@@ -3,6 +3,9 @@ name = "lemmy-client"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+async-trait = "0.1"
+cfg-if = "1.0.0"
+http = "1.0.0"
+lemmy_api_common = {version = "0.19.3", default_features = false }
+serde = "1.0"
