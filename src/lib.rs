@@ -1,5 +1,4 @@
 use crate::{error::Error, forms::LemmyForm, response::LemmyResponse};
-use async_trait::async_trait;
 use cfg_if::cfg_if;
 use http::method::Method;
 use std::fmt;
@@ -37,9 +36,8 @@ impl<R: LemmyForm> From<R> for LemmyRequest<R> {
 mod private_trait {
     use crate::LemmyResult;
 
-    use super::{async_trait, LemmyForm, LemmyRequest, LemmyResponse, Method};
+    use super::{LemmyForm, LemmyRequest, LemmyResponse, Method};
 
-    #[async_trait(?Send)]
     pub trait LemmyClient {
         async fn make_request<Response, Form, Request>(
             &self,
@@ -54,7 +52,6 @@ mod private_trait {
     }
 }
 
-#[async_trait(?Send)]
 trait LemmyClient: private_trait::LemmyClient {}
 
 trait MaybeBearerAuth {
@@ -76,7 +73,6 @@ cfg_if! {
             }
         }
 
-    #[async_trait(?Send)]
     impl private_trait::LemmyClient for Fetch {
       async fn make_request<Response, Form, Req>(
                 &self,
@@ -136,7 +132,6 @@ cfg_if! {
         }
 
 
-          #[async_trait(?Send)]
         impl private_trait::LemmyClient for awc::Client {
             async fn make_request<Response, Form, Request>(
                 &self,
