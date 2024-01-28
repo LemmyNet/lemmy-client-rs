@@ -1,28 +1,31 @@
+use crate::{error::Error, forms::LemmyForm, response::LemmyResponse};
 use async_trait::async_trait;
 use cfg_if::cfg_if;
 use http::method::Method;
-use serde::{Deserialize, Serialize};
 use std::fmt;
 
+mod error;
 mod forms;
 mod response;
 mod utils;
 
-pub struct LemmyRequest<R: Serialize> {
+type LemmyResult<R> = Result<R, Error>;
+
+struct LemmyRequest<R: LemmyForm> {
     pub body: Option<R>,
     pub jwt: Option<String>,
 }
 
-impl<R: Serialize> LemmyRequest<R> {
-    pub fn from_jwt(jwt: Option<String>) -> Self {
-        Self {
-            body: None::<R>,
-            jwt,
-        }
-    }
-}
+// impl<R: LemmyForm> LemmyRequest<R> {
+//     pub fn from_jwt(jwt: Option<String>) -> Self {
+//         Self {
+//             body: None::<R>,
+//             jwt,
+//         }
+//     }
+// }
 
-impl<R: Serialize> From<R> for LemmyRequest<R> {
+impl<R: LemmyForm> From<R> for LemmyRequest<R> {
     fn from(body: R) -> Self {
         LemmyRequest {
             body: Some(body),
@@ -32,7 +35,9 @@ impl<R: Serialize> From<R> for LemmyRequest<R> {
 }
 
 mod private_trait {
-    use super::{async_trait, Deserialize, LemmyRequest, Method, Serialize};
+    use crate::LemmyResult;
+
+    use super::{async_trait, LemmyForm, LemmyRequest, LemmyResponse, Method};
 
     #[async_trait(?Send)]
     pub trait LemmyClient {
@@ -41,10 +46,10 @@ mod private_trait {
             method: Method,
             path: &str,
             form: Request,
-        ) -> Result<Response, ()>
+        ) -> LemmyResult<Response>
         where
-            Response: for<'de> Deserialize<'de>,
-            Form: Serialize,
+            Response: LemmyResponse,
+            Form: LemmyForm,
             Request: Into<LemmyRequest<Form>>;
     }
 }
@@ -53,7 +58,7 @@ mod private_trait {
 trait LemmyClient: private_trait::LemmyClient {}
 
 trait MaybeBearerAuth {
-  fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self;
+    fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self;
 }
 
 cfg_if! {
@@ -80,8 +85,8 @@ cfg_if! {
                 req: Req,
             ) -> LemmyAppResult<Response>
             where
-                Response: for<'de> Deserialize<'de>,
-                Form: Serialize,
+                Response: LemmyResponse,
+                Form: LemmyForm,
                 Req: Into<LemmyRequest<Form>>
             {
                 let LemmyRequest { body, .. } = req.into();
@@ -114,7 +119,8 @@ cfg_if! {
                             .maybe_bearer_auth(jwt.as_deref())
                             .abort_signal(abort_signal.as_ref())
                             .json(&body)
-                            .expect_throw("Could not parse json body")
+                            .expect_throw("Could not parse json body"),
+                    _ => unreachable!("This crate does not use other HTTP methods.")
                 }.send().await?.json::<Response>().await.map_err(Into::into)
             }
     }
@@ -128,6 +134,8 @@ cfg_if! {
                 }
             }
         }
+
+
           #[async_trait(?Send)]
         impl private_trait::LemmyClient for awc::Client {
             async fn make_request<Response, Form, Request>(
@@ -135,10 +143,10 @@ cfg_if! {
                 method: Method,
                 path: &str,
                 req: Request,
-            ) -> Result<Response, ()>
+            ) -> LemmyResult<Response>
             where
-                Response: for<'de> Deserialize<'de>,
-                Form: Serialize,
+                Response: LemmyResponse,
+                Form: LemmyForm,
                 Request: Into<LemmyRequest<Form>>
             {
                 let LemmyRequest {body, jwt} = req.into();
@@ -160,7 +168,8 @@ cfg_if! {
                         self
                             .put(route)
                             .maybe_bearer_auth(jwt)
-                            .send_json(&body)
+                            .send_json(&body),
+                    _ => unreachable!("This crate does not use other HTTP methods.")
                 }.await?.json::<Response>().await.map_err(Into::into)
             }
         }
