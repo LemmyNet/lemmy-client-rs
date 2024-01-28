@@ -5,7 +5,9 @@ edition = "2021"
 
 [dependencies]
 async-trait = "0.1"
+awc = "3.3.0"
 cfg-if = "1.0.0"
 http = "1.0.0"
 lemmy_api_common = {version = "0.19.3", default_features = false }
 serde = "1.0"
+gloo-net = { version = "0.5", features = ["http"], optional = true }
