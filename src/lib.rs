@@ -4,6 +4,10 @@ use http::method::Method;
 use serde::{Deserialize, Serialize};
 use std::fmt;
 
+mod forms;
+mod response;
+mod utils;
+
 pub struct LemmyRequest<R: Serialize> {
     pub body: Option<R>,
     pub jwt: Option<String>,
