@@ -19,7 +19,7 @@ use lemmy_api_common::{
     post::{
         CreatePost, CreatePostLike, CreatePostReport, DeletePost, EditPost, FeaturePost, GetPost,
         GetPosts, GetSiteMetadata, ListPostLikes, ListPostReports, LockPost, MarkPostAsRead,
-        RemovePost, ResolvePostReport,
+        RemovePost, ResolvePostReport, SavePost,
     },
     private_message::{
         CreatePrivateMessage, CreatePrivateMessageReport, DeletePrivateMessage, EditPrivateMessage,
@@ -107,6 +107,7 @@ impl_marker_trait!(
         MarkPostAsRead,
         RemovePost,
         ResolvePostReport,
+        SavePost,
         // Private Messages
         CreatePrivateMessage,
         CreatePrivateMessageReport,

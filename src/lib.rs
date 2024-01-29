@@ -2,6 +2,15 @@ use crate::{error::Error, forms::LemmyForm, response::LemmyResponse};
 use cfg_if::cfg_if;
 use http::method::Method;
 use std::fmt;
+use lemmy_api_common::{
+    comment::*,
+    community::*,
+    custom_emoji::*,
+    person::*,
+    post::*,
+    private_message::*,
+    site::*
+};
 
 mod error;
 mod forms;
@@ -52,7 +61,61 @@ mod private_trait {
     }
 }
 
-trait LemmyClient: private_trait::LemmyClient {}
+macro_rules! client_fn {
+    ($name:ident, $method:expr, $path:expr, $form:ty, $response:ty) => {
+        async fn $name<T>(&self, form: T) -> LemmyResult<$response>
+            where
+                T: Into<LemmyRequest<$form>>
+        {
+            self.make_request($method, $path, form).await
+        }
+    };
+}
+
+trait LemmyClient: private_trait::LemmyClient {
+    async fn get_site(&self) -> LemmyResult<GetSiteResponse>
+        {
+            // The type of the request form doesn't matter here because this endpoint doesn't take arguments
+            self.make_request(Method::GET, "site", LemmyRequest::<GetSiteMetadata>{
+                body: None,
+                jwt: None
+            }).await
+        }
+    client_fn!(create_site, Method::POST, "site", CreateSite, GetSiteResponse);
+    client_fn!(edit_site, Method::PUT, "site", EditSite, GetSiteResponse);
+    client_fn!(get_modlog, Method::GET, "modlog", GetModlog, GetModlogResponse);
+    client_fn!(search, Method::GET, "search", Search, SearchResponse);
+    client_fn!(resolve_object, Method::GET, "resolve_object", ResolveObject, ResolveObjectResponse);
+    client_fn!(get_community, Method::GET, "community", GetCommunity, GetCommunityResponse);
+    client_fn!(create_community, Method::POST, "community", CreateCommunity, GetCommunityResponse);
+    client_fn!(edit_community, Method::PUT, "community", EditCommunity, GetCommunityResponse);
+    client_fn!(hide_community, Method::PUT, "community/hide", HideCommunity, GetCommunityResponse);
+    client_fn!(list_communities, Method::GET, "community/list", ListCommunities, ListCommunitiesResponse);
+    client_fn!(follow_community, Method::POST, "community/follow", FollowCommunity, GetCommunityResponse);
+    client_fn!(block_community, Method::POST, "community/block", BlockCommunity, GetCommunityResponse);
+    client_fn!(delete_community, Method::POST, "community/delete", DeleteCommunity, GetCommunityResponse);
+    client_fn!(remove_community, Method::POST, "community/remove", RemoveCommunity, GetCommunityResponse);
+    client_fn!(transfer_community, Method::POST, "community/transfer", TransferCommunity, GetCommunityResponse);
+    client_fn!(ban_from_community, Method::POST, "community/ban_user", BanFromCommunity, BanFromCommunityResponse);
+    client_fn!(add_mod_to_community, Method::POST, "community/mod", AddModToCommunity, AddModToCommunityResponse);
+    client_fn!(get_federated_instances, Method::GET, "federated_instances", FederatedInstances, GetFederatedInstancesResponse);
+    client_fn!(get_post, Method::GET, "post", GetPost, GetPostResponse);
+    client_fn!(create_post, Method::POST, "post", CreatePost, GetPostResponse);
+    client_fn!(edit_post, Method::PUT, "post", EditPost, GetPostResponse);
+    client_fn!(delete_post, Method::POST, "post/delete", DeletePost, GetPostResponse);
+    client_fn!(remove_post, Method::POST, "post/remove", RemovePost, GetPostResponse);
+    client_fn!(mark_post_as_read, Method::POST, "post/mark_as_read", MarkPostAsRead, GetPostResponse);
+    client_fn!(lock_post, Method::POST, "post/lock", LockPost, GetPostResponse);
+    client_fn!(feature_post, Method::POST, "post/feature", FeaturePost, GetPostResponse);
+    client_fn!(list_posts, Method::GET, "post/list", GetPosts, GetPostsResponse);
+    client_fn!(like_post, Method::POST, "post/like", CreatePostLike, GetPostResponse);
+    client_fn!(list_post_likes, Method::GET, "post/like/list", ListPostLikes, ListPostLikesResponse);
+    client_fn!(save_post, Method::PUT, "post/save", SavePost, GetPostResponse);
+    client_fn!(report_post, Method::POST, "post/report", CreatePostReport, PostReportResponse);
+    client_fn!(resolve_post_report, Method::PUT, "post/report/resolve", ResolvePostReport, PostReportResponse);
+    client_fn!(list_post_reports, Method::GET, "post/report/list", ListPostReports, ListPostReportsResponse);
+    client_fn!(get_post_url_metadata, Method::GET, "post/site_metadata", GetSiteMetadata, GetSiteMetadataResponse);
+}
 
 trait MaybeBearerAuth {
     fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self;
