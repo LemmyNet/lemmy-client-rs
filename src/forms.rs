@@ -24,6 +24,7 @@ use lemmy_api_common::{
     private_message::{
         CreatePrivateMessage, CreatePrivateMessageReport, DeletePrivateMessage, EditPrivateMessage,
         GetPrivateMessages, ListPrivateMessageReports, MarkPrivateMessageAsRead,
+        ResolvePrivateMessageReport,
     },
     site::{
         ApproveRegistrationApplication, BlockInstance, CreateSite, EditSite, FederatedInstances,
@@ -40,6 +41,7 @@ pub(crate) trait LemmyForm: Serialize {}
 impl_marker_trait!(
     LemmyForm,
     [
+        String,
         // Comments
         CreateComment,
         CreateCommentLike,
@@ -116,6 +118,7 @@ impl_marker_trait!(
         GetPrivateMessages,
         ListPrivateMessageReports,
         MarkPrivateMessageAsRead,
+        ResolvePrivateMessageReport,
         // Site
         ApproveRegistrationApplication,
         BlockInstance,

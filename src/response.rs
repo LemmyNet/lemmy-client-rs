@@ -8,6 +8,7 @@ use lemmy_api_common::{
         CommunityResponse, GetCommunityResponse, ListCommunitiesResponse,
     },
     custom_emoji::CustomEmojiResponse,
+    lemmy_db_schema::source::login_token::LoginToken,
     person::{
         AddAdminResponse, BanPersonResponse, BannedPersonsResponse, BlockPersonResponse,
         CaptchaResponse, CommentReplyResponse, GenerateTotpSecretResponse, GetCaptchaResponse,
@@ -28,6 +29,7 @@ use lemmy_api_common::{
         GetUnreadRegistrationApplicationCountResponse, ListRegistrationApplicationsResponse,
         RegistrationApplicationResponse, ResolveObjectResponse, SearchResponse, SiteResponse,
     },
+    SuccessResponse,
 };
 use serde::Deserialize;
 
@@ -38,6 +40,8 @@ pub(crate) trait LemmyResponse: for<'de> Deserialize<'de> {}
 impl_marker_trait!(
     LemmyResponse,
     [
+        String,
+        SuccessResponse,
         // Comments
         CommentReportResponse,
         CommentResponse,
@@ -71,6 +75,7 @@ impl_marker_trait!(
         LoginResponse,
         PersonMentionResponse,
         UpdateTotpResponse,
+        Vec<LoginToken>,
         // Posts
         GetPostResponse,
         GetPostsResponse,
