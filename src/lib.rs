@@ -196,13 +196,16 @@ cfg_if! {
                 let route = &build_route(path);
                 let jwt = get("jwt").and_then(Result::ok);
 
-                // let abort_controller = AbortController::new().ok();
-                // let abort_signal = abort_controller.as_ref().map(AbortController::signal);
-                // leptos::on_cleanup( move || {
-                //     if let Some(abort_controller) = abort_controller {
-                //         abort_controller.abort()
-                //     }
-                // });
+                #[cfg(feature = "leptos")]
+                {
+                    let abort_controller = AbortController::new().ok();
+                    let abort_signal = abort_controller.as_ref().map(AbortController::signal);
+                    leptos::on_cleanup( move || {
+                    if let Some(abort_controller) = abort_controller {
+                            abort_controller.abort()
+                        }
+                    });
+                }
 
                 match method {
                     Method::GET =>

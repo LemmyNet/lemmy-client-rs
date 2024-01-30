@@ -8,6 +8,11 @@ cfg-if = "1.0.0"
 http = "1.0.0"
 lemmy_api_common = {version = "0.19.3", default_features = false }
 serde = "1.0"
+leptos = { version = "0.6", optional = true }
+
+[features]
+default = []
+leptos = ["dep:leptos"]
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 gloo-net = { version = "0.5", features = ["http"] }

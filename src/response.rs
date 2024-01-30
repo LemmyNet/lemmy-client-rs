@@ -1,3 +1,5 @@
+use crate::impl_marker_trait;
+use cfg_if::cfg_if;
 use lemmy_api_common::{
     comment::{
         CommentReportResponse, CommentResponse, CreateCommentReport, GetCommentsResponse,
@@ -33,9 +35,13 @@ use lemmy_api_common::{
 };
 use serde::Deserialize;
 
-use crate::impl_marker_trait;
-
-pub(crate) trait LemmyResponse: for<'de> Deserialize<'de> {}
+cfg_if! {
+    if #[cfg(feature = "leptos")] {
+        pub(crate) trait LemmyResponse: leptos::Serializable + for<'de> Deserialize<'de> {}
+    } else {
+        pub(crate) trait LemmyResponse: for<'de> Deserialize<'de> {}
+    }
+}
 
 impl_marker_trait!(
     LemmyResponse,
