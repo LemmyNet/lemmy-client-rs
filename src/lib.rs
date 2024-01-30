@@ -19,24 +19,6 @@ struct LemmyRequest<R: LemmyForm> {
     pub jwt: Option<String>,
 }
 
-// impl<R: LemmyForm> LemmyRequest<R> {
-//     pub fn from_jwt(jwt: Option<String>) -> Self {
-//         Self {
-//             body: None::<R>,
-//             jwt,
-//         }
-//     }
-// }
-
-impl<R: LemmyForm> From<R> for LemmyRequest<R> {
-    fn from(body: R) -> Self {
-        LemmyRequest {
-            body: Some(body),
-            jwt: None,
-        }
-    }
-}
-
 mod private_trait {
     use crate::LemmyResult;
 
@@ -69,12 +51,12 @@ macro_rules! client_fn {
 
 macro_rules! client_fn_no_arg {
     ($name:ident, $method:expr, $path:expr, $response:ty) => {
-        async fn $name(&self) -> LemmyResult<$response>
+        async fn $name(&self, jwt: Option<String>) -> LemmyResult<$response>
         {
             // The type of the request form doesn't matter here because this endpoint doesn't take arguments
             self.make_request(Method::GET, $path, LemmyRequest::<GetSiteMetadata>{
                 body: None,
-                jwt: None
+                jwt
             }).await
         }
     };
@@ -185,12 +167,13 @@ trait MaybeBearerAuth {
 cfg_if! {
   if #[cfg(target_arch = "wasm32")] {
     use gloo_net::http::{Request, RequestBuilder};
+    use http::header;
     pub struct Fetch;
 
     impl MaybeBearerAuth for RequestBuilder {
         fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self {
             if let Some(token) = token {
-                self.header("Authorization", format!("Bearer {token}").as_str())
+                self.header(header::AUTHORIZATION, format!("Bearer {token}").as_str())
             } else {
                 self
             }
