@@ -13,6 +13,7 @@ mod utils;
 
 type LemmyResult<R> = Result<R, Error>;
 
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
 struct LemmyRequest<R: LemmyForm> {
     pub body: Option<R>,
     pub jwt: Option<String>,
@@ -183,18 +184,18 @@ trait MaybeBearerAuth {
 
 cfg_if! {
   if #[cfg(target_arch = "wasm32")] {
-        use gloo_net::http::{Request, RequestBuilder};
+    use gloo_net::http::{Request, RequestBuilder};
     pub struct Fetch;
 
-        impl MaybeBearerAuth for RequestBuilder {
-           fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self {
-                if let Some(token) = token {
-                    self.header("Authorization", format!("Bearer {token}").as_str())
-                } else {
-                    self
-                }
+    impl MaybeBearerAuth for RequestBuilder {
+        fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self {
+            if let Some(token) = token {
+                self.header("Authorization", format!("Bearer {token}").as_str())
+            } else {
+                self
             }
         }
+    }
 
     impl private_trait::LemmyClient for Fetch {
       async fn make_request<Response, Form, Req>(
