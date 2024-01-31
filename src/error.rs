@@ -1,5 +1,5 @@
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) struct Error(String);
+pub struct Error(String);
 
 impl<T> From<T> for Error
 where

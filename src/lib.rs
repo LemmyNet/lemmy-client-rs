@@ -14,7 +14,7 @@ mod utils;
 type LemmyResult<R> = Result<R, Error>;
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
-struct LemmyRequest<R: LemmyForm> {
+pub struct LemmyRequest<R: LemmyForm> {
     pub body: Option<R>,
     pub jwt: Option<String>,
 }
@@ -24,6 +24,7 @@ mod private_trait {
 
     use super::{LemmyForm, LemmyRequest, LemmyResponse, Method};
 
+    #[allow(async_fn_in_trait)]
     pub trait LemmyClient {
         async fn make_request<Response, Form, Request>(
             &self,
@@ -62,7 +63,9 @@ macro_rules! client_fn_no_arg {
     };
 }
 
-trait LemmyClient: private_trait::LemmyClient {
+
+#[allow(async_fn_in_trait)]
+pub trait LemmyClient: private_trait::LemmyClient {
     client_fn_no_arg!(get_site, Method::GET, "site", GetSiteResponse);
     client_fn!(create_site, Method::POST, "site", CreateSite, GetSiteResponse);
     client_fn!(edit_site, Method::PUT, "site", EditSite, GetSiteResponse);
@@ -230,6 +233,8 @@ cfg_if! {
                 }.send().await?.json::<Response>().await.map_err(Into::into)
             }
     }
+
+    impl LemmyClient for Fetch {}
   } else {
         impl MaybeBearerAuth for awc::ClientRequest {
             fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self {
@@ -278,5 +283,17 @@ cfg_if! {
                 }.await?.json::<Response>().await.map_err(Into::into)
             }
         }
+
+      impl LemmyClient for awc::Client {}
   }
+}
+
+pub fn create_lemmy_client() -> impl LemmyClient {
+    cfg_if! {
+        if #[cfg(target = "wasm32")] {
+            Fetch
+        } else {
+            awc::Client::new()
+        }
+    }
 }

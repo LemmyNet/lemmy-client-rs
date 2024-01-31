@@ -37,9 +37,9 @@ use serde::Deserialize;
 
 cfg_if! {
     if #[cfg(feature = "leptos")] {
-        pub(crate) trait LemmyResponse: leptos::Serializable + for<'de> Deserialize<'de> {}
+        pub trait LemmyResponse: leptos::Serializable + for<'de> Deserialize<'de> {}
     } else {
-        pub(crate) trait LemmyResponse: for<'de> Deserialize<'de> {}
+        pub trait LemmyResponse: for<'de> Deserialize<'de> {}
     }
 }
 

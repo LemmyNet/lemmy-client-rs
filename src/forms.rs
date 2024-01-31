@@ -36,7 +36,7 @@ use serde::Serialize;
 
 use crate::impl_marker_trait;
 
-pub(crate) trait LemmyForm: Serialize {}
+pub trait LemmyForm: Serialize {}
 
 impl_marker_trait!(
     LemmyForm,
