@@ -167,16 +167,30 @@ trait MaybeBearerAuth {
     fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self;
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ClientOptions {
+    domain: String,
+    secure: bool
+}
+
 cfg_if! {
   if #[cfg(target_arch = "wasm32")] {
     use gloo_net::http::{Request, RequestBuilder};
     use http::header;
-    pub struct Fetch;
+    use web_sys::wasm_bindgen::UnwrapThrowExt;
+    pub struct Fetch(ClientOptions);
+
+    impl Fetch {
+        fn build_fetch_query<T: serde::Serialize>(&self, path: &str, form: &T) -> String {
+            let form_str = serde_urlencoded::to_string(form).unwrap_or_else(|_| path.to_string());
+            format!("{}?{}", build_route(path, &self.0), form_str)
+        }
+    }
 
     impl MaybeBearerAuth for RequestBuilder {
         fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self {
             if let Some(token) = token {
-                self.header(header::AUTHORIZATION, format!("Bearer {token}").as_str())
+                self.header(header::AUTHORIZATION.as_str(), format!("Bearer {token}").as_str())
             } else {
                 self
             }
@@ -189,49 +203,46 @@ cfg_if! {
                 method: Method,
                 path: &str,
                 req: Req,
-            ) -> LemmyAppResult<Response>
+            ) -> LemmyResult<Response>
             where
                 Response: LemmyResponse,
                 Form: LemmyForm,
                 Req: Into<LemmyRequest<Form>>
             {
-                let LemmyRequest { body, .. } = req.into();
-                let route = &build_route(path);
-                let jwt = get("jwt").and_then(Result::ok);
+                let LemmyRequest { body, jwt } = req.into();
+                let route = &build_route(path, &self.0);
 
-                #[cfg(feature = "leptos")]
+                #[allow(unused_mut)]
+                let mut req = match method {
+                    Method::GET => Request::get(&self.build_fetch_query(path, &body)),
+                    Method::POST => Request::post(route),
+                    Method::PUT => Request::put(route),
+                    method @ _ => unreachable!("This crate only uses GET, POST, and PUT HTTP methods. Got {method:?}")
+                }.maybe_bearer_auth(jwt.as_deref());
+
+                #[cfg(all(feature = "leptos", target_arch = "wasm32"))]
                 {
+                    use web_sys::AbortController;
                     let abort_controller = AbortController::new().ok();
                     let abort_signal = abort_controller.as_ref().map(AbortController::signal);
                     leptos::on_cleanup( move || {
-                    if let Some(abort_controller) = abort_controller {
+                        if let Some(abort_controller) = abort_controller {
                             abort_controller.abort()
                         }
                     });
+                    req = req.abort_signal(abort_signal.as_ref());
                 }
 
                 match method {
-                    Method::GET =>
-                        Request::get(&build_fetch_query(path, body))
-                            .maybe_bearer_auth(jwt.as_deref())
-                            .abort_signal(abort_signal.as_ref())
-                            .build()
-                            .expect_throw("Could not parse query params"),
-                    Method::POST =>
-                        Request::post(route)
-                            .maybe_bearer_auth(jwt.as_deref())
-                            .abort_signal(abort_signal.as_ref())
-                            .json(&body)
-                            .expect_throw("Could not parse json body"),
-                    Method::PUT =>
-                        Request::put(route)
-                            .maybe_bearer_auth(jwt.as_deref())
-                            .abort_signal(abort_signal.as_ref())
-                            .json(&body)
-                            .expect_throw("Could not parse json body"),
-                    _ => unreachable!("This crate does not use other HTTP methods.")
-                }.send().await?.json::<Response>().await.map_err(Into::into)
-            }
+                    Method::GET => req.build().expect_throw("Could not parse query params"),
+                    Method::POST | Method::PUT => req.json(&body).expect_throw("Could not parse JSON body"),
+                    method @ _ => unreachable!("This crate only uses GET, POST, and PUT HTTP methods. Got {method:?}")
+                }.send()
+                 .await?
+                 .json::<Response>()
+                 .await
+                 .map_err(Into::into)
+        }
     }
 
     impl LemmyClient for Fetch {}
@@ -246,8 +257,12 @@ cfg_if! {
             }
         }
 
+      struct ClientWrapper {
+          client: awc::Client,
+          options: ClientOptions
+      }
 
-        impl private_trait::LemmyClient for awc::Client {
+      impl private_trait::LemmyClient for ClientWrapper {
             async fn make_request<Response, Form, Request>(
                 &self,
                 method: Method,
@@ -259,23 +274,26 @@ cfg_if! {
                 Form: LemmyForm,
                 Request: Into<LemmyRequest<Form>>
             {
-                let LemmyRequest {body, jwt} = req.into();
-                let route = path;
+                let LemmyRequest { body, jwt } = req.into();
+                let route = build_route(path, &self.options);
 
                 match method {
                     Method::GET =>
                         self
+                            .client
                             .get(route)
                             .maybe_bearer_auth(jwt)
                             .query(&body)?
                             .send(),
                     Method::POST =>
                         self
+                            .client
                             .post(route)
                             .maybe_bearer_auth(jwt)
                             .send_json(&body),
                     Method::PUT =>
                         self
+                            .client
                             .put(route)
                             .maybe_bearer_auth(jwt)
                             .send_json(&body),
@@ -284,16 +302,25 @@ cfg_if! {
             }
         }
 
-      impl LemmyClient for awc::Client {}
+      impl LemmyClient for ClientWrapper {}
   }
 }
 
-pub fn create_lemmy_client() -> impl LemmyClient {
+
+
+pub fn create_lemmy_client(options: ClientOptions) -> impl LemmyClient {
     cfg_if! {
-        if #[cfg(target = "wasm32")] {
-            Fetch
+        if #[cfg(target_arch = "wasm32")] {
+            Fetch(options)
         } else {
-            awc::Client::new()
+            ClientWrapper {
+                client: awc::Client::new(),
+                options
+            }
         }
     }
+}
+
+fn build_route(route: &str, ClientOptions { domain, secure }: &ClientOptions) -> String {
+    format!("http{}://{domain}/api/v3/{route}", if *secure { "s" } else { "" })
 }

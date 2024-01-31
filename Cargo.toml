@@ -12,10 +12,12 @@ leptos = { version = "0.6", optional = true }
 
 [features]
 default = []
-leptos = ["dep:leptos"]
+leptos = ["web-sys/AbortController", "dep:leptos"]
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 gloo-net = { version = "0.5", features = ["http"] }
+serde_urlencoded = "0.7"
+web-sys = "0.3"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 awc = { version = "3.3.0" }
