@@ -38,6 +38,21 @@ use crate::impl_marker_trait;
 
 pub trait LemmyForm: Serialize {}
 
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct LemmyRequest<R: LemmyForm> {
+    pub body: Option<R>,
+    pub jwt: Option<String>,
+}
+
+impl<F: LemmyForm> From<F> for LemmyRequest<F> {
+    fn from(value: F) -> Self {
+        Self {
+            body: Some(value),
+            jwt: None,
+        }
+    }
+}
+
 impl_marker_trait!(
     LemmyForm,
     [

@@ -6,3 +6,9 @@ macro_rules! impl_marker_trait {
         )*
     };
 }
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ClientOptions {
+    pub domain: String,
+    pub secure: bool,
+}

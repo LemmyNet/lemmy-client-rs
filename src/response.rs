@@ -1,4 +1,4 @@
-use crate::impl_marker_trait;
+use crate::{error::Error, impl_marker_trait};
 use cfg_if::cfg_if;
 use lemmy_api_common::{
     comment::{
@@ -42,6 +42,8 @@ cfg_if! {
         pub trait LemmyResponse: for<'de> Deserialize<'de> {}
     }
 }
+
+pub type LemmyResult<R> = Result<R, Error>;
 
 impl_marker_trait!(
     LemmyResponse,
