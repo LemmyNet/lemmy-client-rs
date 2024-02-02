@@ -1,37 +1,8 @@
 use crate::{error::Error, impl_marker_trait};
 use cfg_if::cfg_if;
 use lemmy_api_common::{
-    comment::{
-        CommentReportResponse, CommentResponse, CreateCommentReport, GetCommentsResponse,
-        ListCommentLikesResponse, ListCommentReportsResponse,
-    },
-    community::{
-        AddModToCommunityResponse, BanFromCommunityResponse, BlockCommunityResponse,
-        CommunityResponse, GetCommunityResponse, ListCommunitiesResponse,
-    },
-    custom_emoji::CustomEmojiResponse,
-    lemmy_db_schema::source::login_token::LoginToken,
-    person::{
-        AddAdminResponse, BanPersonResponse, BannedPersonsResponse, BlockPersonResponse,
-        CaptchaResponse, CommentReplyResponse, GenerateTotpSecretResponse, GetCaptchaResponse,
-        GetPersonDetailsResponse, GetPersonMentionsResponse, GetRepliesResponse,
-        GetReportCountResponse, GetUnreadCountResponse, LoginResponse, PersonMentionResponse,
-        UpdateTotpResponse,
-    },
-    post::{
-        GetPostResponse, GetPostsResponse, GetSiteMetadataResponse, ListPostLikesResponse,
-        ListPostReportsResponse, PostReportResponse, PostResponse,
-    },
-    private_message::{
-        ListPrivateMessageReportsResponse, PrivateMessageReportResponse, PrivateMessageResponse,
-        PrivateMessagesResponse,
-    },
-    site::{
-        BlockInstanceResponse, GetFederatedInstancesResponse, GetModlogResponse, GetSiteResponse,
-        GetUnreadRegistrationApplicationCountResponse, ListRegistrationApplicationsResponse,
-        RegistrationApplicationResponse, ResolveObjectResponse, SearchResponse, SiteResponse,
-    },
-    SuccessResponse,
+    comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,
+    person::*, post::*, private_message::*, site::*, SuccessResponse,
 };
 use serde::Deserialize;
 

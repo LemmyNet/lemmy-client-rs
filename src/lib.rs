@@ -11,7 +11,7 @@ use lemmy_client_internal::Fetch;
 use utils::ClientOptions;
 
 mod error;
-mod forms;
+mod form;
 mod lemmy_client_internal;
 mod lemmy_client_trait;
 mod response;

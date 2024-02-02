@@ -1,4 +1,4 @@
-use crate::{forms::{LemmyForm, LemmyRequest}, response::{LemmyResponse, LemmyResult}};
+use crate::{form::{LemmyForm, LemmyRequest}, response::{LemmyResponse, LemmyResult}};
 use http::Method;
 use lemmy_api_common::{
     comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,

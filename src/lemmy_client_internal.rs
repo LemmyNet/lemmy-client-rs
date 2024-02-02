@@ -1,5 +1,5 @@
 use crate::{
-    forms::{LemmyForm, LemmyRequest},
+    form::{LemmyForm, LemmyRequest},
     lemmy_client_trait::{private_trait, LemmyClientInternal},
     response::{LemmyResponse, LemmyResult},
     utils::ClientOptions,
