@@ -19,13 +19,20 @@ pub struct LemmyRequest<R: LemmyForm> {
     pub jwt: Option<String>,
 }
 
-mod private_trait {
-    use crate::LemmyResult;
+impl<F: LemmyForm> From<F> for LemmyRequest<F> {
+    fn from(value: F) -> Self {
+        Self {
+            body: Some(value),
+            jwt: None
+        }
+    }
+}
 
-    use super::{LemmyForm, LemmyRequest, LemmyResponse, Method};
+mod private_trait {
+    use super::{LemmyForm, LemmyRequest, LemmyResponse, Method, LemmyResult};
 
     #[allow(async_fn_in_trait)]
-    pub trait LemmyClient {
+    pub trait LemmyClientInternal {
         async fn make_request<Response, Form, Request>(
             &self,
             method: Method,
@@ -50,7 +57,7 @@ macro_rules! client_fn {
     };
 }
 
-macro_rules! client_fn_no_arg {
+macro_rules! client_fn_no_form {
     ($name:ident, $method:expr, $path:expr, $response:ty) => {
         async fn $name(&self, jwt: Option<String>) -> LemmyResult<$response>
         {
@@ -64,9 +71,8 @@ macro_rules! client_fn_no_arg {
 }
 
 
-#[allow(async_fn_in_trait)]
-pub trait LemmyClient: private_trait::LemmyClient {
-    client_fn_no_arg!(get_site, Method::GET, "site", GetSiteResponse);
+trait LemmyClientInternal: private_trait::LemmyClientInternal {
+    client_fn_no_form!(get_site, Method::GET, "site", GetSiteResponse);
     client_fn!(create_site, Method::POST, "site", CreateSite, GetSiteResponse);
     client_fn!(edit_site, Method::PUT, "site", EditSite, GetSiteResponse);
     client_fn!(get_modlog, Method::GET, "modlog", GetModlog, GetModlogResponse);
@@ -125,33 +131,33 @@ pub trait LemmyClient: private_trait::LemmyClient {
     client_fn!(list_private_message_reports, Method::GET, "private_message/report/list", ListPrivateMessageReports, ListPrivateMessageReportsResponse);
     client_fn!(get_person, Method::GET, "user", GetPersonDetails, GetPersonDetailsResponse);
     client_fn!(register_account, Method::POST, "user/register", Register, RegistrationApplicationResponse);
-    client_fn_no_arg!(get_captcha, Method::GET, "user/get_captcha", GetCaptchaResponse);
-    client_fn_no_arg!(export_settings, Methd::GET, "user/export_settings", String);
+    client_fn_no_form!(get_captcha, Method::GET, "user/get_captcha", GetCaptchaResponse);
+    client_fn_no_form!(export_settings, Methd::GET, "user/export_settings", String);
     client_fn!(import_settings, Method::POST, "user/import_settings", String, SuccessResponse);
     client_fn!(list_mentions, Method::GET, "user/mention", GetPersonMentions, GetPersonMentionsResponse);
     client_fn!(mark_mention_as_read, Method::POST, "user/mention/mark_as_read", MarkPersonMentionAsRead, PersonMentionResponse);
     client_fn!(list_replies, Method::GET, "user/replies", GetReplies, GetRepliesResponse);
     client_fn!(ban_from_site, Method::POST, "user/ban", BanPerson, BanPersonResponse);
-    client_fn_no_arg!(list_banned_users, Method::GET, "user/banned", BannedPersonsResponse);
+    client_fn_no_form!(list_banned_users, Method::GET, "user/banned", BannedPersonsResponse);
     client_fn!(block_person, Method::POST, "user/block", BlockPerson, BlockPersonResponse);
     client_fn!(login, Method::POST, "user/login", Login, LoginResponse);
-    client_fn_no_arg!(logout, Method::POST, "user/logout", String);
+    client_fn_no_form!(logout, Method::POST, "user/logout", String);
     client_fn!(delete_account, Method::POST, "user/delete_account", DeleteAccount, GetPersonDetailsResponse);
     client_fn!(reset_password, Method::POST, "user/password_reset", PasswordReset, SuccessResponse);
     client_fn!(change_password_after_reset, Method::POST, "user/password_change", PasswordChangeAfterReset, SuccessResponse);
-    client_fn_no_arg!(mark_all_notifications_as_read, Method::POST, "user/mark_all_as_read", GetRepliesResponse);
+    client_fn_no_form!(mark_all_notifications_as_read, Method::POST, "user/mark_all_as_read", GetRepliesResponse);
     client_fn!(save_user_settings, Method::PUT, "user/save_user_settings", SaveUserSettings, SuccessResponse);
     client_fn!(change_password, Method::PUT, "user/change_password", ChangePassword, LoginResponse);
     client_fn!(report_count, Method::GET, "user/report_count", GetReportCount, GetReportCountResponse);
-    client_fn_no_arg!(unread_count, Method::GET, "user/unread_count", GetUnreadCountResponse);
+    client_fn_no_form!(unread_count, Method::GET, "user/unread_count", GetUnreadCountResponse);
     client_fn!(verify_email, Method::POST, "user/verify_email", VerifyEmail, SuccessResponse);
-    client_fn_no_arg!(leave_admin, Method::POST, "user/verify_email", GetSiteResponse);
-    client_fn_no_arg!(generate_totp_secret, Method::POST, "user/totp/generate", GenerateTotpSecretResponse);
+    client_fn_no_form!(leave_admin, Method::POST, "user/verify_email", GetSiteResponse);
+    client_fn_no_form!(generate_totp_secret, Method::POST, "user/totp/generate", GenerateTotpSecretResponse);
     client_fn!(update_totp, Method::POST, "user/totp/update", UpdateTotp, UpdateTotpResponse);
-    client_fn_no_arg!(list_logins, Method::GET, "user/list_logins", Vec<LoginToken>);
-    client_fn_no_arg!(validate_auth, Method::GET, "user/validate_auth", SuccessResponse);
+    client_fn_no_form!(list_logins, Method::GET, "user/list_logins", Vec<LoginToken>);
+    client_fn_no_form!(validate_auth, Method::GET, "user/validate_auth", SuccessResponse);
     client_fn!(add_admin, Method::POST, "admin/add", AddAdmin, AddAdminResponse);
-    client_fn_no_arg!(unread_registration_application_count, Method::GET, "admin/registration_application/count", GetUnreadRegistrationApplicationCountResponse);
+    client_fn_no_form!(unread_registration_application_count, Method::GET, "admin/registration_application/count", GetUnreadRegistrationApplicationCountResponse);
     client_fn!(list_registration_applications, Method::GET, "admin/registration_application/list", ListRegistrationApplications, ListRegistrationApplicationsResponse);
     client_fn!(approve_registration_application, Method::PUT, "admin/registration_application/approve", ApproveRegistrationApplication, RegistrationApplicationResponse);
     client_fn!(purge_person, Method::POST, "admin/purge/person", PurgePerson, SuccessResponse);
@@ -197,7 +203,7 @@ cfg_if! {
         }
     }
 
-    impl private_trait::LemmyClient for Fetch {
+    impl private_trait::LemmyClientInternal for Fetch {
       async fn make_request<Response, Form, Req>(
                 &self,
                 method: Method,
@@ -245,7 +251,7 @@ cfg_if! {
         }
     }
 
-    impl LemmyClient for Fetch {}
+    impl LemmyClientInternal for Fetch {}
   } else {
         impl MaybeBearerAuth for awc::ClientRequest {
             fn maybe_bearer_auth(self, token: Option<impl fmt::Display>) -> Self {
@@ -262,7 +268,7 @@ cfg_if! {
           options: ClientOptions
       }
 
-      impl private_trait::LemmyClient for ClientWrapper {
+      impl private_trait::LemmyClientInternal for ClientWrapper {
             async fn make_request<Response, Form, Request>(
                 &self,
                 method: Method,
@@ -302,23 +308,141 @@ cfg_if! {
             }
         }
 
-      impl LemmyClient for ClientWrapper {}
+      impl LemmyClientInternal for ClientWrapper {}
   }
 }
 
+#[cfg(target_arch = "wasm32")]
+pub struct LemmyClient(Fetch);
+#[cfg(not(target_arch = "wasm32"))]
+pub struct LemmyClient(ClientWrapper);
 
+macro_rules! expose_wrapped_fn {
+    ($name:ident, $form:ty, $response:ty) => {
+        pub async fn $name(&self, form: $form) -> LemmyResult<$response> {
+            self.0.$name(form).await
+        }
+    };
+}
 
-pub fn create_lemmy_client(options: ClientOptions) -> impl LemmyClient {
-    cfg_if! {
-        if #[cfg(target_arch = "wasm32")] {
-            Fetch(options)
-        } else {
-            ClientWrapper {
-                client: awc::Client::new(),
-                options
+macro_rules! expose_wrapped_fn_no_form {
+    ($name:ident, $response:ty) => {
+        pub async fn $name(&self, jwt: Option<String>) -> LemmyResult<$response> {
+            // The type of the request form doesn't matter here because this endpoint doesn't take arguments
+            self.0.$name(jwt).await
+        }
+    };
+}
+
+impl LemmyClient {
+    pub fn new(options: ClientOptions) -> Self {
+        cfg_if! {
+            if #[cfg(target_arch = "wasm32")] {
+                Self(Fetch(options))
+            } else {
+                Self(ClientWrapper {
+                    client: awc::Client::new(),
+                    options
+                })
             }
         }
     }
+
+    expose_wrapped_fn_no_form!(get_site, GetSiteResponse);
+    expose_wrapped_fn!(create_site, CreateSite, GetSiteResponse);
+    expose_wrapped_fn!(edit_site, EditSite, GetSiteResponse);
+    expose_wrapped_fn!(get_modlog, GetModlog, GetModlogResponse);
+    expose_wrapped_fn!(search, Search, SearchResponse);
+    expose_wrapped_fn!(resolve_object, ResolveObject, ResolveObjectResponse);
+    expose_wrapped_fn!(get_community, GetCommunity, GetCommunityResponse);
+    expose_wrapped_fn!(create_community, CreateCommunity, GetCommunityResponse);
+    expose_wrapped_fn!(edit_community, EditCommunity, GetCommunityResponse);
+    expose_wrapped_fn!(hide_community, HideCommunity, GetCommunityResponse);
+    expose_wrapped_fn!(list_communities, ListCommunities, ListCommunitiesResponse);
+    expose_wrapped_fn!(follow_community, FollowCommunity, GetCommunityResponse);
+    expose_wrapped_fn!(block_community, BlockCommunity, GetCommunityResponse);
+    expose_wrapped_fn!(delete_community, DeleteCommunity, GetCommunityResponse);
+    expose_wrapped_fn!(remove_community, RemoveCommunity, GetCommunityResponse);
+    expose_wrapped_fn!(transfer_community, TransferCommunity, GetCommunityResponse);
+    expose_wrapped_fn!(ban_from_community, BanFromCommunity, BanFromCommunityResponse);
+    expose_wrapped_fn!(add_mod_to_community, AddModToCommunity, AddModToCommunityResponse);
+    expose_wrapped_fn!(get_federated_instances, FederatedInstances, GetFederatedInstancesResponse);
+    expose_wrapped_fn!(get_post, GetPost, GetPostResponse);
+    expose_wrapped_fn!(create_post, CreatePost, GetPostResponse);
+    expose_wrapped_fn!(edit_post, EditPost, GetPostResponse);
+    expose_wrapped_fn!(delete_post, DeletePost, GetPostResponse);
+    expose_wrapped_fn!(remove_post, RemovePost, GetPostResponse);
+    expose_wrapped_fn!(mark_post_as_read, MarkPostAsRead, GetPostResponse);
+    expose_wrapped_fn!(lock_post, LockPost, GetPostResponse);
+    expose_wrapped_fn!(feature_post, FeaturePost, GetPostResponse);
+    expose_wrapped_fn!(list_posts, GetPosts, GetPostsResponse);
+    expose_wrapped_fn!(like_post, CreatePostLike, GetPostResponse);
+    expose_wrapped_fn!(list_post_likes, ListPostLikes, ListPostLikesResponse);
+    expose_wrapped_fn!(save_post, SavePost, GetPostResponse);
+    expose_wrapped_fn!(report_post, CreatePostReport, PostReportResponse);
+    expose_wrapped_fn!(resolve_post_report, ResolvePostReport, PostReportResponse);
+    expose_wrapped_fn!(list_post_reports, ListPostReports, ListPostReportsResponse);
+    expose_wrapped_fn!(get_post_url_metadata, GetSiteMetadata, GetSiteMetadataResponse);
+    expose_wrapped_fn!(get_comment, GetComment, CommentResponse);
+    expose_wrapped_fn!(create_comment, CreateComment, CommentResponse);
+    expose_wrapped_fn!(edit_comment, EditComment, CommentResponse);
+    expose_wrapped_fn!(delete_comment, DeleteComment, CommentResponse);
+    expose_wrapped_fn!(remove_comment, RemoveComment, CommentResponse);
+    expose_wrapped_fn!(mark_reply_as_read, MarkCommentReplyAsRead, CommentReplyResponse);
+    expose_wrapped_fn!(distinguish_comment, DistinguishComment, CommentResponse);
+    expose_wrapped_fn!(like_comment, CreateCommentLike, CommentResponse);
+    expose_wrapped_fn!(list_comment_likes, ListCommentLikes, ListCommentLikesResponse);
+    expose_wrapped_fn!(save_comment, SaveComment, CommentResponse);
+    expose_wrapped_fn!(list_comments, GetComments, GetCommentsResponse);
+    expose_wrapped_fn!(create_comment_report, CreateCommentReport, CommentResponse);
+    expose_wrapped_fn!(resolve_client_report, ResolveCommentReport, CommentReportResponse);
+    expose_wrapped_fn!(list_comment_reports, ListCommentReports, ListCommentReportsResponse);
+    expose_wrapped_fn!(create_private_message, CreatePrivateMessage, PrivateMessageResponse);
+    expose_wrapped_fn!(edit_private_message, EditPrivateMessage, PrivateMessageResponse);
+    expose_wrapped_fn!(list_private_messages, GetPrivateMessages, PrivateMessagesResponse);
+    expose_wrapped_fn!(delete_private_message, DeletePrivateMessage, PrivateMessageResponse);
+    expose_wrapped_fn!(mark_private_message_as_read, MarkPrivateMessageAsRead, PrivateMessageResponse);
+    expose_wrapped_fn!(create_private_message_report, CreatePrivateMessageReport, PrivateMessageReportResponse);
+    expose_wrapped_fn!(resolve_private_message_report, ResolvePrivateMessageReport, PrivateMessageReportResponse);
+    expose_wrapped_fn!(list_private_message_reports, ListPrivateMessageReports, ListPrivateMessageReportsResponse);
+    expose_wrapped_fn!(get_person, GetPersonDetails, GetPersonDetailsResponse);
+    expose_wrapped_fn!(register_account, Register, RegistrationApplicationResponse);
+    expose_wrapped_fn_no_form!(get_captcha, GetCaptchaResponse);
+    expose_wrapped_fn_no_form!(export_settings, String);
+    expose_wrapped_fn!(import_settings, String, SuccessResponse);
+    expose_wrapped_fn!(list_mentions, GetPersonMentions, GetPersonMentionsResponse);
+    expose_wrapped_fn!(mark_mention_as_read, MarkPersonMentionAsRead, PersonMentionResponse);
+    expose_wrapped_fn!(list_replies, GetReplies, GetRepliesResponse);
+    expose_wrapped_fn!(ban_from_site, BanPerson, BanPersonResponse);
+    expose_wrapped_fn_no_form!(list_banned_users, BannedPersonsResponse);
+    expose_wrapped_fn!(block_person, BlockPerson, BlockPersonResponse);
+    expose_wrapped_fn!(login, Login, LoginResponse);
+    expose_wrapped_fn_no_form!(logout, String);
+    expose_wrapped_fn!(delete_account, DeleteAccount, GetPersonDetailsResponse);
+    expose_wrapped_fn!(reset_password, PasswordReset, SuccessResponse);
+    expose_wrapped_fn!(change_password_after_reset, PasswordChangeAfterReset, SuccessResponse);
+    expose_wrapped_fn_no_form!(mark_all_notifications_as_read, GetRepliesResponse);
+    expose_wrapped_fn!(save_user_settings, SaveUserSettings, SuccessResponse);
+    expose_wrapped_fn!(change_password, ChangePassword, LoginResponse);
+    expose_wrapped_fn!(report_count, GetReportCount, GetReportCountResponse);
+    expose_wrapped_fn_no_form!(unread_count, GetUnreadCountResponse);
+    expose_wrapped_fn!(verify_email, VerifyEmail, SuccessResponse);
+    expose_wrapped_fn_no_form!(leave_admin, GetSiteResponse);
+    expose_wrapped_fn_no_form!(generate_totp_secret, GenerateTotpSecretResponse);
+    expose_wrapped_fn!(update_totp, UpdateTotp, UpdateTotpResponse);
+    expose_wrapped_fn_no_form!(list_logins, Vec<LoginToken>);
+    expose_wrapped_fn_no_form!(validate_auth, SuccessResponse);
+    expose_wrapped_fn!(add_admin, AddAdmin, AddAdminResponse);
+    expose_wrapped_fn_no_form!(unread_registration_application_count, GetUnreadRegistrationApplicationCountResponse);
+    expose_wrapped_fn!(list_registration_applications, ListRegistrationApplications, ListRegistrationApplicationsResponse);
+    expose_wrapped_fn!(approve_registration_application, ApproveRegistrationApplication, RegistrationApplicationResponse);
+    expose_wrapped_fn!(purge_person, PurgePerson, SuccessResponse);
+    expose_wrapped_fn!(purge_community, PurgeCommunity, SuccessResponse);
+    expose_wrapped_fn!(purge_post, PurgePost, SuccessResponse);
+    expose_wrapped_fn!(purge_comment, PurgeComment, SuccessResponse);
+    expose_wrapped_fn!(create_custom_emoji, CreateCustomEmoji, CustomEmojiResponse);
+    expose_wrapped_fn!(edit_custom_emoji, EditCustomEmoji, CustomEmojiResponse);
+    expose_wrapped_fn!(delete_custom_emoji, DeleteCustomEmoji, CustomEmojiResponse);
 }
 
 fn build_route(route: &str, ClientOptions { domain, secure }: &ClientOptions) -> String {
