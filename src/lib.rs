@@ -8,7 +8,6 @@ use lemmy_api_common::{
 use lemmy_client_internal::ClientWrapper;
 #[cfg(target_arch = "wasm32")]
 use lemmy_client_internal::Fetch;
-use utils::ClientOptions;
 
 mod error;
 mod form;
@@ -16,6 +15,8 @@ mod lemmy_client_internal;
 mod lemmy_client_trait;
 mod response;
 mod utils;
+
+pub use utils::ClientOptions;
 
 #[cfg(target_arch = "wasm32")]
 pub struct LemmyClient(Fetch);

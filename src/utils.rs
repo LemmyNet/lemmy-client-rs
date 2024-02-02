@@ -1,4 +1,3 @@
-#[macro_export]
 macro_rules! impl_marker_trait {
     ($trait_name:ty, [$( $impler:ty ),+$(,)?]) => {
         $(
@@ -6,6 +5,8 @@ macro_rules! impl_marker_trait {
         )*
     };
 }
+
+pub(crate) use impl_marker_trait;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ClientOptions {

@@ -1,4 +1,4 @@
-use crate::{error::Error, impl_marker_trait};
+use crate::{error::Error, utils::impl_marker_trait};
 use cfg_if::cfg_if;
 use lemmy_api_common::{
     comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,

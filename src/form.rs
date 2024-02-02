@@ -3,7 +3,7 @@ use lemmy_api_common::{
 };
 use serde::Serialize;
 
-use crate::impl_marker_trait;
+use crate::utils::impl_marker_trait;
 
 pub trait LemmyForm: Serialize {}
 
