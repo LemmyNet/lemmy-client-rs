@@ -67,7 +67,7 @@ cfg_if! {
                     Method::GET => Request::get(&self.build_fetch_query(path, &body)),
                     Method::POST => Request::post(route),
                     Method::PUT => Request::put(route),
-                    method @ _ => unreachable!("This crate only uses GET, POST, and PUT HTTP methods. Got {method:?}")
+                    method => unreachable!("This crate only uses GET, POST, and PUT HTTP methods. Got {method:?}")
                 }.maybe_bearer_auth(jwt.as_deref());
 
                 #[cfg(all(feature = "leptos", target_arch = "wasm32"))]
@@ -86,7 +86,7 @@ cfg_if! {
                 match method {
                     Method::GET => req.build().expect_throw("Could not parse query params"),
                     Method::POST | Method::PUT => req.json(&body).expect_throw("Could not parse JSON body"),
-                    method @ _ => unreachable!("This crate only uses GET, POST, and PUT HTTP methods. Got {method:?}")
+                    method => unreachable!("This crate only uses GET, POST, and PUT HTTP methods. Got {method:?}")
                 }.send()
                  .await?
                  .json::<Response>()

@@ -8,7 +8,6 @@ use lemmy_api_common::{
 pub mod private_trait {
     use super::{LemmyRequest, Method, LemmyResult, LemmyResponse, LemmyForm};
 
-    #[allow(async_fn_in_trait)]
     pub trait LemmyClientInternal {
         async fn make_request<Response, Form, Request>(
             &self,
