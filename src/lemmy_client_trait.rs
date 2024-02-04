@@ -95,7 +95,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
     client_fn!(save_comment, Method::PUT, "comment/save", SaveComment, CommentResponse);
     client_fn!(list_comments, Method::GET, "comment/list", GetComments, GetCommentsResponse);
     client_fn!(create_comment_report, Method::POST, "comment/report", CreateCommentReport, CommentResponse);
-    client_fn!(resolve_client_report, Method::PUT, "comment/report/resolve", ResolveCommentReport, CommentReportResponse);
+    client_fn!(resolve_comment_report, Method::PUT, "comment/report/resolve", ResolveCommentReport, CommentReportResponse);
     client_fn!(list_comment_reports, Method::GET, "comment/report/list", ListCommentReports, ListCommentReportsResponse);
     client_fn!(create_private_message, Method::POST, "private_message", CreatePrivateMessage, PrivateMessageResponse);
     client_fn!(edit_private_message, Method::PUT, "private_message", EditPrivateMessage, PrivateMessageResponse);
