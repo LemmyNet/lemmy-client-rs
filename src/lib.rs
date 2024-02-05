@@ -1,4 +1,10 @@
 #![warn(missing_docs)]
+#![doc(
+    html_favicon_url = "https://github.com/SleeplessOne1917/lemmy-client-rs/raw/main/images/lemmy_logo.svg"
+)]
+#![doc(
+    html_logo_url = "https://github.com/SleeplessOne1917/lemmy-client-rs/raw/main/images/lemmy_logo.svg"
+)]
 //! A Rust HTTP client for Lemmy.
 //! If used when targeting WASM, uses the browser's built-in fetch API to reduce bundle size.
 //! # Example
@@ -33,6 +39,7 @@ mod response;
 mod utils;
 
 pub use error::Error;
+pub use form::LemmyRequest;
 pub use lemmy_api_common;
 pub use utils::ClientOptions;
 

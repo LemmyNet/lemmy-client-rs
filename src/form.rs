@@ -8,8 +8,11 @@ use crate::utils::impl_marker_trait;
 pub trait LemmyForm: Serialize {}
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
+/// A request to send to the Lemmy API.
 pub struct LemmyRequest<R: LemmyForm> {
+    /// The body of the request/
     pub body: Option<R>,
+    /// The JWT token to use in the Authorization header.
     pub jwt: Option<String>,
 }
 
