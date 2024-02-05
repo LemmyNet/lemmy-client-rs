@@ -1,4 +1,25 @@
 #![warn(missing_docs)]
+#![doc(
+    html_favicon_url = "https://github.com/SleeplessOne1917/lemmy-client-rs/raw/main/images/lemmy_logo.svg"
+)]
+#![doc(
+    html_logo_url = "https://github.com/SleeplessOne1917/lemmy-client-rs/raw/main/images/lemmy_logo.svg"
+)]
+//! A Rust HTTP client for Lemmy.
+//! If used when targeting WASM, uses the browser's built-in fetch API to reduce bundle size.
+//! # Example
+//! ```
+//! use lemmy_client::{LemmyClient, ClientOptions};
+//!
+//! let client = LemmyClient::new(ClientOptions {
+//!     domain: "lemmy.ml",
+//!     secure: true
+//! });
+//!
+//! let res = client.get_site(None).await;
+//!
+//! assert!(res.is_some());
+//! ```
 use crate::{lemmy_client_trait::LemmyClientInternal, response::LemmyResult};
 use cfg_if::cfg_if;
 use lemmy_api_common::{
@@ -18,6 +39,7 @@ mod response;
 mod utils;
 
 pub use error::Error;
+pub use form::LemmyRequest;
 pub use lemmy_api_common;
 pub use utils::ClientOptions;
 
@@ -42,7 +64,6 @@ macro_rules! expose_wrapped_fn_no_form {
     ($name:ident, $response:ty, $doc:expr) => {
         #[doc = $doc]
         pub async fn $name(&self, jwt: Option<String>) -> LemmyResult<$response> {
-            // The type of the request form doesn't matter here because this endpoint doesn't take arguments
             self.0.$name(jwt).await
         }
     };
