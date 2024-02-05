@@ -52,6 +52,7 @@ impl LemmyClient {
     /// Creates a new `LeptosClient`.
     /// # Examples
     /// ```
+    /// use lemmy_client::{LemmyClient, ClientOptions};
     /// let client = LemmyClient::new(ClientOptions {
     ///     domain: String::from("lemmy.ml"),
     ///     secure: true
