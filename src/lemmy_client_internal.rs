@@ -91,21 +91,27 @@ cfg_if! {
 
     impl LemmyClientInternal for Fetch {}
   } else {
-        impl WithHeaders for awc::ClientRequest {
+        impl WithHeaders for reqwest::RequestBuilder {
             fn with_headers(self, headers: &HashMap<String, String>) -> Self {
-                headers.iter().fold(self, |acc, (header, value)| acc.insert_header((header.as_str(), value.as_str())))
+                let mut client = headers.iter().fold(self, |acc, (header, value)| acc.header(header, value));
+
+                if !headers.keys().any(|key| key.eq_ignore_ascii_case("user-agent")) {
+                    client = client.header("user-agent", "Lemmy-Client-rs/0.19.3");
+                }
+
+                client
             }
         }
 
       pub struct ClientWrapper {
-          client: awc::Client,
+          client: reqwest::Client,
           options: ClientOptions
       }
 
       impl ClientWrapper {
           pub fn new(options: ClientOptions) -> Self {
               Self {
-                  client: awc::Client::new(),
+                  client: reqwest::Client::new(),
                   options
               }
           }
@@ -125,28 +131,30 @@ cfg_if! {
             {
                 let route = build_route(path, &self.options);
 
-                match method {
+                let hue = match method {
                     Method::GET =>
                         self
                             .client
                             .get(route)
                             .with_headers(headers)
-                            .query(&form)?
-                            .send(),
+                            .query(&form),
                     Method::POST =>
                         self
                             .client
                             .post(route)
                             .with_headers(headers)
-                            .send_json(&form),
+                            .json(&form),
                     Method::PUT =>
                         self
                             .client
                             .put(route)
                             .with_headers(headers)
-                            .send_json(&form),
+                            .json(&form),
                     _ => unreachable!("This crate does not use other HTTP methods.")
-                }.await?.json::<Response>().await.map_err(Into::into)
+                }.send().await;
+
+                println!("Response is {hue:?}");
+                hue?.json::<Response>().await.map_err(Into::into)
             }
         }
 

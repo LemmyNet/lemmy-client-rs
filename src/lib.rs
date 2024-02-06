@@ -16,7 +16,7 @@
 //!     secure: true
 //! });
 //!
-//! let res = client.get_site(None).await;
+//! let res = client.get_site().await;
 //!
 //! assert!(res.is_some());
 //! ```
