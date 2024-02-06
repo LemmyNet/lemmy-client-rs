@@ -1,9 +1,9 @@
 #![warn(missing_docs)]
 #![doc(
-    html_favicon_url = "https://github.com/SleeplessOne1917/lemmy-client-rs/raw/main/images/lemmy_logo.svg"
+    html_favicon_url = "https://raw.githubusercontent.com/LemmyNet/lemmy-ui/main/src/assets/icons/favicon.svg"
 )]
 #![doc(
-    html_logo_url = "https://github.com/SleeplessOne1917/lemmy-client-rs/raw/main/images/lemmy_logo.svg"
+    html_logo_url = "https://raw.githubusercontent.com/LemmyNet/lemmy-ui/main/src/assets/icons/favicon.svg"
 )]
 //! A Rust HTTP client for Lemmy.
 //! If used when targeting WASM, uses the browser's built-in fetch API to reduce bundle size.
