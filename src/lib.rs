@@ -97,6 +97,29 @@ impl LemmyClient {
         }
     }
 
+    /// Map of headers that will be included with each request.
+    pub fn headers(&self) -> &HashMap<String, String> {
+        &self.headers
+    }
+
+    /// Mutable map of headers that will be included with each request. Use this method if you want to add headers other than the JWT.
+    pub fn headers_mut(&mut self) -> &mut HashMap<String, String> {
+        &mut self.headers
+    }
+
+    /// Set the jwt to be included with each subsequent request.
+    pub fn set_jwt(&mut self, jwt: &str) {
+        self.headers.insert(
+            http::header::AUTHORIZATION.to_string(),
+            format!("Bearer {jwt}"),
+        );
+    }
+
+    /// Remove the jwt if it is already set.
+    pub fn remove_jwt(&mut self) {
+        self.headers.remove(http::header::AUTHORIZATION.as_str());
+    }
+
     expose_wrapped_fn_no_form!(
         get_site,
         GetSiteResponse,
