@@ -1,12 +1,19 @@
 [package]
 name = "lemmy-client"
-version = "0.1.0"
+version = "0.19.3"
 edition = "2021"
+license = "AGPL-3.0"
+authors = ["SleeplessOne1917"]
+description = "A Rust HTTP client for Lemmy."
+homepage = "https://join-lemmy.org"
+repository = "https://github.com/SleeplessOne1917/lemmy-client-rs"
+keywords = ["Lemmy", "HTTP-client", "API-wrapper", "fediverse"]
+categories = ["api-bindings", "wasm"]
 
 [dependencies]
 cfg-if = "1.0.0"
 http = "1.0.0"
-lemmy_api_common = {version = "0.19.3", default_features = false }
+lemmy_api_common = { version = "0.19.3", default_features = false }
 serde = "1.0"
 leptos = { version = "0.6", optional = true }
 
