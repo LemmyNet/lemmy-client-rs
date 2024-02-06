@@ -1,47 +1,43 @@
-use crate::{form::{LemmyForm, LemmyRequest}, response::{LemmyResponse, LemmyResult}};
+use crate::{form::LemmyForm, response::{LemmyResponse, LemmyResult}};
 use http::Method;
 use lemmy_api_common::{
     comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,
     person::*, post::*, private_message::*, site::*, SuccessResponse,
 };
+use std::collections::HashMap;
 
 pub mod private_trait {
-    use super::{LemmyRequest, Method, LemmyResult, LemmyResponse, LemmyForm};
+    use super::{Method, LemmyResult, LemmyResponse, LemmyForm, HashMap};
 
     pub trait LemmyClientInternal {
-        async fn make_request<Response, Form, Request>(
+        async fn make_request<Response, Form>(
             &self,
             method: Method,
             path: &str,
-            form: Request,
+            form: Option<Form>,
+            headers: &HashMap<String, String>
         ) -> LemmyResult<Response>
         where
             Response: LemmyResponse,
-            Form: LemmyForm,
-            Request: Into<LemmyRequest<Form>>;
+            Form: LemmyForm;
     }
 }
 
 macro_rules! client_fn {
     ($name:ident, $method:expr, $path:expr, $form:ty, $response:ty) => {
-        async fn $name<T>(&self, form: T) -> LemmyResult<$response>
-            where
-                T: Into<LemmyRequest<$form>>
+        async fn $name(&self, form: Option<$form>, headers: &HashMap<String, String>) -> LemmyResult<$response>
         {
-            self.make_request($method, $path, form).await
+            self.make_request($method, $path, form, headers).await
         }
     };
 }
 
 macro_rules! client_fn_no_form {
     ($name:ident, $method:expr, $path:expr, $response:ty) => {
-        async fn $name(&self, jwt: Option<String>) -> LemmyResult<$response>
+        // The type of the request form doesn't matter here because this endpoint doesn't take arguments
+        async fn $name(&self, form: Option<GetSiteMetadata>, headers: &HashMap<String, String>) -> LemmyResult<$response>
         {
-            // The type of the request form doesn't matter here because this endpoint doesn't take arguments
-            self.make_request(Method::GET, $path, LemmyRequest::<GetSiteMetadata>{
-                body: None,
-                jwt
-            }).await
+            self.make_request(Method::GET, $path, form, headers).await
         }
     };
 }

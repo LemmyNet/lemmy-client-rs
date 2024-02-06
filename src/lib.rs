@@ -20,6 +20,8 @@
 //!
 //! assert!(res.is_some());
 //! ```
+use std::collections::HashMap;
+
 use crate::{lemmy_client_trait::LemmyClientInternal, response::LemmyResult};
 use cfg_if::cfg_if;
 use lemmy_api_common::{
@@ -39,23 +41,23 @@ mod response;
 mod utils;
 
 pub use error::Error;
-pub use form::LemmyRequest;
 pub use lemmy_api_common;
 pub use utils::ClientOptions;
 
-#[cfg(target_arch = "wasm32")]
-/// `LemmyClient` for WASM. Uses the browser's built-in fetch API to avoid bundling more WASM than necessary.
-pub struct LemmyClient(Fetch);
-
-/// 'LemmyClient' for most architectures.
-#[cfg(not(target_arch = "wasm32"))]
-pub struct LemmyClient(ClientWrapper);
+/// API wrapper for lemmy
+pub struct LemmyClient {
+    headers: HashMap<String, String>,
+    #[cfg(target_arch = "wasm32")]
+    client: Fetch,
+    #[cfg(not(target_arch = "wasm32"))]
+    client: ClientWrapper,
+}
 
 macro_rules! expose_wrapped_fn {
     ($name:ident, $form:ty, $response:ty, $doc:expr) => {
         #[doc = $doc]
         pub async fn $name(&self, form: $form) -> LemmyResult<$response> {
-            self.0.$name(form).await
+            self.client.$name(Some(form), &self.headers).await
         }
     };
 }
@@ -63,14 +65,14 @@ macro_rules! expose_wrapped_fn {
 macro_rules! expose_wrapped_fn_no_form {
     ($name:ident, $response:ty, $doc:expr) => {
         #[doc = $doc]
-        pub async fn $name(&self, jwt: Option<String>) -> LemmyResult<$response> {
-            self.0.$name(jwt).await
+        pub async fn $name(&self) -> LemmyResult<$response> {
+            self.client.$name(None::<GetSiteMetadata>, &self.headers).await
         }
     };
 }
 
 impl LemmyClient {
-    /// Creates a new `LeptosClient`.
+    /// Creates a new `LemmyClient`.
     /// # Examples
     /// ```
     /// use lemmy_client::{LemmyClient, ClientOptions};
@@ -82,9 +84,15 @@ impl LemmyClient {
     pub fn new(options: ClientOptions) -> Self {
         cfg_if! {
             if #[cfg(target_arch = "wasm32")] {
-                Self(Fetch::new(options))
+                Self {
+                    client: Fetch::new(options),
+                    headers: HashMap::new()
+                }
             } else {
-                Self(ClientWrapper::new(options))
+                Self {
+                    client: ClientWrapper::new(options),
+                    headers: HashMap::new()
+                }
             }
         }
     }
