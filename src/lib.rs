@@ -18,7 +18,7 @@
 //!
 //! let res = client.get_site().await;
 //!
-//! assert!(res.is_some());
+//! assert!(res.is_ok());
 //! ```
 use std::collections::HashMap;
 
