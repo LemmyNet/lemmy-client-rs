@@ -12,7 +12,7 @@
 //! use lemmy_client::{LemmyClient, ClientOptions};
 //!
 //! let client = LemmyClient::new(ClientOptions {
-//!     domain: "lemmy.ml",
+//!     domain: String::from("lemmy.ml"),
 //!     secure: true
 //! });
 //!
