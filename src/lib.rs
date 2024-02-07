@@ -16,7 +16,7 @@
 //!     secure: true
 //! });
 //!
-//! let res = client.get_site().await;
+//! let res = client.get_site(()).await;
 //!
 //! assert!(res.is_ok());
 //! ```
@@ -41,6 +41,7 @@ mod response;
 mod utils;
 
 pub use error::Error;
+pub use form::LemmyRequest;
 pub use lemmy_api_common;
 pub use utils::ClientOptions;
 
@@ -56,17 +57,11 @@ pub struct LemmyClient {
 macro_rules! expose_wrapped_fn {
     ($name:ident, $form:ty, $response:ty, $doc:expr) => {
         #[doc = $doc]
-        pub async fn $name(&self, form: $form) -> LemmyResult<$response> {
-            self.client.$name(Some(form), &self.headers).await
-        }
-    };
-}
-
-macro_rules! expose_wrapped_fn_no_form {
-    ($name:ident, $response:ty, $doc:expr) => {
-        #[doc = $doc]
-        pub async fn $name(&self) -> LemmyResult<$response> {
-            self.client.$name(None::<GetSiteMetadata>, &self.headers).await
+        pub async fn $name<Request>(&self, request: Request) -> LemmyResult<$response>
+        where
+            Request: Into<LemmyRequest<$form>>,
+        {
+            self.client.$name(request.into(), &self.headers).await
         }
     };
 }
@@ -107,21 +102,9 @@ impl LemmyClient {
         &mut self.headers
     }
 
-    /// Set the jwt to be included with each subsequent request.
-    pub fn set_jwt(&mut self, jwt: &str) {
-        self.headers.insert(
-            http::header::AUTHORIZATION.to_string(),
-            format!("Bearer {jwt}"),
-        );
-    }
-
-    /// Remove the jwt if it is already set.
-    pub fn remove_jwt(&mut self) {
-        self.headers.remove(http::header::AUTHORIZATION.as_str());
-    }
-
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         get_site,
+        (),
         GetSiteResponse,
         r#"Gets the site and, if you pass an authorized JWT, information about the logged in user.
 
@@ -591,15 +574,17 @@ HTTP GET /user"#
 
 HTTP POST /user/register"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         get_captcha,
+        (),
         GetCaptchaResponse,
         r#"Gets a captcha.
 
 HTTP GET /user/get_captcha"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         export_settings,
+        (),
         String,
         r#"Exports a backup of your user settings - including your saved content, followed communities, and blocks - as JSON.
 
@@ -645,8 +630,9 @@ HTTP GET /user/replies"#
 
 HTTP POST /user/ban"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         list_banned_users,
+        (),
         BannedPersonsResponse,
         r#"Gets users banned who are banned from your isntance.
 
@@ -668,8 +654,9 @@ HTTP POST /user/block"#
 
 HTTP POST /user/login"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         logout,
+        (),
         String,
         r#"Deletes the active session associated with the JWT.
 
@@ -699,8 +686,9 @@ HTTP POST /user/password_reset"#
 
 HTTP POST /user/password_change"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         mark_all_notifications_as_read,
+        (),
         GetRepliesResponse,
         r#"Marks all notifications (replies, mentions, private messages) as read.
 
@@ -730,8 +718,9 @@ HTTP PUT /user/change_password"#
 
 HTTP GET /user/report_count"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         unread_count,
+        (),
         GetUnreadCountResponse,
         r#"Gets the number of unread notifications.
 
@@ -745,15 +734,17 @@ HTTP GET /user/unread_count"#
 
 HTTP POST /user/verify_email"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         leave_admin,
+        (),
         GetSiteResponse,
         r#"Leave your instance's admin team.
 
 HTTP POST /user/leave_admin"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         generate_totp_secret,
+        (),
         GenerateTotpSecretResponse,
         r#"Generates a secret to enable time-based one time passwords for two-factor authentication.
 
@@ -773,15 +764,17 @@ You can only disable this if it is already enabled. Again, you must pass a valid
 
 HTTP POST /user/totp/update"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         list_logins,
+        (),
         Vec<LoginToken>,
         r#"Lists login tokens for your user's active sessions.
 
 HTTP GET /user/list_logins"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         validate_auth,
+        (),
         SuccessResponse,
         r#"Returns an error message if your auth token is invalid.
 
@@ -795,8 +788,9 @@ HTTP GET /user/validate_auth"#
 
 HTTP POST admin/add"#
     );
-    expose_wrapped_fn_no_form!(
+    expose_wrapped_fn!(
         unread_registration_application_count,
+        (),
         GetUnreadRegistrationApplicationCountResponse,
         r#"Gets the number of unread registration applications for the instance you administrate.
 
