@@ -9,6 +9,13 @@ impl Error {
     }
 }
 
+#[cfg(feature = "leptos")]
+impl From<Error> for leptos::ServerFnError {
+    fn from(e: Error) -> Self {
+        Self::ServerError(e.message().to_owned())
+    }
+}
+
 impl<T> From<T> for Error
 where
     T: ToString,
