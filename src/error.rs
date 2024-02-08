@@ -12,13 +12,6 @@ impl Error {
     }
 }
 
-#[cfg(feature = "leptos")]
-impl From<self::Error> for leptos::ServerFnError {
-    fn from(e: Error) -> Self {
-        Self::ServerError(e.message().to_owned())
-    }
-}
-
 #[cfg(not(target_arch = "wasm32"))]
 impl From<reqwest::Error> for Error {
     fn from(e: reqwest::Error) -> Self {
