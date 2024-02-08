@@ -158,7 +158,7 @@ cfg_if! {
                 let route = build_route(path, &self.options);
                 let LemmyRequest { body, jwt } = request;
 
-                let hue = match method {
+                match method {
                     Method::GET =>
                         self
                             .client
@@ -181,10 +181,7 @@ cfg_if! {
                             .maybe_with_jwt(jwt)
                             .json(&body),
                     _ => unreachable!("This crate does not use other HTTP methods.")
-                }.send().await;
-
-                println!("Response is {hue:?}");
-                hue?.json::<Response>().await.map_err(Into::into)
+                }.send().await?.json::<Response>().await.map_err(Into::into)
             }
         }
 
