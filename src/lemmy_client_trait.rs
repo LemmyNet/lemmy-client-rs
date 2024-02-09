@@ -45,9 +45,9 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         Method::POST,
         "site",
         CreateSite,
-        GetSiteResponse
+        SiteResponse
     );
-    client_fn!(edit_site, Method::PUT, "site", EditSite, GetSiteResponse);
+    client_fn!(edit_site, Method::PUT, "site", EditSite, SiteResponse);
     client_fn!(
         get_modlog,
         Method::GET,
@@ -75,21 +75,21 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         Method::POST,
         "community",
         CreateCommunity,
-        GetCommunityResponse
+        CommunityResponse
     );
     client_fn!(
         edit_community,
         Method::PUT,
         "community",
         EditCommunity,
-        GetCommunityResponse
+        CommunityResponse
     );
     client_fn!(
         hide_community,
         Method::PUT,
         "community/hide",
         HideCommunity,
-        GetCommunityResponse
+        SuccessResponse
     );
     client_fn!(
         list_communities,
@@ -103,28 +103,28 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         Method::POST,
         "community/follow",
         FollowCommunity,
-        GetCommunityResponse
+        CommunityResponse
     );
     client_fn!(
         block_community,
         Method::POST,
         "community/block",
         BlockCommunity,
-        GetCommunityResponse
+        BlockCommunityResponse
     );
     client_fn!(
         delete_community,
         Method::POST,
         "community/delete",
         DeleteCommunity,
-        GetCommunityResponse
+        CommunityResponse
     );
     client_fn!(
         remove_community,
         Method::POST,
         "community/remove",
         RemoveCommunity,
-        GetCommunityResponse
+        CommunityResponse
     );
     client_fn!(
         transfer_community,
@@ -160,43 +160,43 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         Method::POST,
         "post",
         CreatePost,
-        GetPostResponse
+        PostResponse
     );
-    client_fn!(edit_post, Method::PUT, "post", EditPost, GetPostResponse);
+    client_fn!(edit_post, Method::PUT, "post", EditPost, PostResponse);
     client_fn!(
         delete_post,
         Method::POST,
         "post/delete",
         DeletePost,
-        GetPostResponse
+        PostResponse
     );
     client_fn!(
         remove_post,
         Method::POST,
         "post/remove",
         RemovePost,
-        GetPostResponse
+        PostResponse
     );
     client_fn!(
         mark_post_as_read,
         Method::POST,
         "post/mark_as_read",
         MarkPostAsRead,
-        GetPostResponse
+        SuccessResponse
     );
     client_fn!(
         lock_post,
         Method::POST,
         "post/lock",
         LockPost,
-        GetPostResponse
+        PostResponse
     );
     client_fn!(
         feature_post,
         Method::POST,
         "post/feature",
         FeaturePost,
-        GetPostResponse
+        PostResponse
     );
     client_fn!(
         list_posts,
@@ -210,7 +210,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         Method::POST,
         "post/like",
         CreatePostLike,
-        GetPostResponse
+        PostResponse
     );
     client_fn!(
         list_post_likes,
@@ -224,7 +224,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         Method::PUT,
         "post/save",
         SavePost,
-        GetPostResponse
+        PostResponse
     );
     client_fn!(
         report_post,
@@ -492,7 +492,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         Method::POST,
         "user/delete_account",
         DeleteAccount,
-        GetPersonDetailsResponse
+        SuccessResponse
     );
     client_fn!(
         reset_password,

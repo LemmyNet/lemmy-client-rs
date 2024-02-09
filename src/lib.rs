@@ -161,7 +161,7 @@ HTTP GET /community"#
     expose_wrapped_fn!(
         create_community,
         CreateCommunity,
-        GetCommunityResponse,
+        CommunityResponse,
         r#"Creates a new community.
 
 HTTP POST /community"#
@@ -169,7 +169,7 @@ HTTP POST /community"#
     expose_wrapped_fn!(
         edit_community,
         EditCommunity,
-        GetCommunityResponse,
+        CommunityResponse,
         r#"Edits a community.
 
 HTTP PUT /community"#
@@ -177,7 +177,7 @@ HTTP PUT /community"#
     expose_wrapped_fn!(
         hide_community,
         HideCommunity,
-        GetCommunityResponse,
+        SuccessResponse,
         r#"Hides a community from public view.
 
 HTTP PUT /community_hide"#
@@ -193,7 +193,7 @@ HTTP GET /community/list"#
     expose_wrapped_fn!(
         follow_community,
         FollowCommunity,
-        GetCommunityResponse,
+        CommunityResponse,
         r#"Subscribes to a community.
 
 HTTP POST /community/follow"#
@@ -201,7 +201,7 @@ HTTP POST /community/follow"#
     expose_wrapped_fn!(
         block_community,
         BlockCommunity,
-        GetCommunityResponse,
+        BlockCommunityResponse,
         r#"Blocks a community.
 
 HTTP POST /community/block"#
@@ -217,7 +217,7 @@ HTTP POST /community/delete"#
     expose_wrapped_fn!(
         remove_community,
         RemoveCommunity,
-        GetCommunityResponse,
+        CommunityResponse,
         r#"Removes a community (moderation action).
 
 HTTP POST /community/remove"#
@@ -265,7 +265,7 @@ HTTP GET /post"#
     expose_wrapped_fn!(
         create_post,
         CreatePost,
-        GetPostResponse,
+        PostResponse,
         r#"Creates a post.
 
 HTTP POST /post"#
@@ -273,7 +273,7 @@ HTTP POST /post"#
     expose_wrapped_fn!(
         edit_post,
         EditPost,
-        GetPostResponse,
+        PostResponse,
         r#"Edits a post you have already created.
 
 HTTP PUT /post"#
@@ -281,7 +281,7 @@ HTTP PUT /post"#
     expose_wrapped_fn!(
         delete_post,
         DeletePost,
-        GetPostResponse,
+        PostResponse,
         r#"Deletes a post you have made.
 
 HTTP POST /post/delete"#
@@ -289,7 +289,7 @@ HTTP POST /post/delete"#
     expose_wrapped_fn!(
         remove_post,
         RemovePost,
-        GetPostResponse,
+        PostResponse,
         r#"Removes a post (moderator action).
 
 HTTP POST /post/remove"#
@@ -297,7 +297,7 @@ HTTP POST /post/remove"#
     expose_wrapped_fn!(
         mark_post_as_read,
         MarkPostAsRead,
-        GetPostResponse,
+        SuccessResponse,
         r#"Marks a post as read.
 
 HTTP POST /post/mark_as_read"#
@@ -305,7 +305,7 @@ HTTP POST /post/mark_as_read"#
     expose_wrapped_fn!(
         lock_post,
         LockPost,
-        GetPostResponse,
+        PostResponse,
         r#"Prevents users from commenting on the post (moderator action).
 
 HTTP POST /post/lock"#
@@ -313,7 +313,7 @@ HTTP POST /post/lock"#
     expose_wrapped_fn!(
         feature_post,
         FeaturePost,
-        GetPostResponse,
+        PostResponse,
         r#"Pins a post to the top of the community page (moderator action).
 
 HTTP POST /post/feature"#
@@ -329,7 +329,7 @@ HTTP GET /post/list"#
     expose_wrapped_fn!(
         like_post,
         CreatePostLike,
-        GetPostResponse,
+        PostResponse,
         r#"Votes on a post.
 
 HTTP POST /post/like"#
@@ -345,7 +345,7 @@ HTTP GET /post/like/list"#
     expose_wrapped_fn!(
         save_post,
         SavePost,
-        GetPostResponse,
+        PostResponse,
         r#"Saves a post to your favorites list.
 
 HTTP PUT /post/save"#
@@ -665,7 +665,7 @@ HTTP POST /user/logout"#
     expose_wrapped_fn!(
         delete_account,
         DeleteAccount,
-        GetPersonDetailsResponse,
+        SuccessResponse,
         r#"Deletes your account.
 
 HTTP POST /user/delete_account"#
