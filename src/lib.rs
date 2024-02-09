@@ -113,7 +113,7 @@ HTTP GET /site"#
     expose_wrapped_fn!(
         create_site,
         CreateSite,
-        GetSiteResponse,
+        SiteResponse,
         r#"Creates site during initial setup.
 
 HTTP POST /site"#
@@ -121,7 +121,7 @@ HTTP POST /site"#
     expose_wrapped_fn!(
         edit_site,
         EditSite,
-        GetSiteResponse,
+        SiteResponse,
         r#"Edits your site.
 
 HTTP PUT /site"#
@@ -209,7 +209,7 @@ HTTP POST /community/block"#
     expose_wrapped_fn!(
         delete_community,
         DeleteCommunity,
-        GetCommunityResponse,
+        CommunityResponse,
         r#"Deletes a community.
 
 HTTP POST /community/delete"#
