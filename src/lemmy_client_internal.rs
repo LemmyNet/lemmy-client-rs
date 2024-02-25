@@ -6,6 +6,7 @@ use crate::{
 };
 use cfg_if::cfg_if;
 use http::Method;
+use lemmy_api_common::LemmyErrorType;
 use std::collections::HashMap;
 
 trait WithHeaders {
@@ -21,6 +22,11 @@ fn build_route(route: &str, ClientOptions { domain, secure }: &ClientOptions) ->
         "http{}://{domain}/api/v3/{route}",
         if *secure { "s" } else { "" }
     )
+}
+
+fn map_err_to_lemmy_error_type<E: ToString>(e: E) -> LemmyErrorType {
+    let error_string = e.to_string();
+    serde_json::from_str(&error_string).unwrap_or(LemmyErrorType::Unknown(error_string))
 }
 
 cfg_if! {
@@ -98,10 +104,10 @@ cfg_if! {
                     Method::POST | Method::PUT => req.json(&body).expect_throw("Could not parse JSON body"),
                     method => unreachable!("This crate only uses GET, POST, and PUT HTTP methods. Got {method:?}")
                 }.send()
-                 .await?
+                 .await.map_err(map_err_to_lemmy_error_type)?
                  .json::<Response>()
                  .await
-                 .map_err(Into::into)
+                 .map_err(map_err_to_lemmy_error_type)
         }
     }
 
@@ -181,7 +187,12 @@ cfg_if! {
                             .maybe_with_jwt(jwt)
                             .json(&body),
                     _ => unreachable!("This crate does not use other HTTP methods.")
-                }.send().await?.json::<Response>().await.map_err(Into::into)
+                }.send()
+                 .await
+                 .map_err(map_err_to_lemmy_error_type)?
+                 .json::<Response>()
+                    .await
+                    .map_err(map_err_to_lemmy_error_type)
             }
         }
 

@@ -1,8 +1,8 @@
-use crate::{error::Error, utils::impl_marker_trait};
+use crate::utils::impl_marker_trait;
 use cfg_if::cfg_if;
 use lemmy_api_common::{
     comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,
-    person::*, post::*, private_message::*, site::*, SuccessResponse,
+    person::*, post::*, private_message::*, site::*, LemmyErrorType, SuccessResponse,
 };
 use serde::Deserialize;
 
@@ -14,7 +14,7 @@ cfg_if! {
     }
 }
 
-pub type LemmyResult<R> = Result<R, Error>;
+pub type LemmyResult<R> = Result<R, LemmyErrorType>;
 
 impl_marker_trait!(
     LemmyResponse,

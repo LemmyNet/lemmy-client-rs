@@ -853,8 +853,8 @@ dependencies = [
  "leptos",
  "reqwest",
  "serde",
+ "serde_json",
  "serde_urlencoded",
- "thiserror",
  "web-sys",
 ]
 

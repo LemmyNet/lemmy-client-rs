@@ -33,14 +33,12 @@ use lemmy_client_internal::ClientWrapper;
 #[cfg(target_arch = "wasm32")]
 use lemmy_client_internal::Fetch;
 
-mod error;
 mod form;
 mod lemmy_client_internal;
 mod lemmy_client_trait;
 mod response;
 mod utils;
 
-pub use error::Error;
 pub use form::LemmyRequest;
 pub use lemmy_api_common;
 pub use utils::ClientOptions;

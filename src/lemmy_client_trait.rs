@@ -40,13 +40,7 @@ macro_rules! client_fn {
 
 pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
     client_fn!(get_site, Method::GET, "site", (), GetSiteResponse);
-    client_fn!(
-        create_site,
-        Method::POST,
-        "site",
-        CreateSite,
-        SiteResponse
-    );
+    client_fn!(create_site, Method::POST, "site", CreateSite, SiteResponse);
     client_fn!(edit_site, Method::PUT, "site", EditSite, SiteResponse);
     client_fn!(
         get_modlog,
@@ -155,13 +149,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         GetFederatedInstancesResponse
     );
     client_fn!(get_post, Method::GET, "post", GetPost, GetPostResponse);
-    client_fn!(
-        create_post,
-        Method::POST,
-        "post",
-        CreatePost,
-        PostResponse
-    );
+    client_fn!(create_post, Method::POST, "post", CreatePost, PostResponse);
     client_fn!(edit_post, Method::PUT, "post", EditPost, PostResponse);
     client_fn!(
         delete_post,
@@ -184,13 +172,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         MarkPostAsRead,
         SuccessResponse
     );
-    client_fn!(
-        lock_post,
-        Method::POST,
-        "post/lock",
-        LockPost,
-        PostResponse
-    );
+    client_fn!(lock_post, Method::POST, "post/lock", LockPost, PostResponse);
     client_fn!(
         feature_post,
         Method::POST,
@@ -219,13 +201,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         ListPostLikes,
         ListPostLikesResponse
     );
-    client_fn!(
-        save_post,
-        Method::PUT,
-        "post/save",
-        SavePost,
-        PostResponse
-    );
+    client_fn!(save_post, Method::PUT, "post/save", SavePost, PostResponse);
     client_fn!(
         report_post,
         Method::POST,
