@@ -24,9 +24,8 @@ fn build_route(route: &str, ClientOptions { domain, secure }: &ClientOptions) ->
     )
 }
 
-fn map_err_to_lemmy_error_type<E: ToString>(e: E) -> LemmyErrorType {
-    let error_string = e.to_string();
-    serde_json::from_str(&error_string).unwrap_or(LemmyErrorType::Unknown(error_string))
+fn map_other_error<E: ToString>(e: E) -> LemmyErrorType {
+    LemmyErrorType::Unknown(e.to_string())
 }
 
 cfg_if! {
@@ -99,15 +98,18 @@ cfg_if! {
                     req = req.abort_signal(abort_signal.as_ref());
                 }
 
-                match method {
+                let res = match method {
                     Method::GET => req.build().expect_throw("Could not parse query params"),
                     Method::POST | Method::PUT => req.json(&body).expect_throw("Could not parse JSON body"),
                     method => unreachable!("This crate only uses GET, POST, and PUT HTTP methods. Got {method:?}")
                 }.send()
-                 .await.map_err(map_err_to_lemmy_error_type)?
-                 .json::<Response>()
                  .await
-                 .map_err(map_err_to_lemmy_error_type)
+                 .map_err(map_other_error)?
+                 .text()
+                 .await
+                 .map_err(map_other_error)?;
+
+                serde_json::from_str::<Response>(&res).map_err(|_| serde_json::from_str::<LemmyErrorType>(&res).unwrap_or_else(map_other_error))
         }
     }
 
@@ -164,7 +166,7 @@ cfg_if! {
                 let route = build_route(path, &self.options);
                 let LemmyRequest { body, jwt } = request;
 
-                match method {
+                let res = match method {
                     Method::GET =>
                         self
                             .client
@@ -189,10 +191,19 @@ cfg_if! {
                     _ => unreachable!("This crate does not use other HTTP methods.")
                 }.send()
                  .await
-                 .map_err(map_err_to_lemmy_error_type)?
-                 .json::<Response>()
-                    .await
-                    .map_err(map_err_to_lemmy_error_type)
+                 .map_err(|e| {
+                     println!("Error sending = {e:?}");
+                     map_other_error(e)
+                 })?
+                 .text().await.map_err(|e| {
+                     println!("Error json to string = {e:?}");
+                     map_other_error(e)
+                 })?;
+
+                println!("In client with res {res}");
+
+                serde_json::from_str::<Response>(&res)
+                    .map_err(|_| serde_json::from_str::<LemmyErrorType>(&res).unwrap_or_else(map_other_error))
             }
         }
 
