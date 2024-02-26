@@ -125,7 +125,7 @@ cfg_if! {
                 let mut client = headers.iter().fold(self, |acc, (header, value)| acc.header(header, value));
 
                 if !headers.keys().any(|key| key.eq_ignore_ascii_case("user-agent")) {
-                    client = client.header("user-agent", "Lemmy-Client-rs/0.19.3");
+                    client = client.header("user-agent", "Lemmy-Client-rs/0.19.4-alpha.1");
                 }
 
                 client
