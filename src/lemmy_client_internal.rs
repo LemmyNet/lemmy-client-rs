@@ -28,6 +28,11 @@ fn map_other_error<E: ToString>(e: E) -> LemmyErrorType {
     LemmyErrorType::Unknown(e.to_string())
 }
 
+fn deserialize_response<Response: LemmyResponse>(res: &str) -> Result<Response, LemmyErrorType> {
+    serde_json::from_str::<Response>(res)
+        .map_err(|_| serde_json::from_str::<LemmyErrorType>(res).unwrap_or_else(map_other_error))
+}
+
 cfg_if! {
   if #[cfg(target_arch = "wasm32")] {
     use gloo_net::http::{Request, RequestBuilder};
@@ -109,7 +114,7 @@ cfg_if! {
                  .await
                  .map_err(map_other_error)?;
 
-                serde_json::from_str::<Response>(&res).map_err(|_| serde_json::from_str::<LemmyErrorType>(&res).unwrap_or_else(map_other_error))
+                deserialize_response(&res)
         }
     }
 
@@ -191,19 +196,12 @@ cfg_if! {
                     _ => unreachable!("This crate does not use other HTTP methods.")
                 }.send()
                  .await
-                 .map_err(|e| {
-                     println!("Error sending = {e:?}");
-                     map_other_error(e)
-                 })?
-                 .text().await.map_err(|e| {
-                     println!("Error json to string = {e:?}");
-                     map_other_error(e)
-                 })?;
+                 .map_err(map_other_error)?
+                 .text()
+                 .await
+                 .map_err(map_other_error)?;
 
-                println!("In client with res {res}");
-
-                serde_json::from_str::<Response>(&res)
-                    .map_err(|_| serde_json::from_str::<LemmyErrorType>(&res).unwrap_or_else(map_other_error))
+                deserialize_response(&res)
             }
         }
 
