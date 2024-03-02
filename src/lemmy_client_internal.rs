@@ -34,7 +34,7 @@ fn deserialize_response<Response: LemmyResponse>(res: &str) -> Result<Response, 
 }
 
 cfg_if! {
-  if #[cfg(target_arch = "wasm32")] {
+  if #[cfg(target_family = "wasm")] {
     use gloo_net::http::{Request, RequestBuilder};
     use web_sys::wasm_bindgen::UnwrapThrowExt;
     pub struct Fetch(ClientOptions);
@@ -90,7 +90,7 @@ cfg_if! {
                 }.with_headers(headers)
                  .maybe_with_jwt(jwt);
 
-                #[cfg(all(feature = "leptos", target_arch = "wasm32"))]
+                #[cfg(all(feature = "leptos", target_family = "wasm"))]
                 {
                     use web_sys::AbortController;
                     let abort_controller = AbortController::new().ok();

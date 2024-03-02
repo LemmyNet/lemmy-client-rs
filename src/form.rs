@@ -117,6 +117,7 @@ impl_marker_trait!(
         RemovePost,
         ResolvePostReport,
         SavePost,
+        HidePost,
         // Private Messages
         CreatePrivateMessage,
         CreatePrivateMessageReport,

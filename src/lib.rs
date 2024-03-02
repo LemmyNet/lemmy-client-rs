@@ -28,9 +28,9 @@ use lemmy_api_common::{
     comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,
     person::*, post::*, private_message::*, site::*, SuccessResponse,
 };
-#[cfg(not(target_arch = "wasm32"))]
+#[cfg(not(target_family = "wasm"))]
 use lemmy_client_internal::ClientWrapper;
-#[cfg(target_arch = "wasm32")]
+#[cfg(target_family = "wasm")]
 use lemmy_client_internal::Fetch;
 
 mod form;
@@ -46,9 +46,9 @@ pub use utils::ClientOptions;
 /// API wrapper for lemmy
 pub struct LemmyClient {
     headers: HashMap<String, String>,
-    #[cfg(target_arch = "wasm32")]
+    #[cfg(target_family = "wasm")]
     client: Fetch,
-    #[cfg(not(target_arch = "wasm32"))]
+    #[cfg(not(target_family = "wasm"))]
     client: ClientWrapper,
 }
 
@@ -76,7 +76,7 @@ impl LemmyClient {
     /// ```
     pub fn new(options: ClientOptions) -> Self {
         cfg_if! {
-            if #[cfg(target_arch = "wasm32")] {
+            if #[cfg(target_family = "wasm")] {
                 Self {
                     client: Fetch::new(options),
                     headers: HashMap::new()
@@ -379,6 +379,14 @@ HTTP GET /post/report/list"#
         r#"Gets the metadata of a given site.
 
 HTTP POST /post/site_metadata"#
+    );
+    expose_wrapped_fn!(
+        hide_post,
+        HidePost,
+        SuccessResponse,
+        r#"Hide a post from list views.
+
+HTTP POST /post/hide"#
     );
     expose_wrapped_fn!(
         get_comment,

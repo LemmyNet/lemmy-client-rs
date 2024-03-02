@@ -231,6 +231,13 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         GetSiteMetadataResponse
     );
     client_fn!(
+        hide_post,
+        Method::POST,
+        "post/hide",
+        HidePost,
+        SuccessResponse
+    );
+    client_fn!(
         get_comment,
         Method::GET,
         "comment",
