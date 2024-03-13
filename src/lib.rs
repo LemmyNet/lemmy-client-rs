@@ -663,7 +663,7 @@ HTTP POST /user/login"#
     expose_wrapped_fn!(
         logout,
         (),
-        String,
+        SuccessResponse,
         r#"Deletes the active session associated with the JWT.
 
 HTTP POST /user/logout"#

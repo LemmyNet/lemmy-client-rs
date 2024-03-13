@@ -469,7 +469,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         BlockPersonResponse
     );
     client_fn!(login, Method::POST, "user/login", Login, LoginResponse);
-    client_fn!(logout, Method::POST, "user/logout", (), String);
+    client_fn!(logout, Method::POST, "user/logout", (), SuccessResponse);
     client_fn!(
         delete_account,
         Method::POST,
