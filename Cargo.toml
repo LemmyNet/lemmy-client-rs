@@ -12,7 +12,7 @@ categories = ["api-bindings", "wasm"]
 
 [dependencies]
 cfg-if = "1.0.0"
-http = "1.0.0"
+http = "1.1.0"
 lemmy_api_common = { git = "https://github.com/LemmyNet/lemmy.git", branch = "main" }
 serde = "1.0"
 leptos = { version = "0.6", optional = true }
@@ -28,4 +28,4 @@ serde_urlencoded = "0.7"
 web-sys = "0.3"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
-reqwest = { version = "0.11", features = ["json"] }
+reqwest = { version = "0.12", features = ["json"], default-features = false }
