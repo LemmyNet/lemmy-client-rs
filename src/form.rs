@@ -141,6 +141,8 @@ impl_marker_trait!(
         PurgePerson,
         PurgePost,
         ResolveObject,
-        Search
+        Search,
+        // Media
+        ListMedia
     ]
 );

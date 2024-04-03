@@ -79,5 +79,7 @@ impl_marker_trait!(
         ResolveObjectResponse,
         SearchResponse,
         SiteResponse,
+        // Media
+        ListMediaResponse
     ]
 );

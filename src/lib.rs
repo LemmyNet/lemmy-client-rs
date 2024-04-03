@@ -874,4 +874,20 @@ HTTP PUT /custom_emoji"#
 
 HTTP POST /custom_emoji/delete"#
     );
+    expose_wrapped_fn!(
+        list_media,
+        ListMedia,
+        ListMediaResponse,
+        r#"Gets all media posted by the logged in user.
+
+HTTP GET /account/list_media"#
+    );
+    expose_wrapped_fn!(
+        list_all_media,
+        ListMedia,
+        ListMediaResponse,
+        r#"Gets all media posted on an instance. Only usable by the instance's admins.
+
+HTTP GET /admin/list_all_media"#
+    );
 }

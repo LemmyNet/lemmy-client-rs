@@ -645,4 +645,18 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         DeleteCustomEmoji,
         CustomEmojiResponse
     );
+    client_fn!(
+        list_media,
+        Method::GET,
+        "account/list_media",
+        ListMedia,
+        ListMediaResponse
+    );
+    client_fn!(
+        list_all_media,
+        Method::GET,
+        "admin/list_all_media",
+        ListMedia,
+        ListMediaResponse
+    );
 }
