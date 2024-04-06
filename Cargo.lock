@@ -592,9 +592,9 @@ dependencies = [
 
 [[package]]
 name = "getrandom"
-version = "0.2.12"
+version = "0.2.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "190092ea657667030ac6a35e305e62fc4dd69fd98ac98631e5d3a2b1575a12b5"
+checksum = "a06fddc2749e0528d2813f95e050e87e52c8cbbae56223b9babf73b3e53b0cc6"
 dependencies = [
  "cfg-if",
  "js-sys",
@@ -909,8 +909,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_api_common"
-version = "0.19.3"
-source = "git+https://github.com/LemmyNet/lemmy.git?branch=main#4d9c16a336d40190bce51a67acd5ace3ae79cff1"
+version = "0.19.4-beta.2"
+source = "git+https://github.com/LemmyNet/lemmy.git?tag=0.19.4-beta.2#1f178b65a10c0984b6a3d7040e476327930d3eea"
 dependencies = [
  "anyhow",
  "chrono",
@@ -931,13 +931,14 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_schema"
-version = "0.19.3"
-source = "git+https://github.com/LemmyNet/lemmy.git?branch=main#4d9c16a336d40190bce51a67acd5ace3ae79cff1"
+version = "0.19.4-beta.2"
+source = "git+https://github.com/LemmyNet/lemmy.git?tag=0.19.4-beta.2#1f178b65a10c0984b6a3d7040e476327930d3eea"
 dependencies = [
  "anyhow",
  "async-trait",
  "chrono",
  "futures-util",
+ "moka",
  "serde",
  "serde_with",
  "strum",
@@ -950,8 +951,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views"
-version = "0.19.3"
-source = "git+https://github.com/LemmyNet/lemmy.git?branch=main#4d9c16a336d40190bce51a67acd5ace3ae79cff1"
+version = "0.19.4-beta.2"
+source = "git+https://github.com/LemmyNet/lemmy.git?tag=0.19.4-beta.2#1f178b65a10c0984b6a3d7040e476327930d3eea"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -961,8 +962,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_actor"
-version = "0.19.3"
-source = "git+https://github.com/LemmyNet/lemmy.git?branch=main#4d9c16a336d40190bce51a67acd5ace3ae79cff1"
+version = "0.19.4-beta.2"
+source = "git+https://github.com/LemmyNet/lemmy.git?tag=0.19.4-beta.2#1f178b65a10c0984b6a3d7040e476327930d3eea"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -974,8 +975,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_moderator"
-version = "0.19.3"
-source = "git+https://github.com/LemmyNet/lemmy.git?branch=main#4d9c16a336d40190bce51a67acd5ace3ae79cff1"
+version = "0.19.4-beta.2"
+source = "git+https://github.com/LemmyNet/lemmy.git?tag=0.19.4-beta.2#1f178b65a10c0984b6a3d7040e476327930d3eea"
 dependencies = [
  "lemmy_db_schema",
  "serde",
@@ -984,8 +985,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_utils"
-version = "0.19.3"
-source = "git+https://github.com/LemmyNet/lemmy.git?branch=main#4d9c16a336d40190bce51a67acd5ace3ae79cff1"
+version = "0.19.4-beta.2"
+source = "git+https://github.com/LemmyNet/lemmy.git?tag=0.19.4-beta.2#1f178b65a10c0984b6a3d7040e476327930d3eea"
 dependencies = [
  "cfg-if",
  "rosetta-build",
@@ -1547,11 +1548,11 @@ checksum = "adad44e29e4c806119491a7f06f03de4d1af22c3a680dd47f1e6e179439d1f56"
 
 [[package]]
 name = "reqwest"
-version = "0.12.2"
+version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2d66674f2b6fb864665eea7a3c1ac4e3dfacd2fda83cf6f935a612e01b0e3338"
+checksum = "3e6cc1e89e689536eb5aeede61520e874df5a4707df811cd5da4aa5fbb2aae19"
 dependencies = [
- "base64 0.21.7",
+ "base64 0.22.0",
  "bytes",
  "futures-core",
  "futures-util",
@@ -1927,9 +1928,9 @@ dependencies = [
 
 [[package]]
 name = "syn"
-version = "2.0.57"
+version = "2.0.58"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "11a6ae1e52eb25aab8f3fb9fca13be982a373b8f1157ca14b897a825ba4a2d35"
+checksum = "44cfb93f38070beee36b3fef7d4f5a16f27751d94b187b666a5cc5e9b0d30687"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2563,9 +2564,9 @@ dependencies = [
 
 [[package]]
 name = "winreg"
-version = "0.50.0"
+version = "0.52.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "524e57b2c537c0f9b1e69f1965311ec12182b4122e45035b1508cd24d2adadb1"
+checksum = "a277a57398d4bfa075df44f501a17cfdf8542d224f0d36095a2adc7aee4ef0a5"
 dependencies = [
  "cfg-if",
  "windows-sys 0.48.0",

@@ -1,10 +1,10 @@
 <div align="center">
-  <img src="https://img.shields.io/github/license/SleeplessOne1917/lemmy-client-rs?style=for-the-badge" alt="License" />
-  <img src="https://img.shields.io/github/last-commit/SleeplessOne1917/lemmy-client-rs?style=for-the-badge&logo=GitHub" alt="Last commit" />
-  <img src="https://img.shields.io/github/stars/SleeplessOne1917/lemmy-client-rs?style=for-the-badge&logo=GitHub" alt="Github stars" />
+  <img src="https://img.shields.io/github/license/LemmyNet/lemmy-client-rs?style=for-the-badge" alt="License" />
+  <img src="https://img.shields.io/github/last-commit/LemmyNet/lemmy-client-rs?style=for-the-badge&logo=GitHub" alt="Last commit" />
+  <img src="https://img.shields.io/github/stars/LemmyNet/lemmy-client-rs?style=for-the-badge&logo=GitHub" alt="Github stars" />
   <img src="https://img.shields.io/crates/v/lemmy-client?style=for-the-badge" alt="Latest version" />
   <img src="https://img.shields.io/crates/dv/lemmy-client?style=for-the-badge" alt="Downloads for latest version" />
-  <img src="https://img.shields.io/github/languages/code-size/SleeplessOne1917/lemmy-client-rs?style=for-the-badge&logo=Rust" alt="Library size in bytes" />
+  <img src="https://img.shields.io/github/languages/code-size/LemmyNet/lemmy-client-rs?style=for-the-badge&logo=Rust" alt="Library size in bytes" />
 </div>
 <div align="center">
   <a href="https://join-lemmy.org" rel="noopener">
