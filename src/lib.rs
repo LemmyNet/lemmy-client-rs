@@ -124,6 +124,9 @@ HTTP POST /site"#
 
 HTTP PUT /site"#
     );
+    expose_wrapped_fn!(block_instance, BlockInstance, BlockInstanceResponse, r#"Blocks an instance.
+
+HTTP POST /site/block"#);
     expose_wrapped_fn!(
         get_modlog,
         GetModlog,

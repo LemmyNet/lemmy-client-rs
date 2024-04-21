@@ -42,6 +42,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
     client_fn!(get_site, Method::GET, "site", (), GetSiteResponse);
     client_fn!(create_site, Method::POST, "site", CreateSite, SiteResponse);
     client_fn!(edit_site, Method::PUT, "site", EditSite, SiteResponse);
+    client_fn!(block_instance, Method::POST, "site/block", BlockInstance, BlockInstanceResponse);
     client_fn!(
         get_modlog,
         Method::GET,
