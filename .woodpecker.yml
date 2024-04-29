@@ -79,7 +79,7 @@ steps:
   publish_to_crates_io:
     image: *rust_image
     commands:
-      - cargo publish --allow-dirty --no-verify --TOKEN "$CARGO_API_TOKEN"
+      - cargo publish --allow-dirty --no-verify --token "$CARGO_API_TOKEN"
     secrets: [cargo_api_token]
     when:
       - event: tag
