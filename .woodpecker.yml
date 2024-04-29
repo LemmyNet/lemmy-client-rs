@@ -1,0 +1,106 @@
+variables:
+  - &rust_image "rust:1.77"
+
+steps:
+  prepare_repo:
+    image: alpine:3
+    commands:
+      - apk add git
+      - git submodule init
+      - git submodule update
+    when:
+      - event: [pull_request, tag]
+
+  prettier_check:
+    image: tmknom/prettier:3.0.0
+    commands:
+      - prettier -c .
+    when:
+      - event: pull_request
+
+  toml_fmt:
+    image: tamasfe/taplo:0.8.1
+    commands:
+      - taplo format --check
+    when:
+      - event: pull_request
+
+  cargo_fmt:
+    image: rustlang/rust:nightly
+    environment:
+      # store cargo data in repo folder so that it gets cached between steps
+      CARGO_HOME: .cargo_home
+    commands:
+      - rustup component add rustfmt
+      - cargo +nightly fmt -- --check
+    when:
+      - event: pull_request
+
+  cargo_machete:
+    image: rustlang/rust:nightly
+    commands:
+      - wget https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz
+      - tar -xvf cargo-binstall-x86_64-unknown-linux-musl.tgz
+      - cp cargo-binstall /usr/local/cargo/bin
+      - cargo binstall -y cargo-machete
+      - cargo machete
+    when:
+      - event: pull_request
+
+  cargo_clippy:
+    image: *rust_image
+    environment:
+      CARGO_HOME: .cargo_home
+    commands:
+      - rustup component add clippy
+      - cargo clippy --tests --all-targets -- -D warnings
+    when:
+      - event: pull_request
+
+  cargo_build:
+    image: *rust_image
+    environment:
+      CARGO_HOME: .cargo_home
+    commands:
+      - cargo build
+    when:
+      - event: pull_request
+
+  cargo_test:
+    image: *rust_image
+    environment:
+      RUST_BACKTRACE: "1"
+      CARGO_HOME: .cargo_home
+    commands:
+      - cargo test --no-fail-fast
+    when:
+      - event: pull_request
+
+  # TODO
+  # publish_to_crates_io:
+  #   image: *rust_image
+  #   commands:
+  #     - cargo install cargo-workspaces
+  #     - cp -r migrations crates/db_schema/
+  #     - cargo login "$CARGO_API_TOKEN"
+  #     - cargo workspaces publish --from-git --allow-dirty --no-verify --allow-branch "${CI_COMMIT_TAG}" --yes custom "${CI_COMMIT_TAG}"
+  #   secrets: [cargo_api_token]
+  #   when:
+  #     - event: tag
+
+  notify_on_failure:
+    image: alpine:3
+    commands:
+      - apk add curl
+      - "curl -d'lemmy-client-rs CI build failed: ${CI_PIPELINE_URL}' ntfy.sh/lemmy_drone_ci"
+    when:
+      - event: [pull_request, tag]
+        status: failure
+
+  notify_on_tag_deploy:
+    image: alpine:3
+    commands:
+      - apk add curl
+      - "curl -d'lemmy-client-rs:${CI_COMMIT_TAG} deployed' ntfy.sh/lemmy_drone_ci"
+    when:
+      - event: tag

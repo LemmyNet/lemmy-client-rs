@@ -11,14 +11,16 @@
 //! ```
 //! use lemmy_client::{LemmyClient, ClientOptions};
 //!
-//! let client = LemmyClient::new(ClientOptions {
+//! async fn get_site_test() {
+//!   let client = LemmyClient::new(ClientOptions {
 //!     domain: String::from("lemmy.ml"),
 //!     secure: true
-//! });
+//!   });
 //!
-//! let res = client.get_site(()).await;
+//!   let res = client.get_site(()).await;
 //!
-//! assert!(res.is_ok());
+//!   assert!(res.is_ok());
+//! }
 //! ```
 use std::collections::HashMap;
 
