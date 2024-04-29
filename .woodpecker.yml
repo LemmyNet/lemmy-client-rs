@@ -79,8 +79,7 @@ steps:
   publish_to_crates_io:
     image: *rust_image
     commands:
-      - cargo login "$CARGO_API_TOKEN"
-      - cargo publish --from-git --allow-dirty --no-verify --allow-branch "${CI_COMMIT_TAG}" --yes custom "${CI_COMMIT_TAG}"
+      - cargo publish --allow-dirty --no-verify --TOKEN "$CARGO_API_TOKEN"
     secrets: [cargo_api_token]
     when:
       - event: tag
