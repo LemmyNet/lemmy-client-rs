@@ -12,7 +12,7 @@ steps:
       - event: [pull_request, tag]
 
   prettier_check:
-    image: tmknom/prettier:3.0.0
+    image: tmknom/prettier:3.2.5
     commands:
       - prettier -c .
     when:
