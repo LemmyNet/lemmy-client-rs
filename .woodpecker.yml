@@ -22,7 +22,7 @@ steps:
     image: *rust_image
     commands:
       - apt update && apt -y install wget
-      - wget -O- https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz | tar -xvz -C /usr/local/cargo/bin
+      - curl -s https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz | tar -xvz -C /usr/local/cargo/bin
       - cargo binstall -y cargo-machete
       - cargo machete
     when:
