@@ -1,6 +1,5 @@
 variables:
   - &rust_image "rust:1.78-slim-bookworm"
-  - &rust_nightly_image "rustlang/rust:nightly-bookworm-slim"
 
 steps:
   toml_fmt:
@@ -12,7 +11,7 @@ steps:
     depends_on: [] # enable parallel steps
 
   cargo_fmt:
-    image: *rust_nightly_image
+    image: rustlang/rust:nightly-alpine
     commands:
       - rustup component add rustfmt
       - cargo +nightly fmt -- --check
@@ -22,6 +21,7 @@ steps:
   cargo_machete:
     image: *rust_image
     commands:
+      - apt update && apt -y install wget
       - wget -O- https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz | tar -xvz -C /usr/local/cargo/bin
       - cargo binstall -y cargo-machete
       - cargo machete
