@@ -1,6 +1,6 @@
 variables:
-  - &rust_image "rust:1.78-alpine"
-  - &rust_nightly_image "rustlang/rust:nightly-alpine"
+  - &rust_image "rust:1.78-slim-bookworm"
+  - &rust_nightly_image "rustlang/rust:nightly-bookworm-slim"
 
 steps:
   toml_fmt:
