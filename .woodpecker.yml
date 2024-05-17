@@ -1,35 +1,17 @@
 variables:
-  - &rust_image "rust:1.78"
+  - &rust_image "rust:1.78-slim-bookworm"
 
 steps:
-  prepare_repo:
-    image: alpine:3
-    commands:
-      - apk add git
-      - git submodule init
-      - git submodule update
-    when:
-      - event: [pull_request, tag]
-
-  prettier_check:
-    image: tmknom/prettier:3.2.5
-    commands:
-      - prettier -c .
-    when:
-      - event: pull_request
-
   toml_fmt:
     image: tamasfe/taplo:0.8.1
     commands:
       - taplo format --check
     when:
       - event: pull_request
+    depends_on: [] # enable parallel steps
 
   cargo_fmt:
-    image: rustlang/rust:nightly
-    environment:
-      # store cargo data in repo folder so that it gets cached between steps
-      CARGO_HOME: .cargo_home
+    image: rustlang/rust:nightly-alpine
     commands:
       - rustup component add rustfmt
       - cargo +nightly fmt -- --check
@@ -37,11 +19,10 @@ steps:
       - event: pull_request
 
   cargo_machete:
-    image: rustlang/rust:nightly
+    image: *rust_image
     commands:
-      - wget https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz
-      - tar -xvf cargo-binstall-x86_64-unknown-linux-musl.tgz
-      - cp cargo-binstall /usr/local/cargo/bin
+      - apt update && apt -y install wget
+      - wget -O- https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz | tar -xvz -C /usr/local/cargo/bin
       - cargo binstall -y cargo-machete
       - cargo machete
     when:
@@ -49,8 +30,6 @@ steps:
 
   cargo_clippy:
     image: *rust_image
-    environment:
-      CARGO_HOME: .cargo_home
     commands:
       - rustup component add clippy
       - cargo clippy --tests --all-targets -- -D warnings
@@ -59,8 +38,6 @@ steps:
 
   cargo_build:
     image: *rust_image
-    environment:
-      CARGO_HOME: .cargo_home
     commands:
       - cargo build
     when:
@@ -70,7 +47,6 @@ steps:
     image: *rust_image
     environment:
       RUST_BACKTRACE: "1"
-      CARGO_HOME: .cargo_home
     commands:
       - cargo test --no-fail-fast
     when:
