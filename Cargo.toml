@@ -1,6 +1,6 @@
 [package]
 name = "lemmy-client"
-version = "0.19.4-rc.2"
+version = "0.19.4-rc.3"
 edition = "2021"
 license = "AGPL-3.0"
 authors = ["SleeplessOne1917"]
@@ -12,8 +12,8 @@ categories = ["api-bindings", "wasm"]
 
 [dependencies]
 cfg-if = "1.0.0"
-http = "1.1.0"
-lemmy_api_common = "0.19.4-rc.2"
+http = "1.1"
+lemmy_api_common = "0.19.4-rc.3"
 serde = "1.0"
 leptos = { version = "0.6", optional = true }
 serde_json = "1.0"
