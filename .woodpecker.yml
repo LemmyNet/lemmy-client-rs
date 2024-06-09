@@ -31,6 +31,7 @@ steps:
   cargo_clippy:
     image: *rust_image
     commands:
+      - apt update && apt install pkg-config libssl-dev -y
       - rustup component add clippy
       - cargo clippy --tests --all-targets -- -D warnings
     when:
@@ -39,6 +40,7 @@ steps:
   cargo_build:
     image: *rust_image
     commands:
+      - apt update && apt install pkg-config libssl-dev -y
       - cargo build
     when:
       - event: pull_request
@@ -48,6 +50,7 @@ steps:
     environment:
       RUST_BACKTRACE: "1"
     commands:
+      - apt update && apt install pkg-config libssl-dev -y
       - cargo test --no-fail-fast
     when:
       - event: pull_request
