@@ -11,14 +11,19 @@
 //! ```
 //! use lemmy_client::{LemmyClient, ClientOptions};
 //!
-//! let client = LemmyClient::new(ClientOptions {
+//! async fn get_site_test() {
+//!   let client = LemmyClient::new(ClientOptions {
 //!     domain: String::from("lemmy.ml"),
 //!     secure: true
-//! });
+//!   });
 //!
-//! let res = client.get_site().await;
+//!   let res = client.get_site(()).await;
 //!
-//! assert!(res.is_some());
+//!   assert!(res.is_ok());
+//! }
+//! 
+//! ## IMPORTANT NOTICE
+//! This crate now uses a different versioning scheme than before so as not to be too tied down to Lemmy releases. For Lemmy versions 0.19.4 and up, use versions 1.x.x. For Lemmy versions 0.19.3 and under, use versions 0.19.5 and up. This is confusing, but should become a non issue as Lemmy accumulates versions and fewer servers use Lemmy versions use 0.19.3 and lower
 //! ```
 use std::collections::HashMap;
 
