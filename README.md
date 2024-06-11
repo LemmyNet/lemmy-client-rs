@@ -13,3 +13,7 @@
   <h1 align="center">lemmy-client</h1>
   <p align="center">A Rust HTTP client for <a href="https://github.com/LemmyNet/lemmy">Lemmy</a>. Uses the browser's built-in <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API">fetch API</a> when targeting WASM to keep the binary size small.</p>
 </div>
+
+## IMPORTANT NOTICE
+
+This crate now uses a different versioning scheme than before so as not to be too tied down to Lemmy releases. For Lemmy versions 0.19.4 and up, use versions 1.x.x. For Lemmy versions 0.19.3 and under, use versions 0.19.5 and up. This is confusing, but should become a non issue as Lemmy accumulates versions and fewer servers use Lemmy versions use 0.19.3 and lower.
