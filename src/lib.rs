@@ -21,7 +21,7 @@
 //!
 //!   assert!(res.is_ok());
 //! }
-//! 
+//!
 //! ## IMPORTANT NOTICE
 //! This crate now uses a different versioning scheme than before so as not to be too tied down to Lemmy releases. For Lemmy versions 0.19.4 and up, use versions 1.x.x. For Lemmy versions 0.19.3 and under, use versions 0.19.5 and up. This is confusing, but should become a non issue as Lemmy accumulates versions and fewer servers use Lemmy versions use 0.19.3 and lower.
 //! ```
