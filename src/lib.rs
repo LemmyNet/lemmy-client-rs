@@ -59,12 +59,12 @@ pub struct LemmyClient {
 
 impl LemmyClient {
     /// Get the domain that the client sends its requests to.
-    pub fn domain(&self) -> &str {
+    pub fn domain(&self) -> &ClientOptions {
         cfg_if! {
             if #[cfg(target_family = "wasm")] {
-                &self.client.0.domain
+                &self.client.0
             } else {
-                &self.client.options.domain
+                &self.client.options
             }
         }
     }
