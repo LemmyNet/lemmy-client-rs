@@ -23,7 +23,7 @@ cfg_if! {
   if #[cfg(target_arch = "wasm32")] {
     use gloo_net::http::{Request, RequestBuilder};
     use web_sys::wasm_bindgen::UnwrapThrowExt;
-    pub struct Fetch(ClientOptions);
+    pub struct Fetch(pub ClientOptions);
 
     impl Fetch {
         pub fn new(options: ClientOptions) -> Self {
@@ -105,7 +105,7 @@ cfg_if! {
 
       pub struct ClientWrapper {
           client: reqwest::Client,
-          options: ClientOptions
+          pub options: ClientOptions
       }
 
       impl ClientWrapper {

@@ -22,9 +22,10 @@
 //!   assert!(res.is_ok());
 //! }
 //! 
+//! ```
 //! ## IMPORTANT NOTICE
 //! This crate now uses a different versioning scheme than before so as not to be too tied down to Lemmy releases. For Lemmy versions 0.19.4 and up, use versions 1.x.x. For Lemmy versions 0.19.3 and under, use versions 0.19.5 and up. This is confusing, but should become a non issue as Lemmy accumulates versions and fewer servers use Lemmy versions use 0.19.3 and lower
-//! ```
+
 use std::collections::HashMap;
 
 use crate::{lemmy_client_trait::LemmyClientInternal, response::LemmyResult};
@@ -56,6 +57,19 @@ pub struct LemmyClient {
     client: Fetch,
     #[cfg(not(target_arch = "wasm32"))]
     client: ClientWrapper,
+}
+
+impl LemmyClient {
+    /// Get the options the client is using.
+    pub fn options(&self) -> &ClientOptions {
+        cfg_if! {
+            if #[cfg(target_family = "wasm")] {
+                &self.client.0
+            } else {
+                &self.client.options
+            }
+        }
+    }
 }
 
 macro_rules! expose_wrapped_fn {

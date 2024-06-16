@@ -1,6 +1,6 @@
 [package]
 name = "lemmy-client"
-version = "0.19.6"
+version = "0.19.7"
 edition = "2021"
 license = "AGPL-3.0"
 authors = ["SleeplessOne1917"]
