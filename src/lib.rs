@@ -57,6 +57,19 @@ pub struct LemmyClient {
     client: ClientWrapper,
 }
 
+impl LemmyClient {
+    /// Get the domain that the client sends its requests to.
+    pub fn domain(&self) -> &str {
+        cfg_if! {
+            if #[cfg(target_family = "wasm")] {
+                &self.client.0.domain
+            } else {
+                &self.client.options.domain
+            }
+        }
+    }
+}
+
 macro_rules! expose_wrapped_fn {
     ($name:ident, $form:ty, $response:ty, $doc:expr) => {
         #[doc = $doc]
