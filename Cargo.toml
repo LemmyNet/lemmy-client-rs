@@ -26,7 +26,7 @@ rustls-tls = ["reqwest/rustls-tls"]
 leptos = ["web-sys/AbortController", "dep:leptos"]
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-gloo-net = { version = "0.5", features = ["http"] }
+gloo-net = { version = "0.6", features = ["http"] }
 serde_urlencoded = "0.7"
 web-sys = "0.3"
 
