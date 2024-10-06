@@ -830,6 +830,14 @@ HTTP POST admin/add"#
 HTTP GET /admin/registration_application/count"#
     );
     expose_wrapped_fn!(
+        get_registration_aplication,
+        GetRegistrationApplication,
+        RegistrationApplicationResponse,
+        r#"Get the application a user submitted when they first registered their account
+
+HTTP GET /admin/registration_application"#
+    );
+    expose_wrapped_fn!(
         list_registration_applications,
         ListRegistrationApplications,
         ListRegistrationApplicationsResponse,

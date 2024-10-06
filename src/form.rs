@@ -129,6 +129,7 @@ impl_marker_trait!(
         ResolvePrivateMessageReport,
         // Site
         ApproveRegistrationApplication,
+        GetRegistrationApplication,
         BlockInstance,
         CreateSite,
         EditSite,

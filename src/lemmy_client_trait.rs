@@ -590,6 +590,13 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         GetUnreadRegistrationApplicationCountResponse
     );
     client_fn!(
+        get_registration_aplication,
+        Method::GET,
+        "admin/registration_application",
+        GetRegistrationApplication,
+        RegistrationApplicationResponse
+    );
+    client_fn!(
         list_registration_applications,
         Method::GET,
         "admin/registration_application/list",
