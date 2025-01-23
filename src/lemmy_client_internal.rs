@@ -95,7 +95,7 @@ cfg_if! {
                     use web_sys::AbortController;
                     let abort_controller = AbortController::new().ok();
                     let abort_signal = abort_controller.as_ref().map(AbortController::signal);
-                    leptos::on_cleanup(move || {
+                    leptos::prelude::on_cleanup(move || {
                         if let Some(abort_controller) = abort_controller {
                             abort_controller.abort()
                         }
