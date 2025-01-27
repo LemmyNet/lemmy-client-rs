@@ -90,19 +90,6 @@ cfg_if! {
                 }.with_headers(headers)
                  .maybe_with_jwt(jwt);
 
-                #[cfg(all(feature = "leptos", target_family = "wasm"))]
-                {
-                    use web_sys::AbortController;
-                    let abort_controller = AbortController::new().ok();
-                    let abort_signal = abort_controller.as_ref().map(AbortController::signal);
-                    leptos::prelude::on_cleanup(move || {
-                        if let Some(abort_controller) = abort_controller {
-                            abort_controller.abort()
-                        }
-                    });
-                    req = req.abort_signal(abort_signal.as_ref());
-                }
-
                 let res = match method {
                     Method::GET => req.build().expect_throw("Could not parse query params"),
                     Method::POST | Method::PUT => req.json(&body).expect_throw("Could not parse JSON body"),

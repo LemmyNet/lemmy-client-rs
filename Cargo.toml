@@ -1,6 +1,6 @@
 [package]
 name = "lemmy-client"
-version = "1.0.4"
+version = "1.0.5"
 edition = "2021"
 license = "AGPL-3.0"
 authors = ["SleeplessOne1917"]
@@ -15,7 +15,6 @@ cfg-if = "1"
 http = "1.1"
 lemmy_api_common = "=0.19.8"
 serde = "1.0"
-leptos = { version = "0.7", optional = true }
 serde_json = "1.0"
 
 [features]
@@ -23,7 +22,6 @@ default = ["default-tls"]
 default-tls = ["reqwest/default-tls"]
 native-tls = ["reqwest/native-tls"]
 rustls-tls = ["reqwest/rustls-tls"]
-leptos = ["web-sys/AbortController", "dep:leptos"]
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 gloo-net = { version = "0.6", features = ["http"] }
