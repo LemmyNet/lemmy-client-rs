@@ -19,7 +19,7 @@ trait MaybeWithJwt {
 
 fn build_route(route: &str, ClientOptions { domain, secure }: &ClientOptions) -> String {
     format!(
-        "http{}://{domain}/api/v3/{route}",
+        "http{}://{domain}/api/v4/{route}",
         if *secure { "s" } else { "" }
     )
 }
@@ -36,7 +36,6 @@ fn deserialize_response<Response: LemmyResponse>(res: &str) -> Result<Response, 
 cfg_if! {
   if #[cfg(target_family = "wasm")] {
     use gloo_net::http::{Request, RequestBuilder};
-    use web_sys::wasm_bindgen::UnwrapThrowExt;
     pub struct Fetch(pub ClientOptions);
 
     impl Fetch {
@@ -112,7 +111,7 @@ cfg_if! {
                 let mut client = headers.iter().fold(self, |acc, (header, value)| acc.header(header, value));
 
                 if !headers.keys().any(|key| key.eq_ignore_ascii_case("user-agent")) {
-                    client = client.header("user-agent", "Lemmy-Client-rs/0.19.4-alpha.1");
+                    client = client.header("user-agent", "Lemmy-Client-rs/1.0.0");
                 }
 
                 client

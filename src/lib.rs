@@ -31,8 +31,21 @@ use std::collections::HashMap;
 use crate::{lemmy_client_trait::LemmyClientInternal, response::LemmyResult};
 use cfg_if::cfg_if;
 use lemmy_api_common::{
-    comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,
-    person::*, post::*, private_message::*, site::*, SuccessResponse,
+    comment::*,
+    community::*,
+    custom_emoji::*,
+    person::*,
+    post::*,
+    private_message::*,
+    reports::{
+        comment::{CommentReportResponse, CreateCommentReport, ResolveCommentReport},
+        post::{CreatePostReport, PostReportResponse, ResolvePostReport},
+        private_message::{
+            CreatePrivateMessageReport, PrivateMessageReportResponse, ResolvePrivateMessageReport,
+        },
+    },
+    site::*,
+    SuccessResponse,
 };
 #[cfg(not(target_family = "wasm"))]
 use lemmy_client_internal::ClientWrapper;
@@ -144,14 +157,6 @@ HTTP POST /site"#
 HTTP PUT /site"#
     );
     expose_wrapped_fn!(
-        block_instance,
-        BlockInstance,
-        BlockInstanceResponse,
-        r#"Blocks an instance.
-
-HTTP POST /site/block"#
-    );
-    expose_wrapped_fn!(
         get_modlog,
         GetModlog,
         GetModlogResponse,
@@ -192,7 +197,7 @@ HTTP GET /community"#
 HTTP POST /community"#
     );
     expose_wrapped_fn!(
-        edit_community,
+        update_community,
         EditCommunity,
         CommunityResponse,
         r#"Edits a community.
@@ -392,14 +397,6 @@ HTTP POST /post/report"#
 HTTP PUT /post/report/resolve"#
     );
     expose_wrapped_fn!(
-        list_post_reports,
-        ListPostReports,
-        ListPostReportsResponse,
-        r#"Gets reports of posts that you are able to moderate.
-
-HTTP GET /post/report/list"#
-    );
-    expose_wrapped_fn!(
         get_post_url_metadata,
         GetSiteMetadata,
         GetSiteMetadataResponse,
@@ -458,7 +455,7 @@ HTTP POST /comment/remove"#
     expose_wrapped_fn!(
         mark_reply_as_read,
         MarkCommentReplyAsRead,
-        CommentReplyResponse,
+        SuccessResponse,
         r#"Marks a reply to one of your posts or comments as read.
 
 HTTP POST /comment/mark_as_read"#
@@ -520,14 +517,6 @@ HTTP POST /comment/report"#
 HTTP PUT /comment/report/resolve"#
     );
     expose_wrapped_fn!(
-        list_comment_reports,
-        ListCommentReports,
-        ListCommentReportsResponse,
-        r#"Lists reports for comments in communities you moderate or instances you adminstrate.
-
-HTTP GET /comment/report/list"#
-    );
-    expose_wrapped_fn!(
         create_private_message,
         CreatePrivateMessage,
         PrivateMessageResponse,
@@ -542,14 +531,6 @@ HTTP POST /private_message"#
         r#"Edits a private message you have already sent.
 
 HTTP PUT /private_message"#
-    );
-    expose_wrapped_fn!(
-        list_private_messages,
-        GetPrivateMessages,
-        PrivateMessagesResponse,
-        r#"Lists private messages that have been sent to you.
-
-HTTP GET /private_message/list"#
     );
     expose_wrapped_fn!(
         delete_private_message,
@@ -584,15 +565,7 @@ HTTP POST /private_message/report"#
 HTTP PUT /private_message/report/resolve"#
     );
     expose_wrapped_fn!(
-        list_private_message_reports,
-        ListPrivateMessageReports,
-        ListPrivateMessageReportsResponse,
-        r#"Lists reports of private messages received on the isntance you administrate.
-
-HTTP GET /private_message/report/list"#
-    );
-    expose_wrapped_fn!(
-        get_person,
+        get_person_details,
         GetPersonDetails,
         GetPersonDetailsResponse,
         r#"Gets the publicly viewable details of a user's account.
@@ -602,7 +575,7 @@ HTTP GET /user"#
     expose_wrapped_fn!(
         register_account,
         Register,
-        RegistrationApplicationResponse,
+        LoginResponse,
         r#"Registers a new account on an instance.
 
 HTTP POST /user/register"#
@@ -630,30 +603,6 @@ HTTP GET /user/export_settings"#
         r#"Imports a backup of your user settings.
 
 HTTP POST /user/import_settings"#
-    );
-    expose_wrapped_fn!(
-        list_mentions,
-        GetPersonMentions,
-        GetPersonMentionsResponse,
-        r#"Gets mentions of the authenticated user.
-
-HTTP GET /user/mention"#
-    );
-    expose_wrapped_fn!(
-        mark_mention_as_read,
-        MarkPersonMentionAsRead,
-        PersonMentionResponse,
-        r#"Marks a mention as read.
-
-HTTP POST /user/mention/mark_as_read"#
-    );
-    expose_wrapped_fn!(
-        list_replies,
-        GetReplies,
-        GetRepliesResponse,
-        r#"Gets replies to your posts and comments.
-
-HTTP GET /user/replies"#
     );
     expose_wrapped_fn!(
         ban_from_site,
@@ -722,7 +671,7 @@ HTTP POST /user/password_change"#
     expose_wrapped_fn!(
         mark_all_notifications_as_read,
         (),
-        GetRepliesResponse,
+        SuccessResponse,
         r#"Marks all notifications (replies, mentions, private messages) as read.
 
 HTTP POST /user/mark_all_as_read"#
@@ -800,7 +749,7 @@ HTTP POST /user/totp/update"#
     expose_wrapped_fn!(
         list_logins,
         (),
-        Vec<LoginToken>,
+        ListLoginsResponse,
         r#"Lists login tokens for your user's active sessions.
 
 HTTP GET /user/list_logins"#

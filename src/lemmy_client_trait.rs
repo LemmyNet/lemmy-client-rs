@@ -4,8 +4,19 @@ use crate::{
 };
 use http::Method;
 use lemmy_api_common::{
-    comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,
-    person::*, post::*, private_message::*, site::*, SuccessResponse,
+    comment::*,
+    community::*,
+    custom_emoji::*,
+    person::*,
+    post::*,
+    private_message::*,
+    reports::{comment::*, post::*, private_message::*},
+    site::*,
+    tagline::{
+        CreateTagline, DeleteTagline, ListTaglines, ListTaglinesResponse, TaglineResponse,
+        UpdateTagline,
+    },
+    SuccessResponse,
 };
 use std::collections::HashMap;
 
@@ -42,13 +53,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
     client_fn!(get_site, Method::GET, "site", (), GetSiteResponse);
     client_fn!(create_site, Method::POST, "site", CreateSite, SiteResponse);
     client_fn!(edit_site, Method::PUT, "site", EditSite, SiteResponse);
-    client_fn!(
-        block_instance,
-        Method::POST,
-        "site/block",
-        BlockInstance,
-        BlockInstanceResponse
-    );
+    // TODO: Add stuff for icon and banner
     client_fn!(
         get_modlog,
         Method::GET,
@@ -79,10 +84,17 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         CommunityResponse
     );
     client_fn!(
-        edit_community,
+        update_community,
         Method::PUT,
         "community",
         EditCommunity,
+        CommunityResponse
+    );
+    client_fn!(
+        get_random_community,
+        Method::GET,
+        "community/random",
+        GetRandomCommunity,
         CommunityResponse
     );
     client_fn!(
@@ -105,13 +117,6 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         "community/follow",
         FollowCommunity,
         CommunityResponse
-    );
-    client_fn!(
-        block_community,
-        Method::POST,
-        "community/block",
-        BlockCommunity,
-        BlockCommunityResponse
     );
     client_fn!(
         delete_community,
@@ -148,6 +153,28 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         AddModToCommunity,
         AddModToCommunityResponse
     );
+    // TODO: Add icon and banner stuff
+    client_fn!(
+        get_community_pending_follows_count,
+        Method::GET,
+        "community/pending_follows/count",
+        GetCommunityPendingFollowsCount,
+        GetCommunityPendingFollowsCountResponse
+    );
+    client_fn!(
+        list_community_pending_follows,
+        Method::GET,
+        "community/pending_follows/list",
+        ListCommunityPendingFollows,
+        ListCommunityPendingFollowsResponse
+    );
+    client_fn!(
+        approve_community_pending_follow,
+        Method::POST,
+        "community/pending_follows/approve",
+        ApproveCommunityPendingFollower,
+        SuccessResponse
+    );
     client_fn!(
         get_federated_instances,
         Method::GET,
@@ -158,6 +185,13 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
     client_fn!(get_post, Method::GET, "post", GetPost, GetPostResponse);
     client_fn!(create_post, Method::POST, "post", CreatePost, PostResponse);
     client_fn!(edit_post, Method::PUT, "post", EditPost, PostResponse);
+    client_fn!(
+        get_post_url_metadata,
+        Method::GET,
+        "post/site_metadata",
+        GetSiteMetadata,
+        GetSiteMetadataResponse
+    );
     client_fn!(
         delete_post,
         Method::POST,
@@ -177,6 +211,20 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         Method::POST,
         "post/mark_as_read",
         MarkPostAsRead,
+        SuccessResponse
+    );
+    client_fn!(
+        mark_many_posts_as_read,
+        Method::POST,
+        "post/mark_as_read/many",
+        MarkManyPostsAsRead,
+        SuccessResponse
+    );
+    client_fn!(
+        hide_post,
+        Method::POST,
+        "post/hide",
+        HidePost,
         SuccessResponse
     );
     client_fn!(lock_post, Method::POST, "post/lock", LockPost, PostResponse);
@@ -224,27 +272,6 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         PostReportResponse
     );
     client_fn!(
-        list_post_reports,
-        Method::GET,
-        "post/report/list",
-        ListPostReports,
-        ListPostReportsResponse
-    );
-    client_fn!(
-        get_post_url_metadata,
-        Method::GET,
-        "post/site_metadata",
-        GetSiteMetadata,
-        GetSiteMetadataResponse
-    );
-    client_fn!(
-        hide_post,
-        Method::POST,
-        "post/hide",
-        HidePost,
-        SuccessResponse
-    );
-    client_fn!(
         get_comment,
         Method::GET,
         "comment",
@@ -284,7 +311,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         Method::POST,
         "comment/mark_as_read",
         MarkCommentReplyAsRead,
-        CommentReplyResponse
+        SuccessResponse
     );
     client_fn!(
         distinguish_comment,
@@ -322,6 +349,13 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         GetCommentsResponse
     );
     client_fn!(
+        list_comments_slim,
+        Method::GET,
+        "comment/list/slim",
+        GetComments,
+        GetCommentsSlimResponse
+    );
+    client_fn!(
         create_comment_report,
         Method::POST,
         "comment/report",
@@ -336,13 +370,6 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         CommentReportResponse
     );
     client_fn!(
-        list_comment_reports,
-        Method::GET,
-        "comment/report/list",
-        ListCommentReports,
-        ListCommentReportsResponse
-    );
-    client_fn!(
         create_private_message,
         Method::POST,
         "private_message",
@@ -355,13 +382,6 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         "private_message",
         EditPrivateMessage,
         PrivateMessageResponse
-    );
-    client_fn!(
-        list_private_messages,
-        Method::GET,
-        "private_message/list",
-        GetPrivateMessages,
-        PrivateMessagesResponse
     );
     client_fn!(
         delete_private_message,
@@ -392,188 +412,217 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         PrivateMessageReportResponse
     );
     client_fn!(
-        list_private_message_reports,
-        Method::GET,
-        "private_message/report/list",
-        ListPrivateMessageReports,
-        ListPrivateMessageReportsResponse
-    );
-    client_fn!(
-        get_person,
-        Method::GET,
-        "user",
-        GetPersonDetails,
-        GetPersonDetailsResponse
-    );
-    client_fn!(
         register_account,
         Method::POST,
-        "user/register",
+        "account/auth/register",
         Register,
-        RegistrationApplicationResponse
+        LoginResponse
     );
     client_fn!(
-        get_captcha,
-        Method::GET,
-        "user/get_captcha",
+        login,
+        Method::POST,
+        "account/auth/login",
+        Login,
+        LoginResponse
+    );
+    client_fn!(
+        logout,
+        Method::POST,
+        "account/auth/logout",
         (),
-        GetCaptchaResponse
-    );
-    client_fn!(
-        export_settings,
-        Method::GET,
-        "user/export_settings",
-        (),
-        String
-    );
-    client_fn!(
-        import_settings,
-        Method::POST,
-        "user/import_settings",
-        String,
-        SuccessResponse
-    );
-    client_fn!(
-        list_mentions,
-        Method::GET,
-        "user/mention",
-        GetPersonMentions,
-        GetPersonMentionsResponse
-    );
-    client_fn!(
-        mark_mention_as_read,
-        Method::POST,
-        "user/mention/mark_as_read",
-        MarkPersonMentionAsRead,
-        PersonMentionResponse
-    );
-    client_fn!(
-        list_replies,
-        Method::GET,
-        "user/replies",
-        GetReplies,
-        GetRepliesResponse
-    );
-    client_fn!(
-        ban_from_site,
-        Method::POST,
-        "user/ban",
-        BanPerson,
-        BanPersonResponse
-    );
-    client_fn!(
-        list_banned_users,
-        Method::GET,
-        "user/banned",
-        (),
-        BannedPersonsResponse
-    );
-    client_fn!(
-        block_person,
-        Method::POST,
-        "user/block",
-        BlockPerson,
-        BlockPersonResponse
-    );
-    client_fn!(login, Method::POST, "user/login", Login, LoginResponse);
-    client_fn!(logout, Method::POST, "user/logout", (), SuccessResponse);
-    client_fn!(
-        delete_account,
-        Method::POST,
-        "user/delete_account",
-        DeleteAccount,
         SuccessResponse
     );
     client_fn!(
         reset_password,
         Method::POST,
-        "user/password_reset",
+        "account/auth/password_reset",
         PasswordReset,
         SuccessResponse
     );
     client_fn!(
+        get_captcha,
+        Method::GET,
+        "account/auth/get_captcha",
+        (),
+        GetCaptchaResponse
+    );
+    client_fn!(
         change_password_after_reset,
         Method::POST,
-        "user/password_change",
+        "account/auth/password_change",
         PasswordChangeAfterReset,
-        SuccessResponse
-    );
-    client_fn!(
-        mark_all_notifications_as_read,
-        Method::POST,
-        "user/mark_all_as_read",
-        (),
-        GetRepliesResponse
-    );
-    client_fn!(
-        save_user_settings,
-        Method::PUT,
-        "user/save_user_settings",
-        SaveUserSettings,
         SuccessResponse
     );
     client_fn!(
         change_password,
         Method::PUT,
-        "user/change_password",
+        "account/auth/change_password",
         ChangePassword,
         LoginResponse
     );
     client_fn!(
-        report_count,
-        Method::GET,
-        "user/report_count",
-        GetReportCount,
-        GetReportCountResponse
-    );
-    client_fn!(
-        unread_count,
-        Method::GET,
-        "user/unread_count",
-        (),
-        GetUnreadCountResponse
-    );
-    client_fn!(
-        verify_email,
-        Method::POST,
-        "user/verify_email",
-        VerifyEmail,
-        SuccessResponse
-    );
-    client_fn!(
-        leave_admin,
-        Method::POST,
-        "user/verify_email",
-        (),
-        GetSiteResponse
-    );
-    client_fn!(
         generate_totp_secret,
         Method::POST,
-        "user/totp/generate",
+        "account/auth/totp/generate",
         (),
         GenerateTotpSecretResponse
     );
     client_fn!(
         update_totp,
         Method::POST,
-        "user/totp/update",
+        "account/auth/totp/update",
         UpdateTotp,
         UpdateTotpResponse
     );
     client_fn!(
+        verify_email,
+        Method::POST,
+        "account/auth/verify_email",
+        VerifyEmail,
+        SuccessResponse
+    );
+    client_fn!(
+        list_saved,
+        Method::GET,
+        "account/auth/saved",
+        ListPersonSaved,
+        ListPersonSavedResponse
+    );
+    client_fn!(get_current_user, Method::GET, "account", (), MyUserInfo);
+    client_fn!(
+        list_media,
+        Method::GET,
+        "account/list_media",
+        ListMedia,
+        ListMediaResponse
+    );
+    client_fn!(
+        list_inbox,
+        Method::GET,
+        "account/inbox",
+        ListInbox,
+        ListInboxResponse
+    );
+    client_fn!(
+        delete_account,
+        Method::POST,
+        "account/delete",
+        DeleteAccount,
+        SuccessResponse
+    );
+    client_fn!(
+        mark_comment_mention_as_read,
+        Method::POST,
+        "account/mention/comment/mark_as_read",
+        MarkPersonCommentMentionAsRead,
+        SuccessResponse
+    );
+    client_fn!(
+        mark_post_mention_as_read,
+        Method::POST,
+        "account/mention/post/mark_as_read",
+        MarkPersonPostMentionAsRead,
+        SuccessResponse
+    );
+    client_fn!(
+        mark_all_notifications_as_read,
+        Method::POST,
+        "account/mark_as_read/all",
+        (),
+        SuccessResponse
+    );
+    client_fn!(
+        report_count,
+        Method::GET,
+        "account/report_count",
+        GetReportCount,
+        GetReportCountResponse
+    );
+    client_fn!(
+        unread_count,
+        Method::GET,
+        "account/unread_count",
+        (),
+        GetUnreadCountResponse
+    );
+    client_fn!(
         list_logins,
         Method::GET,
-        "user/list_logins",
+        "account/list_logins",
         (),
-        Vec<LoginToken>
+        ListLoginsResponse
     );
     client_fn!(
         validate_auth,
         Method::GET,
-        "user/validate_auth",
+        "account/validate_auth",
         (),
         SuccessResponse
+    );
+    client_fn!(
+        donation_dialog_shown,
+        Method::POST,
+        "account/donation_dialog_shown",
+        (),
+        SuccessResponse
+    );
+    // TODO: Handle Account avatar and banner
+    client_fn!(
+        block_person,
+        Method::POST,
+        "account/block/person",
+        BlockPerson,
+        BlockPersonResponse
+    );
+    client_fn!(
+        block_community,
+        Method::POST,
+        "account/block/community",
+        BlockCommunity,
+        BlockCommunityResponse
+    );
+    client_fn!(
+        user_block_instance,
+        Method::POST,
+        "account/block/instance",
+        UserBlockInstanceParams,
+        SuccessResponse
+    );
+    client_fn!(
+        save_user_settings,
+        Method::PUT,
+        "account/settings/save",
+        SaveUserSettings,
+        SuccessResponse
+    );
+    client_fn!(
+        export_settings,
+        Method::GET,
+        "account/settings/export",
+        (),
+        String
+    );
+    // TODO: How to handle import?
+    client_fn!(
+        import_settings,
+        Method::POST,
+        "account/settings/import",
+        String,
+        SuccessResponse
+    );
+    client_fn!(
+        get_person_details,
+        Method::GET,
+        "person",
+        GetPersonDetails,
+        GetPersonDetailsResponse
+    );
+    client_fn!(
+        list_person_content,
+        Method::GET,
+        "person/content",
+        ListPersonContent,
+        ListPersonContentResponse
     );
     client_fn!(
         add_admin,
@@ -590,13 +639,6 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         GetUnreadRegistrationApplicationCountResponse
     );
     client_fn!(
-        get_registration_aplication,
-        Method::GET,
-        "admin/registration_application",
-        GetRegistrationApplication,
-        RegistrationApplicationResponse
-    );
-    client_fn!(
         list_registration_applications,
         Method::GET,
         "admin/registration_application/list",
@@ -609,6 +651,20 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         "admin/registration_application/approve",
         ApproveRegistrationApplication,
         RegistrationApplicationResponse
+    );
+    client_fn!(
+        get_registration_aplication,
+        Method::GET,
+        "admin/registration_application",
+        GetRegistrationApplication,
+        RegistrationApplicationResponse
+    );
+    client_fn!(
+        list_all_media,
+        Method::GET,
+        "admin/list_all_media",
+        ListMedia,
+        ListMediaResponse
     );
     client_fn!(
         purge_person,
@@ -639,38 +695,94 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
         SuccessResponse
     );
     client_fn!(
+        create_tagline,
+        Method::POST,
+        "admin/tagline",
+        CreateTagline,
+        TaglineResponse
+    );
+    client_fn!(
+        update_tagline,
+        Method::PUT,
+        "admin/tagline",
+        UpdateTagline,
+        TaglineResponse
+    );
+    client_fn!(
+        delete_tagline,
+        Method::POST,
+        "admin/tagline/delete",
+        DeleteTagline,
+        SuccessResponse
+    );
+    client_fn!(
+        list_taglines,
+        Method::GET,
+        "admin/tagline/list",
+        ListTaglines,
+        ListTaglinesResponse
+    );
+    client_fn!(
+        ban_from_site,
+        Method::POST,
+        "admin/ban",
+        BanPerson,
+        BanPersonResponse
+    );
+    client_fn!(
+        list_banned_users,
+        Method::GET,
+        "admin/banned",
+        (),
+        BannedPersonsResponse
+    );
+    client_fn!(
+        leave_admin,
+        Method::POST,
+        "admin/leave",
+        (),
+        GetSiteResponse
+    );
+    client_fn!(
+        admin_block_instance,
+        Method::POST,
+        "admin/instance/block",
+        AdminBlockInstanceParams,
+        SuccessResponse
+    );
+    client_fn!(
+        admin_allow_instance,
+        Method::POST,
+        "admin/instance/allow",
+        AdminAllowInstanceParams,
+        SuccessResponse
+    );
+    client_fn!(
         create_custom_emoji,
         Method::POST,
-        "custom_emoji",
+        "admin/custom_emoji",
         CreateCustomEmoji,
         CustomEmojiResponse
     );
     client_fn!(
         edit_custom_emoji,
         Method::PUT,
-        "custom_emoji",
+        "admin/custom_emoji",
         EditCustomEmoji,
         CustomEmojiResponse
     );
     client_fn!(
         delete_custom_emoji,
         Method::POST,
-        "custom_emoji/delete",
+        "admin/custom_emoji/delete",
         DeleteCustomEmoji,
         CustomEmojiResponse
     );
     client_fn!(
-        list_media,
+        list_custom_emojis,
         Method::GET,
-        "account/list_media",
-        ListMedia,
-        ListMediaResponse
-    );
-    client_fn!(
-        list_all_media,
-        Method::GET,
-        "admin/list_all_media",
-        ListMedia,
-        ListMediaResponse
+        "admin/custom_emoji/list",
+        ListCustomEmojis,
+        ListCustomEmojisResponse
     );
 }

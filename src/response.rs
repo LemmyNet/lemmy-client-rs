@@ -1,7 +1,18 @@
 use crate::utils::impl_marker_trait;
 use lemmy_api_common::{
-    comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,
-    person::*, post::*, private_message::*, site::*, LemmyErrorType, SuccessResponse,
+    comment::*,
+    community::*,
+    custom_emoji::*,
+    person::*,
+    post::*,
+    private_message::*,
+    reports::{
+        comment::CommentReportResponse, post::PostReportResponse,
+        private_message::PrivateMessageReportResponse,
+    },
+    site::*,
+    tagline::*,
+    LemmyErrorType, SuccessResponse,
 };
 use serde::Deserialize;
 
@@ -17,10 +28,9 @@ impl_marker_trait!(
         // Comments
         CommentReportResponse,
         CommentResponse,
-        CreateCommentReport,
         GetCommentsResponse,
+        GetCommentsSlimResponse,
         ListCommentLikesResponse,
-        ListCommentReportsResponse,
         // Communities
         AddModToCommunityResponse,
         BanFromCommunityResponse,
@@ -28,6 +38,8 @@ impl_marker_trait!(
         CommunityResponse,
         GetCommunityResponse,
         ListCommunitiesResponse,
+        GetCommunityPendingFollowsCountResponse,
+        ListCommunityPendingFollowsResponse,
         // Custom Emojis
         CustomEmojiResponse,
         // Person
@@ -36,33 +48,29 @@ impl_marker_trait!(
         BannedPersonsResponse,
         BlockPersonResponse,
         CaptchaResponse,
-        CommentReplyResponse,
         GenerateTotpSecretResponse,
         GetCaptchaResponse,
         GetPersonDetailsResponse,
-        GetPersonMentionsResponse,
-        GetRepliesResponse,
         GetReportCountResponse,
         GetUnreadCountResponse,
         LoginResponse,
-        PersonMentionResponse,
         UpdateTotpResponse,
-        Vec<LoginToken>,
+        ListLoginsResponse,
+        ListPersonSavedResponse,
+        MyUserInfo,
+        ListInboxResponse,
+        ListPersonContentResponse,
         // Posts
         GetPostResponse,
         GetPostsResponse,
         GetSiteMetadataResponse,
         ListPostLikesResponse,
-        ListPostReportsResponse,
         PostReportResponse,
         PostResponse,
         // Private Messages
-        ListPrivateMessageReportsResponse,
         PrivateMessageReportResponse,
         PrivateMessageResponse,
-        PrivateMessagesResponse,
         // Site
-        BlockInstanceResponse,
         GetFederatedInstancesResponse,
         GetModlogResponse,
         GetSiteResponse,
@@ -72,6 +80,9 @@ impl_marker_trait!(
         ResolveObjectResponse,
         SearchResponse,
         SiteResponse,
+        TaglineResponse,
+        ListTaglinesResponse,
+        ListCustomEmojisResponse,
         // Media
         ListMediaResponse
     ]
