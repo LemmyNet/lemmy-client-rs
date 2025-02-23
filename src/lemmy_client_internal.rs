@@ -1,6 +1,6 @@
 use crate::{
     form::{LemmyForm, LemmyRequest},
-    lemmy_client_trait::{private_trait, LemmyClientInternal},
+    lemmy_client_trait::{LemmyClientInternal, private_trait},
     response::{LemmyResponse, LemmyResult},
     utils::ClientOptions,
 };
@@ -36,6 +36,7 @@ fn deserialize_response<Response: LemmyResponse>(res: &str) -> Result<Response, 
 cfg_if! {
   if #[cfg(target_family = "wasm")] {
     use gloo_net::http::{Request, RequestBuilder};
+    use wasm_bindgen::UnwrapThrowExt;
     pub struct Fetch(pub ClientOptions);
 
     impl Fetch {
