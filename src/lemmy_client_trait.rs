@@ -3,26 +3,32 @@ use crate::lemmy_client_internal::ClientWrapper;
 #[cfg(target_family = "wasm")]
 use crate::lemmy_client_internal::Fetch;
 use crate::{
+    ClientOptions,
     form::{LemmyForm, LemmyRequest},
     response::{LemmyResponse, LemmyResult},
-    ClientOptions,
 };
 use cfg_if::cfg_if;
 use http::Method;
 use lemmy_api_common::{
+    SuccessResponse,
     comment::*,
     community::*,
     custom_emoji::*,
     person::*,
     post::*,
     private_message::*,
-    reports::{comment::*, post::*, private_message::*},
+    reports::{
+        combined::{ListReports, ListReportsResponse},
+        comment::*,
+        community::{CommunityReportResponse, CreateCommunityReport, ResolveCommunityReport},
+        post::*,
+        private_message::*,
+    },
     site::*,
     tagline::{
         CreateTagline, DeleteTagline, ListTaglines, ListTaglinesResponse, TaglineResponse,
         UpdateTagline,
     },
-    SuccessResponse,
 };
 use std::collections::HashMap;
 
@@ -231,16 +237,6 @@ HTTP PUT /community"#
 HTTP GET /community/random"#
     ),
     (
-        hide_community,
-        Method::PUT,
-        "community/hide",
-        HideCommunity,
-        SuccessResponse,
-        r#"Hides a community from public view.
-
-HTTP PUT /community/hide"#
-    ),
-    (
         list_communities,
         Method::GET,
         "community/list",
@@ -259,6 +255,26 @@ HTTP GET /community/list"#
         r#"Subscribes to a community.
 
 HTTP POST /community/follow"#
+    ),
+    (
+        report_community,
+        Method::POST,
+        "community/report",
+        CreateCommunityReport,
+        CommunityReportResponse,
+        r#"Report a community.
+
+HTTP POST /community/report"#
+    ),
+    (
+        resolve_community_report,
+        Method::PUT,
+        "community/report/resolve",
+        ResolveCommunityReport,
+        CommunityReportResponse,
+        r#"Resolves a community report.
+
+HTTP PUT /community/report/resolve"#
     ),
     (
         delete_community,
@@ -647,7 +663,7 @@ HTTP GET /comment/list/slim"#
         "comment/report",
         CreateCommentReport,
         CommentResponse,
-        r#"Reports a comment to the moderator team of the community the comment is in, your instance's admin team, and the commentor's instance's admin team.
+        r#"Reports a comment to the moderator team of the community the comment is in, your instance's admin team, and the commenter's instance's admin team.
 
 HTTP POST /comment/report"#
     ),
@@ -720,6 +736,16 @@ HTTP POST /private_message/report"#
         r#"Resolves a report of a private message sent to a user on the instance you administrate.
 
 HTTP PUT /private_message/report/resolve"#
+    ),
+    (
+        list_reports,
+        Method::GET,
+        "report/list",
+        ListReports,
+        ListReportsResponse,
+        r#"List all reports.
+
+HTTP GET /report/list"#
     ),
     (
         register_account,
@@ -1270,3 +1296,4 @@ HTTP POST /admin/custom_emoji/delete"#
 HTTP GET /admin/custom_emoji/list"#
     )
 ];
+// TODO: OAuth and image stuff

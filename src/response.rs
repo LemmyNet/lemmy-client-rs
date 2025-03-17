@@ -1,5 +1,6 @@
 use crate::utils::impl_marker_trait;
 use lemmy_api_common::{
+    LemmyErrorType, SuccessResponse,
     comment::*,
     community::*,
     custom_emoji::*,
@@ -7,12 +8,12 @@ use lemmy_api_common::{
     post::*,
     private_message::*,
     reports::{
-        comment::CommentReportResponse, post::PostReportResponse,
+        combined::ListReportsResponse, comment::CommentReportResponse,
+        community::CommunityReportResponse, post::PostReportResponse,
         private_message::PrivateMessageReportResponse,
     },
     site::*,
     tagline::*,
-    LemmyErrorType, SuccessResponse,
 };
 use serde::Deserialize;
 
@@ -35,11 +36,13 @@ impl_marker_trait!(
         AddModToCommunityResponse,
         BanFromCommunityResponse,
         BlockCommunityResponse,
+        CommunityReportResponse,
         CommunityResponse,
         GetCommunityResponse,
         ListCommunitiesResponse,
         GetCommunityPendingFollowsCountResponse,
         ListCommunityPendingFollowsResponse,
+        ListReportsResponse,
         // Custom Emojis
         CustomEmojiResponse,
         // Person

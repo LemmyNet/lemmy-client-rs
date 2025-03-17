@@ -5,7 +5,13 @@ use lemmy_api_common::{
     person::*,
     post::*,
     private_message::*,
-    reports::{comment::*, post::*, private_message::*},
+    reports::{
+        combined::ListReports,
+        comment::*,
+        community::{CreateCommunityReport, ResolveCommunityReport},
+        post::*,
+        private_message::*,
+    },
     site::*,
     tagline::*,
 };
@@ -75,6 +81,8 @@ impl_marker_trait!(
         BanFromCommunity,
         BlockCommunity,
         CreateCommunity,
+        CreateCommunityReport,
+        ResolveCommunityReport,
         DeleteCommunity,
         EditCommunity,
         FollowCommunity,
@@ -113,6 +121,7 @@ impl_marker_trait!(
         MarkPersonPostMentionAsRead,
         UserBlockInstanceParams,
         ListPersonContent,
+        ListReports,
         // Posts
         CreatePost,
         CreatePostLike,
