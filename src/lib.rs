@@ -523,7 +523,7 @@ HTTP PUT /comment/report/resolve"#
         list_comment_reports,
         ListCommentReports,
         ListCommentReportsResponse,
-        r#"Lists reports for comments in communities you moderate or instances you adminstrate.
+        r#"Lists reports for comments in communities you moderate or instances you administrate.
 
 HTTP GET /comment/report/list"#
     );
@@ -587,7 +587,7 @@ HTTP PUT /private_message/report/resolve"#
         list_private_message_reports,
         ListPrivateMessageReports,
         ListPrivateMessageReportsResponse,
-        r#"Lists reports of private messages received on the isntance you administrate.
+        r#"Lists reports of private messages received on the instance you administrate.
 
 HTTP GET /private_message/report/list"#
     );
@@ -667,7 +667,7 @@ HTTP POST /user/ban"#
         list_banned_users,
         (),
         BannedPersonsResponse,
-        r#"Gets users banned who are banned from your isntance.
+        r#"Gets users who are banned from your instance.
 
 HTTP GET /user/banned"#
     );
@@ -781,7 +781,7 @@ HTTP POST /user/leave_admin"#
         GenerateTotpSecretResponse,
         r#"Generates a secret to enable time-based one time passwords for two-factor authentication.
 
-After this, you will need to call /user/totp/update with a vaild token to enable it.
+After this, you will need to call /user/totp/update with a valid token to enable it.
 
 HTTP POST /user/totp/generate"#
     );
@@ -873,7 +873,7 @@ HTTP POST /admin/purge/community"#
         purge_post,
         PurgePost,
         SuccessResponse,
-        r#"Purges a post from the datbase.
+        r#"Purges a post from the database.
 
 HTTP POST /admin/purge/post"#
     );

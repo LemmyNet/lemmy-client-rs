@@ -20,7 +20,7 @@ pub struct ClientOptions {
     ///     secure: true
     /// };
     ///
-    /// // ✅ All you need is the domain (including subdomain, if applicaple).
+    /// // ✅ All you need is the domain (including subdomain, if applicable).
     /// let options = ClientOptions {
     ///     domain: String::from("lemmy.ml"),
     ///     secure: true
