@@ -3,12 +3,11 @@ variables:
 
 steps:
   toml_fmt:
-    image: tamasfe/taplo:0.10.0
+    image: tamasfe/taplo:0.9.3
     commands:
       - taplo format --check
     when:
       - event: pull_request
-    depends_on: [] # enable parallel steps
 
   cargo_fmt:
     image: rustlang/rust:nightly-alpine
