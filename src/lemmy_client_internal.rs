@@ -6,7 +6,7 @@ use crate::{
 };
 use cfg_if::cfg_if;
 use http::Method;
-use lemmy_api_common::LemmyErrorType;
+use lemmy_api_common::error::LemmyErrorType;
 use std::collections::HashMap;
 
 trait WithHeaders {

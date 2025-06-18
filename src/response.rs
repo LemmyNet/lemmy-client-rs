@@ -1,19 +1,61 @@
 use crate::utils::impl_marker_trait;
+
 use lemmy_api_common::{
-    LemmyErrorType, SuccessResponse,
-    comment::*,
-    community::*,
-    custom_emoji::*,
-    person::*,
-    post::*,
-    private_message::*,
-    reports::{
-        combined::ListReportsResponse, comment::CommentReportResponse,
-        community::CommunityReportResponse, post::PostReportResponse,
-        private_message::PrivateMessageReportResponse,
+    SuccessResponse,
+    account::{
+        ListPersonHiddenResponse, ListPersonLikedResponse, ListPersonReadResponse,
+        ListPersonSavedResponse, MyUserInfo,
+        auth::{
+            CaptchaResponse, GenerateTotpSecretResponse, GetCaptchaResponse, ListLoginsResponse,
+            LoginResponse, UpdateTotpResponse,
+        },
     },
-    site::*,
-    tagline::*,
+    comment::{
+        CommentResponse, GetCommentsResponse, GetCommentsSlimResponse,
+        actions::moderation::ListCommentLikesResponse,
+    },
+    community::{
+        CommunityResponse, GetCommunityResponse, ListCommunitiesResponse, Tag,
+        actions::{
+            BlockCommunityResponse,
+            moderation::{
+                AddModToCommunityResponse, BanFromCommunityResponse,
+                GetCommunityPendingFollowsCountResponse, ListCommunityPendingFollowsResponse,
+            },
+        },
+    },
+    custom_emoji::{CustomEmojiResponse, ListCustomEmojisResponse},
+    error::LemmyErrorType,
+    federation::GetFederatedInstancesResponse,
+    inbox::{GetUnreadCountResponse, ListInboxResponse},
+    media::ListMediaResponse,
+    modlog::GetModlogResponse,
+    oauth::OAuthProvider,
+    person::{
+        GetPersonDetailsResponse,
+        actions::{
+            BlockPersonResponse, ListPersonContentResponse,
+            moderation::{BanPersonResponse, RegistrationApplicationResponse},
+        },
+    },
+    post::{
+        GetPostResponse, GetPostsResponse, GetSiteMetadataResponse, PostResponse,
+        actions::moderation::ListPostLikesResponse,
+    },
+    private_message::PrivateMessageResponse,
+    report::{
+        CommentReportResponse, CommunityReportResponse, GetReportCountResponse,
+        ListReportsResponse, PostReportResponse, PrivateMessageReportResponse,
+    },
+    search::SearchResponse,
+    site::{
+        GetSiteResponse, SiteResponse,
+        administration::{
+            AddAdminResponse, AdminListUsersResponse,
+            GetUnreadRegistrationApplicationCountResponse, ListRegistrationApplicationsResponse,
+        },
+    },
+    tagline::{ListTaglinesResponse, TaglineResponse},
 };
 use serde::Deserialize;
 
@@ -43,12 +85,13 @@ impl_marker_trait!(
         GetCommunityPendingFollowsCountResponse,
         ListCommunityPendingFollowsResponse,
         ListReportsResponse,
+        Tag,
         // Custom Emojis
         CustomEmojiResponse,
+        ListCustomEmojisResponse,
         // Person
         AddAdminResponse,
         BanPersonResponse,
-        BannedPersonsResponse,
         BlockPersonResponse,
         CaptchaResponse,
         GenerateTotpSecretResponse,
@@ -60,9 +103,13 @@ impl_marker_trait!(
         UpdateTotpResponse,
         ListLoginsResponse,
         ListPersonSavedResponse,
+        ListPersonReadResponse,
+        ListPersonHiddenResponse,
+        ListPersonLikedResponse,
         MyUserInfo,
         ListInboxResponse,
         ListPersonContentResponse,
+        AdminListUsersResponse,
         // Posts
         GetPostResponse,
         GetPostsResponse,
@@ -80,13 +127,13 @@ impl_marker_trait!(
         GetUnreadRegistrationApplicationCountResponse,
         ListRegistrationApplicationsResponse,
         RegistrationApplicationResponse,
-        ResolveObjectResponse,
         SearchResponse,
         SiteResponse,
         TaglineResponse,
         ListTaglinesResponse,
-        ListCustomEmojisResponse,
         // Media
-        ListMediaResponse
+        ListMediaResponse,
+        //OAuth
+        OAuthProvider
     ]
 );

@@ -1,19 +1,73 @@
 use lemmy_api_common::{
-    comment::*,
-    community::*,
-    custom_emoji::*,
-    person::*,
-    post::*,
-    private_message::*,
-    reports::{
-        combined::ListReports,
-        comment::*,
-        community::{CreateCommunityReport, ResolveCommunityReport},
-        post::*,
-        private_message::*,
+    account::{
+        DeleteAccount, ListPersonHidden, ListPersonLiked, ListPersonRead, ListPersonSaved,
+        SaveUserSettings,
+        auth::{
+            ChangePassword, Login, PasswordChangeAfterReset, PasswordReset, Register,
+            ResendVerificationEmail, UpdateTotp, VerifyEmail,
+        },
     },
-    site::*,
-    tagline::*,
+    comment::{
+        GetComment, GetComments,
+        actions::{
+            CreateComment, CreateCommentLike, DeleteComment, EditComment, SaveComment,
+            moderation::{DistinguishComment, ListCommentLikes, PurgeComment, RemoveComment},
+        },
+    },
+    community::{
+        GetCommunity, GetRandomCommunity, ListCommunities,
+        actions::{
+            BlockCommunity, CreateCommunity, FollowCommunity, HideCommunity,
+            moderation::{
+                AddModToCommunity, ApproveCommunityPendingFollower, BanFromCommunity,
+                CreateCommunityTag, DeleteCommunity, DeleteCommunityTag, EditCommunity,
+                GetCommunityPendingFollowsCount, ListCommunityPendingFollows, PurgeCommunity,
+                RemoveCommunity, TransferCommunity, UpdateCommunityTag,
+            },
+        },
+    },
+    custom_emoji::{CreateCustomEmoji, DeleteCustomEmoji, EditCustomEmoji, ListCustomEmojis},
+    federation::{
+        FederatedInstances, InstanceWithFederationState, ResolveObject, UserBlockInstanceParams,
+        administration::{AdminAllowInstanceParams, AdminBlockInstanceParams},
+    },
+    inbox::{
+        ListInbox, MarkCommentReplyAsRead, MarkPersonCommentMentionAsRead,
+        MarkPersonPostMentionAsRead, MarkPrivateMessageAsRead,
+    },
+    media::{DeleteImageParams, ListMedia},
+    modlog::GetModlog,
+    oauth::{AuthenticateWithOauth, CreateOAuthProvider, DeleteOAuthProvider, EditOAuthProvider},
+    person::{
+        GetPersonDetails,
+        actions::{
+            BlockPerson, ListPersonContent, NotePerson,
+            moderation::{BanPerson, GetRegistrationApplication, PurgePerson},
+        },
+    },
+    post::{
+        GetPost, GetPosts, GetSiteMetadata,
+        actions::{
+            CreatePost, CreatePostLike, DeletePost, EditPost, HidePost, MarkManyPostsAsRead,
+            MarkPostAsRead, SavePost,
+            moderation::{FeaturePost, ListPostLikes, LockPost, PurgePost, RemovePost},
+        },
+    },
+    private_message::actions::{CreatePrivateMessage, DeletePrivateMessage, EditPrivateMessage},
+    report::{
+        CreateCommentReport, CreateCommunityReport, CreatePostReport, CreatePrivateMessageReport,
+        GetReportCount, ListReports, ResolveCommentReport, ResolveCommunityReport,
+        ResolvePostReport, ResolvePrivateMessageReport,
+    },
+    search::Search,
+    site::administration::{
+        AddAdmin, AdminListUsers, ApproveRegistrationApplication, CreateSite, EditSite,
+        ListRegistrationApplications,
+    },
+    tagline::{
+        ListTaglines,
+        aministration::{CreateTagline, DeleteTagline, UpdateTagline},
+    },
 };
 use serde::Serialize;
 use std::fmt;
@@ -95,6 +149,9 @@ impl_marker_trait!(
         GetCommunityPendingFollowsCount,
         ListCommunityPendingFollows,
         ApproveCommunityPendingFollower,
+        CreateCommunityTag,
+        UpdateCommunityTag,
+        DeleteCommunityTag,
         // Emojis
         CreateCustomEmoji,
         DeleteCustomEmoji,
@@ -115,13 +172,19 @@ impl_marker_trait!(
         SaveUserSettings,
         UpdateTotp,
         VerifyEmail,
+        ResendVerificationEmail,
         ListPersonSaved,
+        ListPersonRead,
+        ListPersonHidden,
+        ListPersonLiked,
         ListInbox,
         MarkPersonCommentMentionAsRead,
         MarkPersonPostMentionAsRead,
         UserBlockInstanceParams,
         ListPersonContent,
         ListReports,
+        NotePerson,
+        AdminListUsers,
         // Posts
         CreatePost,
         CreatePostLike,
@@ -170,6 +233,12 @@ impl_marker_trait!(
         AdminAllowInstanceParams,
         ListCustomEmojis,
         // Media
-        ListMedia
+        ListMedia,
+        DeleteImageParams,
+        // OAuth
+        CreateOAuthProvider,
+        EditOAuthProvider,
+        DeleteOAuthProvider,
+        AuthenticateWithOauth
     ]
 );
