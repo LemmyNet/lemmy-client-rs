@@ -111,23 +111,6 @@ use lemmy_api_common::{
 
 use std::collections::HashMap;
 
-pub mod private_trait {
-    use super::{HashMap, LemmyForm, LemmyRequest, LemmyResponse, LemmyResult, Method};
-
-    pub trait LemmyClientInternal {
-        async fn make_request<Response, Form>(
-            &self,
-            method: Method,
-            path: &str,
-            request: LemmyRequest<Form>,
-            headers: &HashMap<String, String>,
-        ) -> LemmyResult<Response>
-        where
-            Response: LemmyResponse,
-            Form: LemmyForm;
-    }
-}
-
 /// API wrapper for lemmy
 pub struct LemmyClient {
     headers: HashMap<String, String>,
@@ -138,18 +121,7 @@ pub struct LemmyClient {
 }
 
 impl LemmyClient {
-    /// Get the options the client is using.
-    pub fn options(&self) -> &ClientOptions {
-        cfg_if! {
-            if #[cfg(target_family = "wasm")] {
-                &self.client.0
-            } else {
-                &self.client.options
-            }
-        }
-    }
-
-    /// Creates a new `LemmyClient`.
+    /// Creates a new [`LemmyClient`].
     /// # Examples
     /// ```
     /// use lemmy_client::{LemmyClient, ClientOptions};
@@ -174,6 +146,17 @@ impl LemmyClient {
         }
     }
 
+    /// Get the options the client is using.
+    pub fn options(&self) -> &ClientOptions {
+        cfg_if! {
+            if #[cfg(target_family = "wasm")] {
+                &self.client.0
+            } else {
+                &self.client.options
+            }
+        }
+    }
+
     /// Map of headers that will be included with each request.
     pub fn headers(&self) -> &HashMap<String, String> {
         &self.headers
@@ -185,9 +168,26 @@ impl LemmyClient {
     }
 }
 
+/// Allows the various API methods to be added to the
 macro_rules! impl_client {
     ($(($name:ident, $method:expr, $path:expr, $form:ty, $response:ty, $doc:expr)),+$(,)?) => {
-        pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
+
+        /// Allows structs that implement it ([`Fetch`] and [`ClientWrapper`]) to share a common interface for
+        /// making requests to Lemmy's API.
+        ///
+        /// **Implementation Note**: This trait should not be re-exported from the crate.
+        pub trait LemmyClientInternal {
+            async fn make_request<Response, Form>(
+                &self,
+                method: Method,
+                path: &str,
+                request: LemmyRequest<Form>,
+                headers: &HashMap<String, String>,
+            ) -> LemmyResult<Response>
+            where
+                Response: LemmyResponse,
+                Form: LemmyForm;
+
             $(
                 async fn $name(
                     &self,

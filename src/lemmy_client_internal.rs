@@ -1,6 +1,6 @@
 use crate::{
     form::{LemmyForm, LemmyRequest},
-    lemmy_client_trait::{LemmyClientInternal, private_trait},
+    lemmy_client_trait::LemmyClientInternal,
     response::{LemmyResponse, LemmyResult},
     utils::ClientOptions,
 };
@@ -66,7 +66,7 @@ cfg_if! {
         }
     }
 
-    impl private_trait::LemmyClientInternal for Fetch {
+    impl LemmyClientInternal for Fetch {
       async fn make_request<Response, Form>(
                 &self,
                 method: Method,
@@ -104,8 +104,6 @@ cfg_if! {
                 deserialize_response(&res)
         }
     }
-
-    impl LemmyClientInternal for Fetch {}
   } else {
         impl WithHeaders for reqwest::RequestBuilder {
             fn with_headers(self, headers: &HashMap<String, String>) -> Self {
@@ -143,7 +141,7 @@ cfg_if! {
           }
       }
 
-      impl private_trait::LemmyClientInternal for ClientWrapper {
+      impl LemmyClientInternal for ClientWrapper {
             async fn make_request<Response, Form>(
                 &self,
                 method: Method,
@@ -191,7 +189,5 @@ cfg_if! {
                 deserialize_response(&res)
             }
         }
-
-      impl LemmyClientInternal for ClientWrapper {}
   }
 }
