@@ -145,7 +145,7 @@ impl LemmyClient {
         }
     }
 
-    /// Get the options the client is using.
+    /// Gets the options passed to the client.
     pub fn options(&self) -> &ClientOptions {
         cfg_if! {
             if #[cfg(target_family = "wasm")] {
@@ -156,16 +156,18 @@ impl LemmyClient {
         }
     }
 
-    /// Map of headers that will be included with each request.
+    /// Returns a map of headers that will be included with each request.
     pub fn headers(&self) -> &HashMap<String, String> {
         &self.headers
     }
 
-    /// Mutable map of headers that will be included with each request. Use this method if you want to add headers other than the JWT.
+    /// Returns a mutable map of headers that will be included with each request.
+    /// Use this method if you want to add headers other than the JWT.
     pub fn headers_mut(&mut self) -> &mut HashMap<String, String> {
         &mut self.headers
     }
 
+    /// Delegates request making logic to the private client implementation.
     async fn make_request<Response, Form>(
         &self,
         method: Method,
@@ -182,7 +184,8 @@ impl LemmyClient {
     }
 }
 
-/// Allows the various API methods to be added to the
+/// Allows the various API methods to be added to the client without the need to
+/// repeat a bunch of boilerplate.
 macro_rules! impl_client {
     ($(($name:ident, $method:expr, $path:expr, $form:ty, $response:ty, $doc:expr)),+$(,)?) => {
         impl LemmyClient {
