@@ -5,6 +5,7 @@
 #![doc(
     html_logo_url = "https://raw.githubusercontent.com/LemmyNet/lemmy-ui/main/src/assets/icons/favicon.svg"
 )]
+#![doc(issue_tracker_base_url = "https://github.com/LemmyNet/lemmy-client-rs/issues/")]
 //! A Rust HTTP client for Lemmy.
 //! If used when targeting WASM, uses the browser's built-in fetch API to reduce bundle size.
 //! ## Example
@@ -23,7 +24,6 @@
 //!
 //! ```
 //! <div class="warning">
-//! ## IMPORTANT NOTICE
 //! This crate now uses a different versioning scheme than before so as not to be too tied down to Lemmy releases.
 //! For Lemmy versions 0.19.4 and up, use versions 1.x.x.
 //! For Lemmy versions 0.19.3 and under, use versions 0.19.5 and up.
