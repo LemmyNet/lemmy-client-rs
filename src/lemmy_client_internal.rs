@@ -16,10 +16,14 @@ trait MaybeWithJwt {
     fn maybe_with_jwt(self, jwt: Option<String>) -> Self;
 }
 
-fn build_route(route: &str, ClientOptions { domain, secure }: &ClientOptions) -> String {
+fn build_route<T: AsRef<str>>(
+    route: &str,
+    ClientOptions { domain, secure }: &ClientOptions<T>,
+) -> String {
     format!(
-        "http{}://{domain}/api/v4/{route}",
-        if *secure { "s" } else { "" }
+        "http{}://{}/api/v4/{route}",
+        if *secure { "s" } else { "" },
+        domain.as_ref()
     )
 }
 
@@ -36,15 +40,15 @@ cfg_if! {
   if #[cfg(target_family = "wasm")] {
     use gloo_net::http::{Request, RequestBuilder};
     use wasm_bindgen::UnwrapThrowExt;
-    pub struct Fetch(pub ClientOptions);
+    pub struct Fetch<Domain: AsRef<str>>(pub ClientOptions<Domain>);
 
-    impl Fetch {
+    impl<Domain: AsRef<str>> Fetch<Domain> {
         fn build_fetch_query<T: serde::Serialize>(&self, path: &str, form: &T) -> String {
             let form_str = serde_urlencoded::to_string(form).unwrap_or_else(|_| path.to_string());
-            format!("{}?{}", build_route(path, &self.0), form_str)
+            format!("{}?{}", build_route::<Domain>(path, &self.0), form_str)
         }
 
-        pub fn new(options: ClientOptions) -> Self {
+        pub fn new(options: ClientOptions<Domain>) -> Self {
             Self(options)
         }
 
@@ -124,13 +128,13 @@ cfg_if! {
           }
       }
 
-      pub struct ClientWrapper {
+      pub struct ClientWrapper<Domain: AsRef<str>> {
           client: reqwest::Client,
-          pub options: ClientOptions
+          pub options: ClientOptions<Domain>
       }
 
-      impl ClientWrapper {
-          pub fn new(options: ClientOptions) -> Self {
+      impl<Domain: AsRef<str>> ClientWrapper<Domain> {
+          pub fn new(options: ClientOptions<Domain>) -> Self {
               Self {
                   client: reqwest::Client::new(),
                   options

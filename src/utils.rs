@@ -9,24 +9,26 @@ macro_rules! impl_marker_trait {
 pub(crate) use impl_marker_trait;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-/// Options for instantiating a `LemmyClient`.
-pub struct ClientOptions {
+/// Options for creating a [`LemmyClient`][client].
+///
+/// [client]: crate::LemmyClient
+pub struct ClientOptions<Domain: AsRef<str>> {
     /// Domain of the instance the client will send requests to.
     /// ```
-    /// use lemmy_client::ClientOptions;
-    /// // ❌ You do not have to include the scheme for the domain.
+    /// # use lemmy_client::ClientOptions;
+    /// // ❌ You should not include the scheme for the domain.
     /// let options = ClientOptions {
-    ///     domain: String::from("https://lemmy.ml"),
+    ///     domain: "https://lemmy.ml",
     ///     secure: true
     /// };
     ///
     /// // ✅ All you need is the domain (including subdomain, if applicable).
     /// let options = ClientOptions {
-    ///     domain: String::from("lemmy.ml"),
+    ///     domain: "lemmy.ml",
     ///     secure: true
     /// };
     /// ```
-    pub domain: String,
+    pub domain: Domain,
     /// If true, use HTTPS. If false, use HTTP
     pub secure: bool,
 }

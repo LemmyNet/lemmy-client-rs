@@ -111,15 +111,15 @@ use lemmy_api_common::{
 use std::collections::HashMap;
 
 /// API wrapper for lemmy
-pub struct LemmyClient {
+pub struct LemmyClient<Domain: AsRef<str>> {
     headers: HashMap<String, String>,
     #[cfg(target_family = "wasm")]
-    client: Fetch,
+    client: Fetch<Domain>,
     #[cfg(not(target_family = "wasm"))]
-    client: ClientWrapper,
+    client: ClientWrapper<Domain>,
 }
 
-impl LemmyClient {
+impl<Domain: AsRef<str>> LemmyClient<Domain> {
     /// Creates a new [`LemmyClient`].
     /// # Examples
     /// ```
@@ -129,7 +129,7 @@ impl LemmyClient {
     ///     secure: true
     /// });
     /// ```
-    pub fn new(options: ClientOptions) -> Self {
+    pub fn new(options: ClientOptions<Domain>) -> Self {
         cfg_if! {
             if #[cfg(target_family = "wasm")] {
                 Self {
@@ -146,7 +146,7 @@ impl LemmyClient {
     }
 
     /// Gets the options passed to the client.
-    pub fn options(&self) -> &ClientOptions {
+    pub fn options(&self) -> &ClientOptions<Domain> {
         cfg_if! {
             if #[cfg(target_family = "wasm")] {
                 &self.client.0
@@ -188,7 +188,7 @@ impl LemmyClient {
 /// repeat a bunch of boilerplate.
 macro_rules! impl_client {
     ($(($name:ident, $method:expr, $path:expr, $form:ty, $response:ty, $doc:expr)),+$(,)?) => {
-        impl LemmyClient {
+        impl<Domain: AsRef<str>> LemmyClient<Domain> {
             $(
                 #[doc = $doc]
                 pub async fn $name<Request>(&self, request: Request) -> LemmyResult<$response>
@@ -413,7 +413,7 @@ HTTP POST /community/tag"#
         Tag,
         r#"Update an existing tag for a community you moderate.
 
-    HTTP PUT /community/tag"#
+HTTP PUT /community/tag"#
     ),
     (
         delete_community_tag,
