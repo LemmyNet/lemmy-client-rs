@@ -108,7 +108,6 @@ use lemmy_api_common::{
         aministration::{CreateTagline, DeleteTagline, UpdateTagline},
     },
 };
-
 use std::collections::HashMap;
 
 /// API wrapper for lemmy
@@ -166,39 +165,26 @@ impl LemmyClient {
     pub fn headers_mut(&mut self) -> &mut HashMap<String, String> {
         &mut self.headers
     }
+
+    async fn make_request<Response, Form>(
+        &self,
+        method: Method,
+        path: &str,
+        request: LemmyRequest<Form>,
+    ) -> LemmyResult<Response>
+    where
+        Response: LemmyResponse,
+        Form: LemmyForm,
+    {
+        self.client
+            .make_request(method, path, request, &self.headers)
+            .await
+    }
 }
 
 /// Allows the various API methods to be added to the
 macro_rules! impl_client {
     ($(($name:ident, $method:expr, $path:expr, $form:ty, $response:ty, $doc:expr)),+$(,)?) => {
-
-        /// Allows structs that implement it ([`Fetch`] and [`ClientWrapper`]) to share a common interface for
-        /// making requests to Lemmy's API.
-        ///
-        /// **Implementation Note**: This trait should not be re-exported from the crate.
-        pub trait LemmyClientInternal {
-            async fn make_request<Response, Form>(
-                &self,
-                method: Method,
-                path: &str,
-                request: LemmyRequest<Form>,
-                headers: &HashMap<String, String>,
-            ) -> LemmyResult<Response>
-            where
-                Response: LemmyResponse,
-                Form: LemmyForm;
-
-            $(
-                async fn $name(
-                    &self,
-                    request: LemmyRequest<$form>,
-                    headers: &HashMap<String, String>,
-                ) -> LemmyResult<$response> {
-                    self.make_request($method, $path, request, headers).await
-                }
-            )*
-        }
-
         impl LemmyClient {
             $(
                 #[doc = $doc]
@@ -206,7 +192,7 @@ macro_rules! impl_client {
                 where
                     Request: Into<LemmyRequest<$form>>,
                 {
-                    self.client.$name(request.into(), &self.headers).await
+                    self.make_request($method, $path, request.into()).await
                 }
             )*
         }

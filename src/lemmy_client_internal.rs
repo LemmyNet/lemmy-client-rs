@@ -1,6 +1,5 @@
 use crate::{
     form::{LemmyForm, LemmyRequest},
-    lemmy_client_trait::LemmyClientInternal,
     response::{LemmyResponse, LemmyResult},
     utils::ClientOptions,
 };
@@ -40,34 +39,16 @@ cfg_if! {
     pub struct Fetch(pub ClientOptions);
 
     impl Fetch {
-        pub fn new(options: ClientOptions) -> Self {
-            Self(options)
-        }
-
         fn build_fetch_query<T: serde::Serialize>(&self, path: &str, form: &T) -> String {
             let form_str = serde_urlencoded::to_string(form).unwrap_or_else(|_| path.to_string());
             format!("{}?{}", build_route(path, &self.0), form_str)
         }
-    }
 
-    impl WithHeaders for RequestBuilder {
-        fn with_headers(self, headers: &HashMap<String, String>) -> Self {
-            headers.iter().fold(self, |acc, (header, value)| acc.header(header.as_str(), value.as_str()))
+        pub fn new(options: ClientOptions) -> Self {
+            Self(options)
         }
-    }
 
-    impl MaybeWithJwt for RequestBuilder {
-        fn maybe_with_jwt(self, jwt: Option<String>) -> Self {
-            if let Some(jwt) = jwt {
-                self.header(http::header::AUTHORIZATION.as_str(), format!("Bearer {jwt}").as_str())
-            } else {
-                self
-            }
-        }
-    }
-
-    impl LemmyClientInternal for Fetch {
-      async fn make_request<Response, Form>(
+        pub async fn make_request<Response, Form>(
                 &self,
                 method: Method,
                 path: &str,
@@ -102,6 +83,22 @@ cfg_if! {
                  .map_err(map_other_error)?;
 
                 deserialize_response(&res)
+        }
+    }
+
+    impl WithHeaders for RequestBuilder {
+        fn with_headers(self, headers: &HashMap<String, String>) -> Self {
+            headers.iter().fold(self, |acc, (header, value)| acc.header(header.as_str(), value.as_str()))
+        }
+    }
+
+    impl MaybeWithJwt for RequestBuilder {
+        fn maybe_with_jwt(self, jwt: Option<String>) -> Self {
+            if let Some(jwt) = jwt {
+                self.header(http::header::AUTHORIZATION.as_str(), format!("Bearer {jwt}").as_str())
+            } else {
+                self
+            }
         }
     }
   } else {
@@ -139,10 +136,8 @@ cfg_if! {
                   options
               }
           }
-      }
 
-      impl LemmyClientInternal for ClientWrapper {
-            async fn make_request<Response, Form>(
+          pub async fn make_request<Response, Form>(
                 &self,
                 method: Method,
                 path: &str,
@@ -188,6 +183,6 @@ cfg_if! {
 
                 deserialize_response(&res)
             }
-        }
+      }
   }
 }
