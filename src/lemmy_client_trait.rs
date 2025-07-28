@@ -54,10 +54,6 @@ use lemmy_api_common::{
         GetFederatedInstancesResponse, ResolveObject, UserBlockInstanceParams,
         administration::{AdminAllowInstanceParams, AdminBlockInstanceParams},
     },
-    inbox::{
-        GetUnreadCountResponse, ListInbox, ListInboxResponse, MarkCommentReplyAsRead,
-        MarkPersonCommentMentionAsRead, MarkPersonPostMentionAsRead, MarkPrivateMessageAsRead,
-    },
     media::{DeleteImageParams, ListMedia, ListMediaResponse},
     modlog::{GetModlog, GetModlogResponse},
     oauth::{
@@ -428,7 +424,7 @@ HTTP POST /community/tag"#
         Tag,
         r#"Update an existing tag for a community you moderate.
 
-HTTP PUT /community/tag"#
+    HTTP PUT /community/tag"#
     ),
     (
         delete_community_tag,
@@ -701,16 +697,16 @@ HTTP POST /comment/delete"#
 
 HTTP POST /comment/remove"#
     ),
-    (
-        mark_reply_as_read,
-        Method::POST,
-        "comment/mark_as_read",
-        MarkCommentReplyAsRead,
-        SuccessResponse,
-        r#"Marks a reply to one of your posts or comments as read.
+    //     (
+    //         mark_reply_as_read,
+    //         Method::POST,
+    //         "comment/mark_as_read",
+    //         MarkCommentReplyAsRead,
+    //         SuccessResponse,
+    //         r#"Marks a reply to one of your posts or comments as read.
 
-HTTP POST /comment/mark_as_read"#
-    ),
+    // HTTP POST /comment/mark_as_read"#
+    //     ),
     (
         distinguish_comment,
         Method::POST,
@@ -821,16 +817,16 @@ HTTP PUT /private_message"#
 
 HTTP POST /private_message/delete"#
     ),
-    (
-        mark_private_message_as_read,
-        Method::POST,
-        "private_message/mark_as_read",
-        MarkPrivateMessageAsRead,
-        SuccessResponse,
-        r#"Marks a private message that was sent to you as read.
+    //     (
+    //         mark_private_message_as_read,
+    //         Method::POST,
+    //         "private_message/mark_as_read",
+    //         MarkPrivateMessageAsRead,
+    //         SuccessResponse,
+    //         r#"Marks a private message that was sent to you as read.
 
-HTTP POST /private_message/mark_as_read"#
-    ),
+    // HTTP POST /private_message/mark_as_read"#
+    //     ),
     (
         report_private_message,
         Method::POST,
@@ -1007,16 +1003,16 @@ HTTP DELETE /account/media"#
 
 HTTP GET /account/media/list"#
     ),
-    (
-        list_inbox,
-        Method::GET,
-        "account/inbox",
-        ListInbox,
-        ListInboxResponse,
-        r#"Gets all types of notifications for the current user.
+    //     (
+    //         list_inbox,
+    //         Method::GET,
+    //         "account/inbox",
+    //         ListInbox,
+    //         ListInboxResponse,
+    //         r#"Gets all types of notifications for the current user.
 
-HTTP GET /account/inbox"#
-    ),
+    // HTTP GET /account/inbox"#
+    //     ),
     (
         delete_account,
         Method::POST,
@@ -1027,26 +1023,26 @@ HTTP GET /account/inbox"#
 
 HTTP POST /account/delete"#
     ),
-    (
-        mark_comment_mention_as_read,
-        Method::POST,
-        "account/mention/comment/mark_as_read",
-        MarkPersonCommentMentionAsRead,
-        SuccessResponse,
-        r#"Mark a comment mention of the current user as read.
+    //     (
+    //         mark_comment_mention_as_read,
+    //         Method::POST,
+    //         "account/mention/comment/mark_as_read",
+    //         MarkPersonCommentMentionAsRead,
+    //         SuccessResponse,
+    //         r#"Mark a comment mention of the current user as read.
 
-HTTP POST /account/mention/comment/mark_as_read"#
-    ),
-    (
-        mark_post_mention_as_read,
-        Method::POST,
-        "account/mention/post/mark_as_read",
-        MarkPersonPostMentionAsRead,
-        SuccessResponse,
-        r#"Mark a post mention of the current user as read.
+    // HTTP POST /account/mention/comment/mark_as_read"#
+    //     ),
+    //     (
+    //         mark_post_mention_as_read,
+    //         Method::POST,
+    //         "account/mention/post/mark_as_read",
+    //         MarkPersonPostMentionAsRead,
+    //         SuccessResponse,
+    //         r#"Mark a post mention of the current user as read.
 
-HTTP POST /account/mention/post/mark_as_read"#
-    ),
+    // HTTP POST /account/mention/post/mark_as_read"#
+    //     ),
     (
         mark_all_notifications_as_read,
         Method::POST,
@@ -1067,16 +1063,16 @@ HTTP POST /account/mark_as_read/all"#
 
 HTTP GET /account/report_count"#
     ),
-    (
-        unread_count,
-        Method::GET,
-        "account/unread_count",
-        (),
-        GetUnreadCountResponse,
-        r#"Gets the number of unread notifications.
+    //     (
+    //         unread_count,
+    //         Method::GET,
+    //         "account/unread_count",
+    //         (),
+    //         GetUnreadCountResponse,
+    //         r#"Gets the number of unread notifications.
 
-HTTP GET /account/unread_count"#
-    ),
+    // HTTP GET /account/unread_count"#
+    //     ),
     (
         list_logins,
         Method::GET,

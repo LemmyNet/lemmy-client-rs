@@ -4,7 +4,7 @@ use lemmy_api_common::{
         SaveUserSettings,
         auth::{
             ChangePassword, Login, PasswordChangeAfterReset, PasswordReset, Register,
-            ResendVerificationEmail, UpdateTotp, VerifyEmail,
+            ResendVerificationEmail, UpdateTotp, UserSettingsBackup, VerifyEmail,
         },
     },
     comment::{
@@ -15,14 +15,16 @@ use lemmy_api_common::{
         },
     },
     community::{
-        GetCommunity, GetRandomCommunity, ListCommunities,
+        CreateMultiCommunity, CreateOrDeleteMultiCommunityEntry, FollowMultiCommunity,
+        GetCommunity, GetMultiCommunity, GetRandomCommunity, ListCommunities, ListMultiCommunities,
+        UpdateCommunityNotifications, UpdateMultiCommunity,
         actions::{
             BlockCommunity, CreateCommunity, FollowCommunity, HideCommunity,
             moderation::{
                 AddModToCommunity, ApproveCommunityPendingFollower, BanFromCommunity,
-                CreateCommunityTag, DeleteCommunity, DeleteCommunityTag, EditCommunity,
-                GetCommunityPendingFollowsCount, ListCommunityPendingFollows, PurgeCommunity,
-                RemoveCommunity, TransferCommunity, UpdateCommunityTag,
+                CommunityIdQuery, CreateCommunityTag, DeleteCommunity, DeleteCommunityTag,
+                EditCommunity, GetCommunityPendingFollowsCount, ListCommunityPendingFollows,
+                PurgeCommunity, RemoveCommunity, TransferCommunity, UpdateCommunityTag,
             },
         },
     },
@@ -31,12 +33,9 @@ use lemmy_api_common::{
         FederatedInstances, InstanceWithFederationState, ResolveObject, UserBlockInstanceParams,
         administration::{AdminAllowInstanceParams, AdminBlockInstanceParams},
     },
-    inbox::{
-        ListInbox, MarkCommentReplyAsRead, MarkPersonCommentMentionAsRead,
-        MarkPersonPostMentionAsRead, MarkPrivateMessageAsRead,
-    },
-    media::{DeleteImageParams, ListMedia},
+    media::{DeleteImageParams, ImageProxyParams, ListMedia},
     modlog::GetModlog,
+    notification::{ListNotifications, MarkNotificationAsRead},
     oauth::{AuthenticateWithOauth, CreateOAuthProvider, DeleteOAuthProvider, EditOAuthProvider},
     person::{
         GetPersonDetails,
@@ -50,7 +49,9 @@ use lemmy_api_common::{
         actions::{
             CreatePost, CreatePostLike, DeletePost, EditPost, HidePost, MarkManyPostsAsRead,
             MarkPostAsRead, SavePost,
-            moderation::{FeaturePost, ListPostLikes, LockPost, PurgePost, RemovePost},
+            moderation::{
+                FeaturePost, ListPostLikes, LockPost, ModEditPost, PurgePost, RemovePost,
+            },
         },
     },
     private_message::actions::{CreatePrivateMessage, DeletePrivateMessage, EditPrivateMessage},
@@ -136,6 +137,7 @@ impl_marker_trait!(
         BlockCommunity,
         CreateCommunity,
         CreateCommunityReport,
+        CommunityIdQuery,
         ResolveCommunityReport,
         DeleteCommunity,
         EditCommunity,
@@ -150,8 +152,15 @@ impl_marker_trait!(
         ListCommunityPendingFollows,
         ApproveCommunityPendingFollower,
         CreateCommunityTag,
-        UpdateCommunityTag,
         DeleteCommunityTag,
+        CreateMultiCommunity,
+        UpdateMultiCommunity,
+        GetMultiCommunity,
+        CreateOrDeleteMultiCommunityEntry,
+        ListMultiCommunities,
+        FollowMultiCommunity,
+        UpdateCommunityNotifications,
+        UpdateCommunityTag,
         // Emojis
         CreateCustomEmoji,
         DeleteCustomEmoji,
@@ -165,7 +174,6 @@ impl_marker_trait!(
         GetPersonDetails,
         GetReportCount,
         Login,
-        MarkCommentReplyAsRead,
         PasswordChangeAfterReset,
         PasswordReset,
         Register,
@@ -177,14 +185,14 @@ impl_marker_trait!(
         ListPersonRead,
         ListPersonHidden,
         ListPersonLiked,
-        ListInbox,
-        MarkPersonCommentMentionAsRead,
-        MarkPersonPostMentionAsRead,
+        ListNotifications,
+        MarkNotificationAsRead,
         UserBlockInstanceParams,
         ListPersonContent,
         ListReports,
         NotePerson,
         AdminListUsers,
+        UserSettingsBackup,
         // Posts
         CreatePost,
         CreatePostLike,
@@ -203,12 +211,12 @@ impl_marker_trait!(
         ResolvePostReport,
         SavePost,
         HidePost,
+        ModEditPost,
         // Private Messages
         CreatePrivateMessage,
         CreatePrivateMessageReport,
         DeletePrivateMessage,
         EditPrivateMessage,
-        MarkPrivateMessageAsRead,
         ResolvePrivateMessageReport,
         // Site
         ApproveRegistrationApplication,
@@ -235,6 +243,7 @@ impl_marker_trait!(
         // Media
         ListMedia,
         DeleteImageParams,
+        ImageProxyParams,
         // OAuth
         CreateOAuthProvider,
         EditOAuthProvider,

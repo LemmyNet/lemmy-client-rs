@@ -6,8 +6,8 @@ use lemmy_api_common::{
         ListPersonHiddenResponse, ListPersonLikedResponse, ListPersonReadResponse,
         ListPersonSavedResponse, MyUserInfo,
         auth::{
-            CaptchaResponse, GenerateTotpSecretResponse, GetCaptchaResponse, ListLoginsResponse,
-            LoginResponse, UpdateTotpResponse,
+            CaptchaResponse, ExportDataResponse, GenerateTotpSecretResponse, GetCaptchaResponse,
+            ListLoginsResponse, LoginResponse, UpdateTotpResponse, UserSettingsBackup,
         },
     },
     comment::{
@@ -15,7 +15,8 @@ use lemmy_api_common::{
         actions::moderation::ListCommentLikesResponse,
     },
     community::{
-        CommunityResponse, GetCommunityResponse, ListCommunitiesResponse, Tag,
+        CommunityResponse, GetCommunityResponse, GetMultiCommunityResponse,
+        ListCommunitiesResponse, ListMultiCommunitiesResponse, Tag,
         actions::{
             BlockCommunityResponse,
             moderation::{
@@ -27,9 +28,9 @@ use lemmy_api_common::{
     custom_emoji::{CustomEmojiResponse, ListCustomEmojisResponse},
     error::LemmyErrorType,
     federation::GetFederatedInstancesResponse,
-    inbox::{GetUnreadCountResponse, ListInboxResponse},
-    media::ListMediaResponse,
+    media::{ImageGetParams, ListMediaResponse, UploadImageResponse},
     modlog::GetModlogResponse,
+    notification::{GetUnreadCountResponse, ListNotificationsResponse},
     oauth::OAuthProvider,
     person::{
         GetPersonDetailsResponse,
@@ -86,6 +87,8 @@ impl_marker_trait!(
         ListCommunityPendingFollowsResponse,
         ListReportsResponse,
         Tag,
+        GetMultiCommunityResponse,
+        ListMultiCommunitiesResponse,
         // Custom Emojis
         CustomEmojiResponse,
         ListCustomEmojisResponse,
@@ -107,9 +110,11 @@ impl_marker_trait!(
         ListPersonHiddenResponse,
         ListPersonLikedResponse,
         MyUserInfo,
-        ListInboxResponse,
+        ListNotificationsResponse,
         ListPersonContentResponse,
         AdminListUsersResponse,
+        UserSettingsBackup,
+        ExportDataResponse,
         // Posts
         GetPostResponse,
         GetPostsResponse,
@@ -133,6 +138,8 @@ impl_marker_trait!(
         ListTaglinesResponse,
         // Media
         ListMediaResponse,
+        UploadImageResponse,
+        ImageGetParams,
         //OAuth
         OAuthProvider
     ]
