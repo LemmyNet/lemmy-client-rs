@@ -117,7 +117,7 @@ impl_marker_trait!(
     LemmyForm,
     [
         (),
-        String,
+        &'static [u8],
         // Comments
         CreateComment,
         CreateCommentLike,

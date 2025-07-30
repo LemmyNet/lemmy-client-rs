@@ -5,7 +5,7 @@ use crate::{
 };
 use cfg_if::cfg_if;
 use http::Method;
-use lemmy_api_common::error::LemmyErrorType;
+use lemmy_api_common::{error::LemmyErrorType, media::UploadImageResponse};
 use std::collections::HashMap;
 
 trait WithHeaders {
@@ -88,6 +88,25 @@ cfg_if! {
 
                 deserialize_response(&res)
         }
+
+        pub async fn make_file_request(&self, path: &str, request: LemmyRequest<&'static [u8]>, headers: &HashMap<String, String>) -> LemmyResult<UploadImageResponse> {
+            let route = &build_route(path, &self.0);
+            let LemmyRequest { body, jwt } = request;
+
+            let mut res = Request::post(route)
+                .with_headers(headers)
+                .maybe_with_jwt(jwt)
+                .body(&body)
+                .expect_throw("Could not parse file")
+                .send()
+                .await
+                .map_err(map_other_error)?
+                .text()
+                .await
+                .map_err(map_other_error)?;
+
+            deserialize_response(&res)
+        }
     }
 
     impl WithHeaders for RequestBuilder {
@@ -133,60 +152,80 @@ cfg_if! {
           pub options: ClientOptions<Domain>
       }
 
-      impl<Domain: AsRef<str>> ClientWrapper<Domain> {
-          pub fn new(options: ClientOptions<Domain>) -> Self {
-              Self {
-                  client: reqwest::Client::new(),
-                  options
-              }
-          }
-
-          pub async fn make_request<Response, Form>(
-                &self,
-                method: Method,
-                path: &str,
-                request: LemmyRequest<Form>,
-                headers: &HashMap<String, String>
-            ) -> LemmyResult<Response>
-            where
-                Response: LemmyResponse,
-                Form: LemmyForm,
-            {
-                let route = build_route(path, &self.options);
-                let LemmyRequest { body, jwt } = request;
-
-                let res = match method {
-                    Method::GET =>
-                        self
-                            .client
-                            .get(route)
-                            .with_headers(headers)
-                            .maybe_with_jwt(jwt)
-                            .query(&body),
-                    Method::POST =>
-                        self
-                            .client
-                            .post(route)
-                            .with_headers(headers)
-                            .maybe_with_jwt(jwt)
-                            .json(&body),
-                    Method::PUT =>
-                        self
-                            .client
-                            .put(route)
-                            .with_headers(headers)
-                            .maybe_with_jwt(jwt)
-                            .json(&body),
-                    _ => unreachable!("This crate does not use other HTTP methods.")
-                }.send()
-                 .await
-                 .map_err(map_other_error)?
-                 .text()
-                 .await
-                 .map_err(map_other_error)?;
-
-                deserialize_response(&res)
+    impl<Domain: AsRef<str>> ClientWrapper<Domain> {
+        pub fn new(options: ClientOptions<Domain>) -> Self {
+            Self {
+                client: reqwest::Client::new(),
+                options
             }
-      }
+        }
+
+        pub async fn make_request<Response, Form>(
+            &self,
+            method: Method,
+            path: &str,
+            request: LemmyRequest<Form>,
+            headers: &HashMap<String, String>
+        ) -> LemmyResult<Response>
+        where
+            Response: LemmyResponse,
+            Form: LemmyForm,
+        {
+            let route = build_route(path, &self.options);
+            let LemmyRequest { body, jwt } = request;
+
+            let res = match method {
+                Method::GET =>
+                    self
+                        .client
+                        .get(route)
+                        .with_headers(headers)
+                        .maybe_with_jwt(jwt)
+                        .query(&body),
+                Method::POST =>
+                    self
+                        .client
+                        .post(route)
+                        .with_headers(headers)
+                        .maybe_with_jwt(jwt)
+                        .json(&body),
+                Method::PUT =>
+                    self
+                        .client
+                        .put(route)
+                        .with_headers(headers)
+                        .maybe_with_jwt(jwt)
+                        .json(&body),
+                _ => unreachable!("This crate does not use other HTTP methods.")
+            }.send()
+                .await
+                .map_err(map_other_error)?
+                .text()
+                .await
+                .map_err(map_other_error)?;
+
+            deserialize_response(&res)
+        }
+
+        pub async fn make_file_request(&self, path: &str, request: LemmyRequest<&'static [u8]>, headers: &HashMap<String, String>) -> LemmyResult<UploadImageResponse> {
+            let route = build_route(path, &self.options);
+            let LemmyRequest { body, jwt } = request;
+
+            let res = self
+                        .client
+                        .post(route)
+                        .with_headers(headers)
+                        .maybe_with_jwt(jwt)
+                        .body(body)
+                        .send()
+                        .await
+                        .map_err(map_other_error)?
+                        .text()
+                        .await
+                        .map_err(map_other_error)?;
+
+            deserialize_response(&res)
+        }
+    }
   }
 }

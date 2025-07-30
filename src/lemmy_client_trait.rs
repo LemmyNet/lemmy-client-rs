@@ -18,7 +18,8 @@ use lemmy_api_common::{
         auth::{
             ChangePassword, GenerateTotpSecretResponse, GetCaptchaResponse, ListLoginsResponse,
             Login, LoginResponse, PasswordChangeAfterReset, PasswordReset, Register,
-            ResendVerificationEmail, UpdateTotp, UpdateTotpResponse, VerifyEmail,
+            ResendVerificationEmail, UpdateTotp, UpdateTotpResponse, UserSettingsBackup,
+            VerifyEmail,
         },
     },
     comment::{
@@ -54,7 +55,7 @@ use lemmy_api_common::{
         GetFederatedInstancesResponse, ResolveObject, UserBlockInstanceParams,
         administration::{AdminAllowInstanceParams, AdminBlockInstanceParams},
     },
-    media::{DeleteImageParams, ListMedia, ListMediaResponse},
+    media::{DeleteImageParams, ListMedia, ListMediaResponse, UploadImageResponse},
     modlog::{GetModlog, GetModlogResponse},
     oauth::{
         AuthenticateWithOauth, CreateOAuthProvider, DeleteOAuthProvider, EditOAuthProvider,
@@ -182,6 +183,17 @@ impl<Domain: AsRef<str>> LemmyClient<Domain> {
             .make_request(method, path, request, &self.headers)
             .await
     }
+
+    /// Delegates request making logic (for files) to the private client implementation.
+    async fn make_file_request(
+        &self,
+        path: &str,
+        request: LemmyRequest<&'static [u8]>,
+    ) -> LemmyResult<UploadImageResponse> {
+        self.client
+            .make_file_request(path, request, &self.headers)
+            .await
+    }
 }
 
 /// Allows the various API methods to be added to the client without the need to
@@ -200,9 +212,24 @@ macro_rules! impl_client {
             )*
         }
     };
+
+    ($(($name:ident, $method:expr, $path:expr, $doc:expr)),+$(,)?) => {
+        impl<Domain: AsRef<str>> LemmyClient<Domain> {
+            $(
+                #[doc = $doc]
+                pub async fn $name<Request>(&self, request: Request) -> LemmyResult<UploadImageResponse>
+                where
+                    Request: Into<LemmyRequest<&'static [u8]>>,
+                {
+                    self.make_file_request($method, $path, request.into()).await
+                }
+            )*
+        }
+    };
 }
 
 impl_client![
+    // Site
     (
         get_site,
         Method::GET,
@@ -1178,17 +1205,16 @@ HTTP PUT /account/settings/save"#
         Method::GET,
         "account/settings/export",
         (),
-        String,
+        UserSettingsBackup,
         r#"Exports a backup of your user settings - including your saved content, followed communities, and blocks - as JSON.
 
 HTTP GET /account/settings/export"#
     ),
-    // TODO: How to handle import?
     (
         import_settings,
         Method::POST,
         "account/settings/import",
-        String,
+        UserSettingsBackup,
         SuccessResponse,
         r#"Imports a backup of your user settings.
 
