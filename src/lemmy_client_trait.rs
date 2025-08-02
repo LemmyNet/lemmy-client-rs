@@ -2,11 +2,7 @@
 use crate::lemmy_client_internal::ClientWrapper;
 #[cfg(target_family = "wasm")]
 use crate::lemmy_client_internal::Fetch;
-use crate::{
-  ClientOptions,
-  form::{LemmyForm, LemmyRequest},
-  response::{LemmyResponse, LemmyResult},
-};
+use crate::{ClientOptions, form::LemmyRequest, response::LemmyResult};
 use cfg_if::cfg_if;
 use http::Method;
 use lemmy_api_common::{
@@ -268,35 +264,6 @@ impl<Domain: AsRef<str>> LemmyClient<Domain> {
   pub fn headers_mut(&mut self) -> &mut HashMap<String, String> {
     &mut self.headers
   }
-
-  /// Delegates request making logic to the private client implementation.
-  async fn make_request<Response, Form>(
-    &self,
-    method: Method,
-    path: &str,
-    request: LemmyRequest<Form>,
-  ) -> LemmyResult<Response>
-  where
-    Response: LemmyResponse,
-    Form: LemmyForm,
-  {
-    self
-      .client
-      .make_request(method, path, request, &self.headers)
-      .await
-  }
-
-  /// Delegates request making logic (for files) to the private client implementation.
-  async fn make_file_request(
-    &self,
-    path: &str,
-    request: LemmyRequest<&'static [u8]>,
-  ) -> LemmyResult<UploadImageResponse> {
-    self
-      .client
-      .make_file_request(path, request, &self.headers)
-      .await
-  }
 }
 
 /// Allows the various API methods to be added to the client without the need to
@@ -454,7 +421,7 @@ macro_rules! impl_client {
                 where
                     Request: Into<LemmyRequest<$form>>,
                 {
-                    self.make_request($method, $path, request.into()).await
+                    self.client.make_request($method, $path, request.into(), &self.headers).await
                 }
             )*
         }
@@ -468,7 +435,7 @@ macro_rules! impl_client {
                 where
                     Request: Into<LemmyRequest<&'static [u8]>>,
                 {
-                    self.make_file_request($path, request.into()).await
+                    self.client.make_file_request($path, request.into(), &self.headers).await
                 }
             )*
         }
