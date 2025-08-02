@@ -213,7 +213,7 @@ macro_rules! impl_client {
         }
     };
 
-    ($(($name:ident, $method:expr, $path:expr, $doc:expr)),+$(,)?) => {
+    ($(($name:ident, $path:expr, $doc:expr)),+$(,)?) => {
         impl<Domain: AsRef<str>> LemmyClient<Domain> {
             $(
                 #[doc = $doc]
@@ -221,7 +221,7 @@ macro_rules! impl_client {
                 where
                     Request: Into<LemmyRequest<&'static [u8]>>,
                 {
-                    self.make_file_request($method, $path, request.into()).await
+                    self.make_file_request($path, request.into()).await
                 }
             )*
         }
@@ -1522,3 +1522,26 @@ HTTP GET /admin/list_all_media"#
     ),
 ];
 // TODO: OAuth and image stuff
+
+impl_client![
+    (
+        upload_site_icon,
+        "icon",
+        r#"Upload an icon for your site. This is shown as the site favicon, in site header, and is used as metadata for
+external instance listings like [join-lemmy.org](https://join-lemmy.org/instances).
+
+**Only usable by instance admins**
+
+HTTP POST /icon"#
+    ),
+    (
+        upload_site_banner,
+        "banner",
+        r#"Upload a banner for your site. This is shown in the site sidebar and is used as metadata for
+external instance listings like [join-lemmy.org](https://join-lemmy.org/instances).
+
+**Only usable by instance admins**
+
+HTTP POST /banner"#
+    )
+];
