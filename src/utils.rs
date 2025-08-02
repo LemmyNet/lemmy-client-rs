@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+
 /// Implements a marker trait for a list of types.
 /// To use, call the macro like a function, passing a trait with no
 /// functions as the first arg and a list of types you would
@@ -32,7 +34,7 @@ pub(crate) use impl_marker_trait;
 /// Options for creating a [`LemmyClient`][client].
 ///
 /// [client]: crate::LemmyClient
-pub struct ClientOptions<Domain: AsRef<str>> {
+pub struct ClientOptions<Domain: Into<Cow<'static, str>>> {
   /// Domain of the instance the client will send requests to.
   /// ```
   /// # use lemmy_client::ClientOptions;
@@ -51,4 +53,25 @@ pub struct ClientOptions<Domain: AsRef<str>> {
   pub domain: Domain,
   /// If true, use HTTPS. If false, use HTTP
   pub secure: bool,
+}
+
+/// Internal options used by the Lemmy client implementation.
+/// This type being non-generic helps cut down on binary size
+/// from monomorphization.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ClientOptionsInternal {
+  pub domain: Cow<'static, str>,
+  pub secure: bool,
+}
+
+impl<Domain> From<ClientOptions<Domain>> for ClientOptionsInternal
+where
+  Domain: Into<Cow<'static, str>>,
+{
+  fn from(ClientOptions { domain, secure }: ClientOptions<Domain>) -> Self {
+    Self {
+      secure,
+      domain: domain.into(),
+    }
+  }
 }

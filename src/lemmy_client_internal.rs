@@ -1,7 +1,7 @@
 use crate::{
   form::{LemmyForm, LemmyRequest},
   response::{LemmyResponse, LemmyResult},
-  utils::ClientOptions,
+  utils::ClientOptionsInternal,
 };
 use http::Method;
 use lemmy_api_common::{error::LemmyErrorType, media::UploadImageResponse};
@@ -15,9 +15,9 @@ trait MaybeWithJwt {
   fn maybe_with_jwt(self, jwt: Option<String>) -> Self;
 }
 
-fn build_route<T: AsRef<str>>(
+fn build_route(
   route: &str,
-  ClientOptions { domain, secure }: &ClientOptions<T>,
+  ClientOptionsInternal { domain, secure }: &ClientOptionsInternal,
 ) -> String {
   format!(
     "http{}://{}/api/v4/{route}",
@@ -43,7 +43,7 @@ pub use client_internal::Fetch;
 #[cfg(not(target_family = "wasm"))]
 mod client_internal {
   use super::{
-    ClientOptions,
+    ClientOptionsInternal,
     HashMap,
     LemmyForm,
     LemmyRequest,
@@ -57,7 +57,7 @@ mod client_internal {
     deserialize_response,
     map_other_error,
   };
-  use reqwest::RequestBuilder;
+  use reqwest::{Client, RequestBuilder};
 
   impl WithHeaders for RequestBuilder {
     fn with_headers(self, headers: &HashMap<String, String>) -> Self {
@@ -86,15 +86,15 @@ mod client_internal {
     }
   }
 
-  pub struct ClientWrapper<Domain: AsRef<str>> {
-    client: reqwest::Client,
-    pub options: ClientOptions<Domain>,
+  pub struct ClientWrapper {
+    client: Client,
+    pub options: ClientOptionsInternal,
   }
 
-  impl<Domain: AsRef<str>> ClientWrapper<Domain> {
-    pub fn new(options: ClientOptions<Domain>) -> Self {
+  impl ClientWrapper {
+    pub fn new(options: ClientOptionsInternal) -> Self {
       Self {
-        client: reqwest::Client::new(),
+        client: Client::new(),
         options,
       }
     }
@@ -174,7 +174,7 @@ mod client_internal {
 #[cfg(target_family = "wasm")]
 mod client_internal {
   use super::{
-    ClientOptions,
+    ClientOptionsInternal,
     HashMap,
     LemmyForm,
     LemmyRequest,
@@ -191,15 +191,15 @@ mod client_internal {
   use gloo_net::http::{Request, RequestBuilder};
   use serde::Serialize;
   use wasm_bindgen::UnwrapThrowExt;
-  pub struct Fetch<Domain: AsRef<str>>(pub ClientOptions<Domain>);
+  pub struct Fetch(pub ClientOptionsInternal);
 
-  impl<Domain: AsRef<str>> Fetch<Domain> {
+  impl Fetch {
     fn build_fetch_query<T: Serialize>(&self, path: &str, form: &T) -> String {
       let form_str = serde_urlencoded::to_string(form).unwrap_or_else(|_| path.to_string());
-      format!("{}?{}", build_route::<Domain>(path, &self.0), form_str)
+      format!("{}?{}", build_route(path, &self.0), form_str)
     }
 
-    pub fn new(options: ClientOptions<Domain>) -> Self {
+    pub fn new(options: ClientOptionsInternal) -> Self {
       Self(options)
     }
 

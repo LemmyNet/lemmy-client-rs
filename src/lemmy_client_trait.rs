@@ -2,7 +2,12 @@
 use crate::lemmy_client_internal::ClientWrapper;
 #[cfg(target_family = "wasm")]
 use crate::lemmy_client_internal::Fetch;
-use crate::{ClientOptions, form::LemmyRequest, response::LemmyResult};
+use crate::{
+  ClientOptions,
+  form::LemmyRequest,
+  response::LemmyResult,
+  utils::ClientOptionsInternal,
+};
 use http::Method;
 use lemmy_api_common::{
   SuccessResponse,
@@ -205,28 +210,37 @@ use lemmy_api_common::{
     aministration::{CreateTagline, DeleteTagline, UpdateTagline},
   },
 };
-use std::collections::HashMap;
+use std::{borrow::Cow, collections::HashMap};
 
 /// API wrapper for lemmy
-pub struct LemmyClient<Domain: AsRef<str>> {
+pub struct LemmyClient {
   headers: HashMap<String, String>,
   #[cfg(target_family = "wasm")]
-  client: Fetch<Domain>,
+  client: Fetch,
   #[cfg(not(target_family = "wasm"))]
-  client: ClientWrapper<Domain>,
+  client: ClientWrapper,
 }
 
-impl<Domain: AsRef<str>> LemmyClient<Domain> {
+impl LemmyClient {
   /// Creates a new [`LemmyClient`].
   /// # Examples
   /// ```
   /// # use lemmy_client::{LemmyClient, ClientOptions};
   /// let client = LemmyClient::new(ClientOptions {
-  ///     domain: String::from("lemmy.ml"),
+  ///     domain: "lemmy.ml",
   ///     secure: true
   /// });
   /// ```
-  pub fn new(options: ClientOptions<Domain>) -> Self {
+  pub fn new<Domain>(options: ClientOptions<Domain>) -> Self
+  where
+    Domain: Into<Cow<'static, str>>,
+  {
+    Self::new_inner(options.into())
+  }
+
+  /// Private non-generic function for creating a new ['LemmyClient']
+  /// to cut down on monomorphized code.
+  fn new_inner(options: ClientOptionsInternal) -> Self {
     #[cfg(target_family = "wasm")]
     {
       Self {
@@ -245,7 +259,7 @@ impl<Domain: AsRef<str>> LemmyClient<Domain> {
   }
 
   /// Gets the options passed to the client.
-  pub fn options(&self) -> &ClientOptions<Domain> {
+  fn options(&self) -> &ClientOptionsInternal {
     #[cfg(target_family = "wasm")]
     {
       &self.client.0
@@ -255,6 +269,17 @@ impl<Domain: AsRef<str>> LemmyClient<Domain> {
     {
       &self.client.options
     }
+  }
+
+  /// Returns whether or not the client is making requests over HTTPS.
+  pub fn secure(&self) -> bool {
+    self.options().secure
+  }
+
+  /// Returns the domain of the Lemmy instance the client should make
+  /// requests to.
+  pub fn domain(&self) -> &str {
+    &self.options().domain
   }
 
   /// Returns a map of headers that will be included with each request.
@@ -417,7 +442,7 @@ impl<Domain: AsRef<str>> LemmyClient<Domain> {
 /// [image_response]: lemmy_api_common::media::UploadImageResponse
 macro_rules! impl_client {
     ($(($name:ident, $method:expr, $path:expr, $form:ty, $response:ty, $doc:expr)),+$(,)?) => {
-        impl<Domain: AsRef<str>> LemmyClient<Domain> {
+        impl LemmyClient {
             $(
                 #[doc = $doc]
                 pub async fn $name<Request>(&self, request: Request) -> LemmyResult<$response>
@@ -431,7 +456,7 @@ macro_rules! impl_client {
     };
 
     ($(($name:ident, $path:expr, $doc:expr)),+$(,)?) => {
-        impl<Domain: AsRef<str>> LemmyClient<Domain> {
+        impl LemmyClient {
             $(
                 #[doc = $doc]
                 pub async fn $name<Request>(&self, request: Request) -> LemmyResult<UploadImageResponse>
