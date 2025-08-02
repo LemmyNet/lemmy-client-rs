@@ -1,3 +1,23 @@
+/// Implements a marker trait for a list of types.
+/// To use, call the macro like a function, passing a trait with no
+/// functions as the first arg and a list of types you would
+/// like to implement the trait for as the second argument.
+///
+/// # Example
+/// ```ignore
+/// trait Unsigned {}
+///
+/// impl_marker_trait!(
+///   Unsigned,
+///   [
+///     u8,
+///     u16,
+///     u32,
+///     u64,
+///     u128 // Trailing comma optional
+///   ]
+/// );
+/// ```
 macro_rules! impl_marker_trait {
     ($trait_name:ty, [$( $impler:ty ),+$(,)?]) => {
         $(
