@@ -30,11 +30,11 @@ impl WithHeaders for RequestBuilder {
 }
 
 trait MaybeWithJwt {
-  fn maybe_with_jwt(self, jwt: Option<String>) -> Self;
+  fn maybe_with_jwt(self, jwt: Option<&str>) -> Self;
 }
 
 impl MaybeWithJwt for RequestBuilder {
-  fn maybe_with_jwt(self, jwt: Option<String>) -> Self {
+  fn maybe_with_jwt(self, jwt: Option<&str>) -> Self {
     if let Some(jwt) = jwt {
       self.bearer_auth(jwt)
     } else {
@@ -136,7 +136,7 @@ impl LemmyClient {
     &self,
     method: &Method,
     path: &str,
-    jwt: Option<String>,
+    jwt: Option<&str>,
   ) -> RequestBuilder {
     let route = build_route(path, &self.options);
 
@@ -152,11 +152,11 @@ impl LemmyClient {
       .maybe_with_jwt(jwt)
   }
 
-  pub(crate) async fn make_request<Response, Form>(
+  pub(crate) async fn make_request<'jwt, Response, Form>(
     &self,
     method: Method,
     path: &str,
-    request: LemmyRequest<Form>,
+    request: LemmyRequest<'jwt, Form>,
   ) -> LemmyResult<Response>
   where
     Response: LemmyResponse,
@@ -176,10 +176,10 @@ impl LemmyClient {
     deserialize_response(&res)
   }
 
-  pub(crate) async fn make_file_request(
+  pub(crate) async fn make_file_request<'jwt>(
     &self,
     path: &str,
-    request: LemmyRequest<&'static [u8]>,
+    request: LemmyRequest<'jwt, &'static [u8]>,
   ) -> LemmyResult<UploadImageResponse> {
     let LemmyRequest { body, jwt } = request;
     let request_builder = self

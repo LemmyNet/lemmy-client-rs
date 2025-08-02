@@ -180,9 +180,9 @@ macro_rules! impl_client {
         impl LemmyClient {
             $(
                 #[doc = $doc]
-                pub async fn $name<Request>(&self, request: Request) -> LemmyResult<$response>
+                pub async fn $name<'jwt, Request>(&self, request: Request) -> LemmyResult<$response>
                 where
-                    Request: Into<LemmyRequest<$form>>,
+                    Request: Into<LemmyRequest<'jwt, $form>>,
                 {
                     self.make_request($method, $path, request.into()).await
                 }
@@ -195,9 +195,9 @@ macro_rules! impl_client {
         impl LemmyClient {
             $(
                 #[doc = $doc]
-                pub async fn $name<Request>(&self, request: Request) -> LemmyResult<UploadImageResponse>
+                pub async fn $name<'jwt, Request>(&self, request: Request) -> LemmyResult<UploadImageResponse>
                 where
-                    Request: Into<LemmyRequest<&'static [u8]>>,
+                    Request: Into<LemmyRequest<'jwt, &'static [u8]>>,
                 {
                     self.make_file_request($path, request.into()).await
                 }
