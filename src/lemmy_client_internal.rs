@@ -93,10 +93,10 @@ cfg_if! {
             let route = &build_route(path, &self.0);
             let LemmyRequest { body, jwt } = request;
 
-            let mut res = Request::post(route)
+            let res = Request::post(route)
                 .with_headers(headers)
                 .maybe_with_jwt(jwt)
-                .body(&body)
+                .body(Box::<[u8]>::from(body))
                 .expect_throw("Could not parse file")
                 .send()
                 .await
