@@ -31,13 +31,14 @@
 //! use Lemmy versions use 0.19.3 and lower.
 //! </div>
 
+mod client_options;
+mod endpoint_methods;
 mod form;
 mod lemmy_client;
-mod lemmy_client_endpoint_impls;
+mod macros;
 mod response;
-mod utils;
 
+pub use client_options::ClientOptions;
 pub use form::LemmyRequest;
 pub use lemmy_api_common;
 pub use lemmy_client::LemmyClient;
-pub use utils::ClientOptions;

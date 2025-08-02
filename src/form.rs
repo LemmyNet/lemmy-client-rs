@@ -1,4 +1,4 @@
-use crate::utils::impl_marker_trait;
+use crate::macros::impl_marker_trait;
 use lemmy_api_common::{
   account::{
     DeleteAccount,
