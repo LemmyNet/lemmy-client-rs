@@ -3,7 +3,6 @@ use crate::lemmy_client_internal::ClientWrapper;
 #[cfg(target_family = "wasm")]
 use crate::lemmy_client_internal::Fetch;
 use crate::{ClientOptions, form::LemmyRequest, response::LemmyResult};
-use cfg_if::cfg_if;
 use http::Method;
 use lemmy_api_common::{
   SuccessResponse,
@@ -228,29 +227,33 @@ impl<Domain: AsRef<str>> LemmyClient<Domain> {
   /// });
   /// ```
   pub fn new(options: ClientOptions<Domain>) -> Self {
-    cfg_if! {
-        if #[cfg(target_family = "wasm")] {
-            Self {
-                client: Fetch::new(options),
-                headers: HashMap::new()
-            }
-        } else {
-            Self {
-                client: ClientWrapper::new(options),
-                headers: HashMap::new()
-            }
-        }
+    #[cfg(target_family = "wasm")]
+    {
+      Self {
+        client: Fetch::new(options),
+        headers: HashMap::new(),
+      }
+    }
+
+    #[cfg(not(target_family = "wasm"))]
+    {
+      Self {
+        client: ClientWrapper::new(options),
+        headers: HashMap::new(),
+      }
     }
   }
 
   /// Gets the options passed to the client.
   pub fn options(&self) -> &ClientOptions<Domain> {
-    cfg_if! {
-        if #[cfg(target_family = "wasm")] {
-            &self.client.0
-        } else {
-            &self.client.options
-        }
+    #[cfg(target_family = "wasm")]
+    {
+      &self.client.0
+    }
+
+    #[cfg(not(target_family = "wasm"))]
+    {
+      &self.client.options
     }
   }
 
