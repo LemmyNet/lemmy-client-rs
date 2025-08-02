@@ -13,8 +13,34 @@ trait WithHeaders {
   fn with_headers(self, headers: &HeaderMap) -> Self;
 }
 
+impl WithHeaders for RequestBuilder {
+  fn with_headers(self, headers: &HeaderMap) -> Self {
+    let mut request_builder = headers
+      .iter()
+      .fold(self, |request_builder, (header, value)| {
+        request_builder.header(header, value)
+      });
+
+    if !headers.contains_key(USER_AGENT) {
+      request_builder = request_builder.header(USER_AGENT, "Lemmy-Client-rs/1.0.0");
+    }
+
+    request_builder
+  }
+}
+
 trait MaybeWithJwt {
   fn maybe_with_jwt(self, jwt: Option<String>) -> Self;
+}
+
+impl MaybeWithJwt for RequestBuilder {
+  fn maybe_with_jwt(self, jwt: Option<String>) -> Self {
+    if let Some(jwt) = jwt {
+      self.bearer_auth(jwt)
+    } else {
+      self
+    }
+  }
 }
 
 fn build_route(
@@ -37,30 +63,14 @@ fn deserialize_response<Response: LemmyResponse>(res: &str) -> Result<Response, 
     .map_err(|_| serde_json::from_str::<LemmyErrorType>(res).unwrap_or_else(map_other_error))
 }
 
-impl WithHeaders for RequestBuilder {
-  fn with_headers(self, headers: &HeaderMap) -> Self {
-    let mut request_builder = headers
-      .iter()
-      .fold(self, |request_builder, (header, value)| {
-        request_builder.header(header, value)
-      });
-
-    if !headers.contains_key(USER_AGENT) {
-      request_builder = request_builder.header(USER_AGENT, "Lemmy-Client-rs/1.0.0");
-    }
-
-    request_builder
-  }
-}
-
-impl MaybeWithJwt for RequestBuilder {
-  fn maybe_with_jwt(self, jwt: Option<String>) -> Self {
-    if let Some(jwt) = jwt {
-      self.bearer_auth(jwt)
-    } else {
-      self
-    }
-  }
+async fn send_request(request_builder: RequestBuilder) -> Result<String, LemmyErrorType> {
+  request_builder
+    .send()
+    .await
+    .map_err(map_other_error)?
+    .text()
+    .await
+    .map_err(map_other_error)
 }
 
 /// API wrapper for Lemmy
@@ -121,6 +131,27 @@ impl LemmyClient {
     &mut self.headers
   }
 
+  /// Create a [`RequestBuilder`] to use for making requests.
+  fn create_request_builder(
+    &self,
+    method: &Method,
+    path: &str,
+    jwt: Option<String>,
+  ) -> RequestBuilder {
+    let route = build_route(path, &self.options);
+
+    let request_builder = match method {
+      &Method::GET => self.client.get(route),
+      &Method::POST => self.client.post(route),
+      &Method::PUT => self.client.put(route),
+      _ => unreachable!("This crate does not use other HTTP methods."),
+    };
+
+    request_builder
+      .with_headers(&self.headers)
+      .maybe_with_jwt(jwt)
+  }
+
   pub(crate) async fn make_request<Response, Form>(
     &self,
     method: Method,
@@ -131,36 +162,16 @@ impl LemmyClient {
     Response: LemmyResponse,
     Form: LemmyForm,
   {
-    let route = build_route(path, &self.options);
     let LemmyRequest { body, jwt } = request;
+    let request_builder = self.create_request_builder(&method, path, jwt);
 
-    let res = match method {
-      Method::GET => self
-        .client
-        .get(route)
-        .with_headers(&self.headers)
-        .maybe_with_jwt(jwt)
-        .query(&body),
-      Method::POST => self
-        .client
-        .post(route)
-        .with_headers(&self.headers)
-        .maybe_with_jwt(jwt)
-        .json(&body),
-      Method::PUT => self
-        .client
-        .put(route)
-        .with_headers(&self.headers)
-        .maybe_with_jwt(jwt)
-        .json(&body),
+    let request_builder = match method {
+      Method::GET => request_builder.query(&body),
+      Method::POST | Method::PUT => request_builder.json(&body),
       _ => unreachable!("This crate does not use other HTTP methods."),
-    }
-    .send()
-    .await
-    .map_err(map_other_error)?
-    .text()
-    .await
-    .map_err(map_other_error)?;
+    };
+
+    let res = send_request(request_builder).await?;
 
     deserialize_response(&res)
   }
@@ -170,21 +181,12 @@ impl LemmyClient {
     path: &str,
     request: LemmyRequest<&'static [u8]>,
   ) -> LemmyResult<UploadImageResponse> {
-    let route = build_route(path, &self.options);
     let LemmyRequest { body, jwt } = request;
+    let request_builder = self
+      .create_request_builder(&Method::POST, path, jwt)
+      .body(body);
 
-    let res = self
-      .client
-      .post(route)
-      .with_headers(&self.headers)
-      .maybe_with_jwt(jwt)
-      .body(body)
-      .send()
-      .await
-      .map_err(map_other_error)?
-      .text()
-      .await
-      .map_err(map_other_error)?;
+    let res = send_request(request_builder).await?;
 
     deserialize_response(&res)
   }
