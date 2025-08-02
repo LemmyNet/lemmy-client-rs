@@ -1,9 +1,9 @@
 #![warn(missing_docs)]
 #![doc(
-    html_favicon_url = "https://raw.githubusercontent.com/LemmyNet/lemmy-ui/main/src/assets/icons/favicon.svg"
+  html_favicon_url = "https://raw.githubusercontent.com/LemmyNet/lemmy-ui/main/src/assets/icons/favicon.svg"
 )]
 #![doc(
-    html_logo_url = "https://raw.githubusercontent.com/LemmyNet/lemmy-ui/main/src/assets/icons/favicon.svg"
+  html_logo_url = "https://raw.githubusercontent.com/LemmyNet/lemmy-ui/main/src/assets/icons/favicon.svg"
 )]
 #![doc(issue_tracker_base_url = "https://github.com/LemmyNet/lemmy-client-rs/issues/")]
 //! A Rust HTTP client for Lemmy.
@@ -21,11 +21,10 @@
 //!
 //!   assert!(res.is_ok());
 //! }
-//!
 //! ```
 //! <div class="warning">
-//! This crate now uses a different versioning scheme than before so as not to be too tied down to Lemmy releases.
-//! For Lemmy versions 0.19.4 and up, use versions 1.x.x.
+//! This crate now uses a different versioning scheme than before so as not to be too tied down to
+//! Lemmy releases. For Lemmy versions 0.19.4 and up, use versions 1.x.x.
 //! For Lemmy versions 0.19.3 and under, use versions 0.19.5 and up.
 //!
 //! This is confusing, but should become a non issue as Lemmy accumulates versions and fewer servers

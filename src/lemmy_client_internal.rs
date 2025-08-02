@@ -1,7 +1,7 @@
 use crate::{
-    form::{LemmyForm, LemmyRequest},
-    response::{LemmyResponse, LemmyResult},
-    utils::ClientOptions,
+  form::{LemmyForm, LemmyRequest},
+  response::{LemmyResponse, LemmyResult},
+  utils::ClientOptions,
 };
 use cfg_if::cfg_if;
 use http::Method;
@@ -9,31 +9,31 @@ use lemmy_api_common::{error::LemmyErrorType, media::UploadImageResponse};
 use std::collections::HashMap;
 
 trait WithHeaders {
-    fn with_headers(self, headers: &HashMap<String, String>) -> Self;
+  fn with_headers(self, headers: &HashMap<String, String>) -> Self;
 }
 
 trait MaybeWithJwt {
-    fn maybe_with_jwt(self, jwt: Option<String>) -> Self;
+  fn maybe_with_jwt(self, jwt: Option<String>) -> Self;
 }
 
 fn build_route<T: AsRef<str>>(
-    route: &str,
-    ClientOptions { domain, secure }: &ClientOptions<T>,
+  route: &str,
+  ClientOptions { domain, secure }: &ClientOptions<T>,
 ) -> String {
-    format!(
-        "http{}://{}/api/v4/{route}",
-        if *secure { "s" } else { "" },
-        domain.as_ref()
-    )
+  format!(
+    "http{}://{}/api/v4/{route}",
+    if *secure { "s" } else { "" },
+    domain.as_ref()
+  )
 }
 
 fn map_other_error<E: ToString>(e: E) -> LemmyErrorType {
-    LemmyErrorType::Unknown(e.to_string())
+  LemmyErrorType::Unknown(e.to_string())
 }
 
 fn deserialize_response<Response: LemmyResponse>(res: &str) -> Result<Response, LemmyErrorType> {
-    serde_json::from_str::<Response>(res)
-        .map_err(|_| serde_json::from_str::<LemmyErrorType>(res).unwrap_or_else(map_other_error))
+  serde_json::from_str::<Response>(res)
+    .map_err(|_| serde_json::from_str::<LemmyErrorType>(res).unwrap_or_else(map_other_error))
 }
 
 cfg_if! {

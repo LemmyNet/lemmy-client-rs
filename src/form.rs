@@ -1,116 +1,175 @@
+use crate::utils::impl_marker_trait;
 use lemmy_api_common::{
-    account::{
-        DeleteAccount, ListPersonHidden, ListPersonLiked, ListPersonRead, ListPersonSaved,
-        SaveUserSettings,
-        auth::{
-            ChangePassword, Login, PasswordChangeAfterReset, PasswordReset, Register,
-            ResendVerificationEmail, UpdateTotp, UserSettingsBackup, VerifyEmail,
-        },
+  account::{
+    DeleteAccount,
+    ListPersonHidden,
+    ListPersonLiked,
+    ListPersonRead,
+    ListPersonSaved,
+    SaveUserSettings,
+    auth::{
+      ChangePassword,
+      Login,
+      PasswordChangeAfterReset,
+      PasswordReset,
+      Register,
+      ResendVerificationEmail,
+      UpdateTotp,
+      UserSettingsBackup,
+      VerifyEmail,
     },
-    comment::{
-        GetComment, GetComments,
-        actions::{
-            CreateComment, CreateCommentLike, DeleteComment, EditComment, SaveComment,
-            moderation::{DistinguishComment, ListCommentLikes, PurgeComment, RemoveComment},
-        },
+  },
+  comment::{
+    GetComment,
+    GetComments,
+    actions::{
+      CreateComment,
+      CreateCommentLike,
+      DeleteComment,
+      EditComment,
+      SaveComment,
+      moderation::{DistinguishComment, ListCommentLikes, PurgeComment, RemoveComment},
     },
-    community::{
-        CreateMultiCommunity, CreateOrDeleteMultiCommunityEntry, FollowMultiCommunity,
-        GetCommunity, GetMultiCommunity, GetRandomCommunity, ListCommunities, ListMultiCommunities,
-        UpdateCommunityNotifications, UpdateMultiCommunity,
-        actions::{
-            BlockCommunity, CreateCommunity, FollowCommunity, HideCommunity,
-            moderation::{
-                AddModToCommunity, ApproveCommunityPendingFollower, BanFromCommunity,
-                CommunityIdQuery, CreateCommunityTag, DeleteCommunity, DeleteCommunityTag,
-                EditCommunity, GetCommunityPendingFollowsCount, ListCommunityPendingFollows,
-                PurgeCommunity, RemoveCommunity, TransferCommunity, UpdateCommunityTag,
-            },
-        },
+  },
+  community::{
+    CreateMultiCommunity,
+    CreateOrDeleteMultiCommunityEntry,
+    FollowMultiCommunity,
+    GetCommunity,
+    GetMultiCommunity,
+    GetRandomCommunity,
+    ListCommunities,
+    ListMultiCommunities,
+    UpdateCommunityNotifications,
+    UpdateMultiCommunity,
+    actions::{
+      BlockCommunity,
+      CreateCommunity,
+      FollowCommunity,
+      HideCommunity,
+      moderation::{
+        AddModToCommunity,
+        ApproveCommunityPendingFollower,
+        BanFromCommunity,
+        CommunityIdQuery,
+        CreateCommunityTag,
+        DeleteCommunity,
+        DeleteCommunityTag,
+        EditCommunity,
+        GetCommunityPendingFollowsCount,
+        ListCommunityPendingFollows,
+        PurgeCommunity,
+        RemoveCommunity,
+        TransferCommunity,
+        UpdateCommunityTag,
+      },
     },
-    custom_emoji::{CreateCustomEmoji, DeleteCustomEmoji, EditCustomEmoji, ListCustomEmojis},
-    federation::{
-        FederatedInstances, InstanceWithFederationState, ResolveObject, UserBlockInstanceParams,
-        administration::{AdminAllowInstanceParams, AdminBlockInstanceParams},
+  },
+  custom_emoji::{CreateCustomEmoji, DeleteCustomEmoji, EditCustomEmoji, ListCustomEmojis},
+  federation::{
+    FederatedInstances,
+    InstanceWithFederationState,
+    ResolveObject,
+    UserBlockInstanceCommunitiesParams,
+    UserBlockInstancePersonsParams,
+    administration::{AdminAllowInstanceParams, AdminBlockInstanceParams},
+  },
+  media::{DeleteImageParams, ImageProxyParams, ListMedia},
+  modlog::GetModlog,
+  notification::{ListNotifications, MarkNotificationAsRead},
+  oauth::{AuthenticateWithOauth, CreateOAuthProvider, DeleteOAuthProvider, EditOAuthProvider},
+  person::{
+    GetPersonDetails,
+    actions::{
+      BlockPerson,
+      ListPersonContent,
+      NotePerson,
+      moderation::{BanPerson, GetRegistrationApplication, PurgePerson},
     },
-    media::{DeleteImageParams, ImageProxyParams, ListMedia},
-    modlog::GetModlog,
-    notification::{ListNotifications, MarkNotificationAsRead},
-    oauth::{AuthenticateWithOauth, CreateOAuthProvider, DeleteOAuthProvider, EditOAuthProvider},
-    person::{
-        GetPersonDetails,
-        actions::{
-            BlockPerson, ListPersonContent, NotePerson,
-            moderation::{BanPerson, GetRegistrationApplication, PurgePerson},
-        },
+  },
+  post::{
+    GetPost,
+    GetPosts,
+    GetSiteMetadata,
+    actions::{
+      CreatePost,
+      CreatePostLike,
+      DeletePost,
+      EditPost,
+      HidePost,
+      MarkManyPostsAsRead,
+      MarkPostAsRead,
+      SavePost,
+      moderation::{FeaturePost, ListPostLikes, LockPost, ModEditPost, PurgePost, RemovePost},
     },
-    post::{
-        GetPost, GetPosts, GetSiteMetadata,
-        actions::{
-            CreatePost, CreatePostLike, DeletePost, EditPost, HidePost, MarkManyPostsAsRead,
-            MarkPostAsRead, SavePost,
-            moderation::{
-                FeaturePost, ListPostLikes, LockPost, ModEditPost, PurgePost, RemovePost,
-            },
-        },
-    },
-    private_message::actions::{CreatePrivateMessage, DeletePrivateMessage, EditPrivateMessage},
-    report::{
-        CreateCommentReport, CreateCommunityReport, CreatePostReport, CreatePrivateMessageReport,
-        GetReportCount, ListReports, ResolveCommentReport, ResolveCommunityReport,
-        ResolvePostReport, ResolvePrivateMessageReport,
-    },
-    search::Search,
-    site::administration::{
-        AddAdmin, AdminListUsers, ApproveRegistrationApplication, CreateSite, EditSite,
-        ListRegistrationApplications,
-    },
-    tagline::{
-        ListTaglines,
-        aministration::{CreateTagline, DeleteTagline, UpdateTagline},
-    },
+  },
+  private_message::actions::{CreatePrivateMessage, DeletePrivateMessage, EditPrivateMessage},
+  report::{
+    CreateCommentReport,
+    CreateCommunityReport,
+    CreatePostReport,
+    CreatePrivateMessageReport,
+    GetReportCount,
+    ListReports,
+    ResolveCommentReport,
+    ResolveCommunityReport,
+    ResolvePostReport,
+    ResolvePrivateMessageReport,
+  },
+  search::Search,
+  site::administration::{
+    AddAdmin,
+    AdminListUsers,
+    ApproveRegistrationApplication,
+    CreateSite,
+    EditSite,
+    ListRegistrationApplications,
+  },
+  tagline::{
+    ListTaglines,
+    aministration::{CreateTagline, DeleteTagline, UpdateTagline},
+  },
 };
 use serde::Serialize;
 use std::fmt;
 
-use crate::utils::impl_marker_trait;
-
 pub trait LemmyForm: Serialize + Clone + fmt::Debug {}
 
 #[derive(Debug, Clone)]
-/// A request to send to lemmy. If you don't want to set the JWT for each request, you can set the Authorization header with [`LemmyClient::headers_mut`](lemmy_client::LemmyClient.headers_mut).
+/// A request to send to lemmy. If you don't want to set the JWT for each request, you can set the
+/// Authorization header with [`LemmyClient::headers_mut`](lemmy_client::LemmyClient.headers_mut).
 pub struct LemmyRequest<Body>
 where
-    Body: LemmyForm,
+  Body: LemmyForm,
 {
-    /// The body to send with the request. Uses [`unit`] for when a body is not required.
-    pub body: Body,
-    /// The JWT that is used when authorization is required.
-    pub jwt: Option<String>,
+  /// The body to send with the request. Uses [`unit`] for when a body is not required.
+  pub body: Body,
+  /// The JWT that is used when authorization is required.
+  pub jwt: Option<String>,
 }
 
 impl LemmyRequest<()> {
-    /// Returns a request with no body or JWT.
-    pub fn empty() -> Self {
-        Self {
-            body: (),
-            jwt: None,
-        }
+  /// Returns a request with no body or JWT.
+  pub fn empty() -> Self {
+    Self {
+      body: (),
+      jwt: None,
     }
+  }
 
-    /// Returns a request with no body and JWT if [`Some`].
-    pub fn from_jwt(jwt: Option<String>) -> Self {
-        Self { body: (), jwt }
-    }
+  /// Returns a request with no body and JWT if [`Some`].
+  pub fn from_jwt(jwt: Option<String>) -> Self {
+    Self { body: (), jwt }
+  }
 }
 
 impl<Form> From<Form> for LemmyRequest<Form>
 where
-    Form: LemmyForm,
+  Form: LemmyForm,
 {
-    fn from(body: Form) -> Self {
-        Self { body, jwt: None }
-    }
+  fn from(body: Form) -> Self {
+    Self { body, jwt: None }
+  }
 }
 
 impl_marker_trait!(
@@ -187,7 +246,8 @@ impl_marker_trait!(
         ListPersonLiked,
         ListNotifications,
         MarkNotificationAsRead,
-        UserBlockInstanceParams,
+        UserBlockInstanceCommunitiesParams,
+        UserBlockInstancePersonsParams,
         ListPersonContent,
         ListReports,
         NotePerson,
