@@ -1,13 +1,4 @@
-#[cfg(not(target_family = "wasm"))]
-use crate::lemmy_client_internal::ClientWrapper;
-#[cfg(target_family = "wasm")]
-use crate::lemmy_client_internal::Fetch;
-use crate::{
-  ClientOptions,
-  form::LemmyRequest,
-  response::LemmyResult,
-  utils::ClientOptionsInternal,
-};
+use crate::{form::LemmyRequest, lemmy_client::LemmyClient, response::LemmyResult};
 use http::Method;
 use lemmy_api_common::{
   SuccessResponse,
@@ -210,89 +201,6 @@ use lemmy_api_common::{
     aministration::{CreateTagline, DeleteTagline, UpdateTagline},
   },
 };
-use std::{borrow::Cow, collections::HashMap};
-
-/// API wrapper for lemmy
-pub struct LemmyClient {
-  headers: HashMap<String, String>,
-  #[cfg(target_family = "wasm")]
-  client: Fetch,
-  #[cfg(not(target_family = "wasm"))]
-  client: ClientWrapper,
-}
-
-impl LemmyClient {
-  /// Creates a new [`LemmyClient`].
-  /// # Examples
-  /// ```
-  /// # use lemmy_client::{LemmyClient, ClientOptions};
-  /// let client = LemmyClient::new(ClientOptions {
-  ///     domain: "lemmy.ml",
-  ///     secure: true
-  /// });
-  /// ```
-  pub fn new<Domain>(options: ClientOptions<Domain>) -> Self
-  where
-    Domain: Into<Cow<'static, str>>,
-  {
-    Self::new_inner(options.into())
-  }
-
-  /// Private non-generic function for creating a new ['LemmyClient']
-  /// to cut down on monomorphized code.
-  fn new_inner(options: ClientOptionsInternal) -> Self {
-    #[cfg(target_family = "wasm")]
-    {
-      Self {
-        client: Fetch::new(options),
-        headers: HashMap::new(),
-      }
-    }
-
-    #[cfg(not(target_family = "wasm"))]
-    {
-      Self {
-        client: ClientWrapper::new(options),
-        headers: HashMap::new(),
-      }
-    }
-  }
-
-  /// Gets the options passed to the client.
-  fn options(&self) -> &ClientOptionsInternal {
-    #[cfg(target_family = "wasm")]
-    {
-      &self.client.0
-    }
-
-    #[cfg(not(target_family = "wasm"))]
-    {
-      &self.client.options
-    }
-  }
-
-  /// Returns whether or not the client is making requests over HTTPS.
-  pub fn secure(&self) -> bool {
-    self.options().secure
-  }
-
-  /// Returns the domain of the Lemmy instance the client should make
-  /// requests to.
-  pub fn domain(&self) -> &str {
-    &self.options().domain
-  }
-
-  /// Returns a map of headers that will be included with each request.
-  pub fn headers(&self) -> &HashMap<String, String> {
-    &self.headers
-  }
-
-  /// Returns a mutable map of headers that will be included with each request.
-  /// Use this method if you want to add headers other than the JWT.
-  pub fn headers_mut(&mut self) -> &mut HashMap<String, String> {
-    &mut self.headers
-  }
-}
 
 /// Allows the various API methods to be added to the client without the need to
 /// repeat a bunch of boilerplate.
@@ -442,6 +350,7 @@ impl LemmyClient {
 /// [image_response]: lemmy_api_common::media::UploadImageResponse
 macro_rules! impl_client {
     ($(($name:ident, $method:expr, $path:expr, $form:ty, $response:ty, $doc:expr)),+$(,)?) => {
+        /// Methods for making JSON requests to Lemmy's API endpoints.
         impl LemmyClient {
             $(
                 #[doc = $doc]
@@ -449,13 +358,14 @@ macro_rules! impl_client {
                 where
                     Request: Into<LemmyRequest<$form>>,
                 {
-                    self.client.make_request($method, $path, request.into(), &self.headers).await
+                    self.make_request($method, $path, request.into()).await
                 }
             )*
         }
     };
 
     ($(($name:ident, $path:expr, $doc:expr)),+$(,)?) => {
+        /// Methods for uploading images to Lemmy's API endpoints.
         impl LemmyClient {
             $(
                 #[doc = $doc]
@@ -463,7 +373,7 @@ macro_rules! impl_client {
                 where
                     Request: Into<LemmyRequest<&'static [u8]>>,
                 {
-                    self.client.make_file_request($path, request.into(), &self.headers).await
+                    self.make_file_request($path, request.into()).await
                 }
             )*
         }

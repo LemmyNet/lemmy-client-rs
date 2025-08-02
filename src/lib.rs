@@ -7,12 +7,12 @@
 )]
 #![doc(issue_tracker_base_url = "https://github.com/LemmyNet/lemmy-client-rs/issues/")]
 //! A Rust HTTP client for Lemmy.
-//! If used when targeting WASM, uses the browser's built-in fetch API to reduce bundle size.
+//! Also supports WASM, including use in the browser.
 //! ## Example
 //! ```
 //! # use lemmy_client::{LemmyClient, ClientOptions};
 //!
-//! async fn get_site_test() {
+//! # async fn get_site_test() {
 //!   let client = LemmyClient::new(ClientOptions {
 //!     domain: "lemmy.ml",
 //!     secure: true
@@ -20,7 +20,7 @@
 //!   let res = client.get_site(()).await;
 //!
 //!   assert!(res.is_ok());
-//! }
+//! # }
 //! ```
 //! <div class="warning">
 //! This crate now uses a different versioning scheme than before so as not to be too tied down to
@@ -32,12 +32,12 @@
 //! </div>
 
 mod form;
-mod lemmy_client_internal;
-mod lemmy_client_trait;
+mod lemmy_client;
+mod lemmy_client_endpoint_impls;
 mod response;
 mod utils;
 
 pub use form::LemmyRequest;
 pub use lemmy_api_common;
-pub use lemmy_client_trait::LemmyClient;
+pub use lemmy_client::LemmyClient;
 pub use utils::ClientOptions;
