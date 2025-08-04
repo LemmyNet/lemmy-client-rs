@@ -9,4 +9,3 @@ pub mod person;
 pub mod post;
 pub mod private_message;
 pub mod site;
-pub mod tag;
