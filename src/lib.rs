@@ -17,7 +17,7 @@
 //!     domain: "lemmy.ml",
 //!     secure: true
 //!   });
-//!   let res = client.get_site(()).await;
+//!   let res = client.get_site().await;
 //!
 //!   assert!(res.is_ok());
 //! # }
