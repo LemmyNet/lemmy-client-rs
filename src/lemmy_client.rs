@@ -142,10 +142,10 @@ impl LemmyClient {
   ) -> RequestBuilder {
     let route = build_route(path, &self.options);
 
-    let request_builder = match method {
-      &Method::GET => self.client.get(route),
-      &Method::POST => self.client.post(route),
-      &Method::PUT => self.client.put(route),
+    let request_builder = match *method {
+      Method::GET => self.client.get(route),
+      Method::POST => self.client.post(route),
+      Method::PUT => self.client.put(route),
       _ => unreachable!("This crate does not use other HTTP methods."),
     };
 
