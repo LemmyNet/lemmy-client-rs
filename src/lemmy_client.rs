@@ -1,5 +1,10 @@
 use crate::{ClientOptions, client_options::ClientOptionsInternal};
-use http::{HeaderMap, Method, header::USER_AGENT};
+use http::{
+  HeaderMap,
+  HeaderValue,
+  Method,
+  header::{AUTHORIZATION, InvalidHeaderValue, USER_AGENT},
+};
 use lemmy_api_common::{error::LemmyErrorType, media::UploadImageResponse};
 use reqwest::{Client, RequestBuilder};
 use serde::{Deserialize, Serialize};
@@ -7,26 +12,6 @@ use std::{borrow::Cow, fmt};
 
 /// A return type for the lemmy result
 pub type LemmyResult<R> = Result<R, LemmyErrorType>;
-
-trait WithHeaders {
-  fn with_headers(self, headers: &HeaderMap) -> Self;
-}
-
-impl WithHeaders for RequestBuilder {
-  fn with_headers(self, headers: &HeaderMap) -> Self {
-    let mut request_builder = headers
-      .iter()
-      .fold(self, |request_builder, (header, value)| {
-        request_builder.header(header, value)
-      });
-
-    if !headers.contains_key(USER_AGENT) {
-      request_builder = request_builder.header(USER_AGENT, "Lemmy-Client-rs/1.0.0");
-    }
-
-    request_builder
-  }
-}
 
 fn build_route(
   route: &str,
@@ -119,18 +104,48 @@ impl LemmyClient {
     &mut self.headers
   }
 
+  /// Set the Authorization header with a JWT token.
+  /// There is no need to include the "Bearer" part of the header value.
+  pub fn set_jwt(&mut self, jwt: &str) -> Result<(), InvalidHeaderValue> {
+    self.headers.insert(
+      AUTHORIZATION,
+      HeaderValue::try_from(format!("Bearer {jwt}"))?,
+    );
+
+    Ok(())
+  }
+
+  /// Clear the JWT used by the client.
+  ///
+  /// <div class="warning">
+  ///
+  /// **Important Note**: Requests made with the client after this point will not
+  /// be able to use endpoints the require authentication unless another JWT is
+  /// set with [set_jwt][set_jwt].
+  ///
+  /// </div>
+  ///
+  /// [set_jwt]: LemmyClient::set_jwt
+  pub fn clear_jwt(&mut self) {
+    self.headers.remove(AUTHORIZATION);
+  }
+
   /// Create a [`RequestBuilder`] to use for making requests.
   fn create_request_builder(&self, method: &Method, path: &str) -> RequestBuilder {
     let route = build_route(path, &self.options);
 
-    let request_builder = match *method {
+    let mut request_builder = match *method {
       Method::GET => self.client.get(route),
       Method::POST => self.client.post(route),
       Method::PUT => self.client.put(route),
       _ => unreachable!("This crate does not use other HTTP methods."),
     };
 
-    request_builder.with_headers(&self.headers)
+    if !self.headers.contains_key(USER_AGENT) {
+      request_builder = request_builder.header(USER_AGENT, "Lemmy-Client-rs/1.0.0");
+    }
+
+    request_builder.headers(self.headers.clone())
   }
 
   pub(crate) async fn make_request<Response, Form>(

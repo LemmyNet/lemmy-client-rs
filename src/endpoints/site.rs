@@ -16,7 +16,7 @@ use reqwest::Method;
 // TODO: Add stuff for icon and banner
 
 impl LemmyClient {
-  /// Gets the site and, if you pass an authorized JWT, information about the logged in user.
+  /// Gets the site.
   ///
   /// HTTP GET /site
   pub async fn get_site(&self) -> LemmyResult<GetSiteResponse> {

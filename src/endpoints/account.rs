@@ -1,5 +1,5 @@
 use crate::{LemmyClient, LemmyResult};
-use http::Method;
+use http::{Method, header::AUTHORIZATION};
 use lemmy_api_common::{
   SuccessResponse,
   account::{
@@ -60,12 +60,21 @@ impl LemmyClient {
   }
 
   /// Deletes the active session associated with the JWT.
+  /// If the response is successful, the JWT from the headers the client
+  /// sends with each request is also removed.
   ///
   /// HTTP POST /account/auth/logout
-  pub async fn logout(&self) -> LemmyResult<SuccessResponse> {
-    self
+  pub async fn logout(&mut self) -> LemmyResult<SuccessResponse> {
+    let response = self
       .make_request(Method::POST, "account/auth/logout", ())
-      .await
+      .await;
+
+    if response.is_ok() {
+      let headers = self.headers_mut();
+      headers.remove(AUTHORIZATION);
+    }
+
+    response
   }
 
   /// Sends an email to your account (if you have one) with a one time link to change your password.
