@@ -17,7 +17,7 @@ impl LemmyClient {
     &self,
     data: GetPersonDetails,
   ) -> LemmyResult<GetPersonDetailsResponse> {
-    self.make_request(Method::GET, "person", data.into()).await
+    self.make_request(Method::GET, "person", data).await
   }
 
   /// List posts and comments made by a user.
@@ -27,17 +27,13 @@ impl LemmyClient {
     &self,
     data: ListPersonContent,
   ) -> LemmyResult<ListPersonContentResponse> {
-    self
-      .make_request(Method::GET, "person/content", data.into())
-      .await
+    self.make_request(Method::GET, "person/content", data).await
   }
 
   /// Create a note about another user.
   ///
   /// HTTP POST /person/note
   pub async fn create_person_note(&self, data: NotePerson) -> LemmyResult<SuccessResponse> {
-    self
-      .make_request(Method::POST, "person/note", data.into())
-      .await
+    self.make_request(Method::POST, "person/note", data).await
   }
 }

@@ -43,27 +43,21 @@ impl LemmyClient {
   ///
   /// HTTP GET /community
   pub async fn get_community(&self, data: GetCommunity) -> LemmyResult<GetCommunityResponse> {
-    self
-      .make_request(Method::GET, "community", data.into())
-      .await
+    self.make_request(Method::GET, "community", data).await
   }
 
   /// Creates a new community.
   ///
   /// HTTP POST /community
   pub async fn create_community(&self, data: CreateCommunity) -> LemmyResult<CommunityResponse> {
-    self
-      .make_request(Method::POST, "community", data.into())
-      .await
+    self.make_request(Method::POST, "community", data).await
   }
 
   /// Edits a community.
   ///
   /// HTTP PUT /community
   pub async fn update_community(&self, data: EditCommunity) -> LemmyResult<CommunityResponse> {
-    self
-      .make_request(Method::PUT, "community", data.into())
-      .await
+    self.make_request(Method::PUT, "community", data).await
   }
 
   /// Fetches a random community.
@@ -74,7 +68,7 @@ impl LemmyClient {
     data: GetRandomCommunity,
   ) -> LemmyResult<CommunityResponse> {
     self
-      .make_request(Method::GET, "community/random", data.into())
+      .make_request(Method::GET, "community/random", data)
       .await
   }
 
@@ -85,9 +79,7 @@ impl LemmyClient {
     &self,
     data: ListCommunities,
   ) -> LemmyResult<ListCommunitiesResponse> {
-    self
-      .make_request(Method::GET, "community/list", data.into())
-      .await
+    self.make_request(Method::GET, "community/list", data).await
   }
 
   /// Subscribes to a community.
@@ -95,7 +87,7 @@ impl LemmyClient {
   /// HTTP POST /community/follow
   pub async fn follow_community(&self, data: FollowCommunity) -> LemmyResult<CommunityResponse> {
     self
-      .make_request(Method::POST, "community/follow", data.into())
+      .make_request(Method::POST, "community/follow", data)
       .await
   }
 
@@ -107,7 +99,7 @@ impl LemmyClient {
     data: CreateCommunityReport,
   ) -> LemmyResult<CommunityReportResponse> {
     self
-      .make_request(Method::POST, "community/report", data.into())
+      .make_request(Method::POST, "community/report", data)
       .await
   }
 
@@ -119,7 +111,7 @@ impl LemmyClient {
     data: ResolveCommunityReport,
   ) -> LemmyResult<CommunityReportResponse> {
     self
-      .make_request(Method::PUT, "community/report/resolve", data.into())
+      .make_request(Method::PUT, "community/report/resolve", data)
       .await
   }
 
@@ -128,7 +120,7 @@ impl LemmyClient {
   /// HTTP POST /community/delete
   pub async fn delete_community(&self, data: DeleteCommunity) -> LemmyResult<CommunityResponse> {
     self
-      .make_request(Method::POST, "community/delete", data.into())
+      .make_request(Method::POST, "community/delete", data)
       .await
   }
 
@@ -137,7 +129,7 @@ impl LemmyClient {
   /// HTTP POST /community/remove
   pub async fn remove_community(&self, data: RemoveCommunity) -> LemmyResult<CommunityResponse> {
     self
-      .make_request(Method::POST, "community/remove", data.into())
+      .make_request(Method::POST, "community/remove", data)
       .await
   }
   /// Transfers a community you own to another user on that community's moderation team.
@@ -148,7 +140,7 @@ impl LemmyClient {
     data: TransferCommunity,
   ) -> LemmyResult<GetCommunityResponse> {
     self
-      .make_request(Method::POST, "community/transfer", data.into())
+      .make_request(Method::POST, "community/transfer", data)
       .await
   }
 
@@ -160,7 +152,7 @@ impl LemmyClient {
     data: BanFromCommunity,
   ) -> LemmyResult<BanFromCommunityResponse> {
     self
-      .make_request(Method::POST, "community/ban_user", data.into())
+      .make_request(Method::POST, "community/ban_user", data)
       .await
   }
 
@@ -171,9 +163,7 @@ impl LemmyClient {
     &self,
     data: AddModToCommunity,
   ) -> LemmyResult<AddModToCommunityResponse> {
-    self
-      .make_request(Method::POST, "community/mod", data.into())
-      .await
+    self.make_request(Method::POST, "community/mod", data).await
   }
 
   /// Gets number of pending follows for a given community.
@@ -184,7 +174,7 @@ impl LemmyClient {
     data: GetCommunityPendingFollowsCount,
   ) -> LemmyResult<GetCommunityPendingFollowsCountResponse> {
     self
-      .make_request(Method::GET, "community/pending_follows/count", data.into())
+      .make_request(Method::GET, "community/pending_follows/count", data)
       .await
   }
 
@@ -196,7 +186,7 @@ impl LemmyClient {
     data: ListCommunityPendingFollows,
   ) -> LemmyResult<ListCommunityPendingFollowsResponse> {
     self
-      .make_request(Method::GET, "community/pending_follows/list", data.into())
+      .make_request(Method::GET, "community/pending_follows/list", data)
       .await
   }
 
@@ -208,29 +198,21 @@ impl LemmyClient {
     data: ApproveCommunityPendingFollower,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(
-        Method::POST,
-        "community/pending_follows/approve",
-        data.into(),
-      )
+      .make_request(Method::POST, "community/pending_follows/approve", data)
       .await
   }
   /// Create a tag for a community you moderate.
   ///
   /// HTTP POST /community/tag
   pub async fn create_community_tag(&self, data: CreateCommunityTag) -> LemmyResult<Tag> {
-    self
-      .make_request(Method::POST, "community/tag", data.into())
-      .await
+    self.make_request(Method::POST, "community/tag", data).await
   }
 
   /// Update an existing tag for a community you moderate.
   ///
   /// HTTP PUT /community/tag
   pub async fn update_community_tag(&self, data: UpdateCommunityTag) -> LemmyResult<Tag> {
-    self
-      .make_request(Method::PUT, "community/tag", data.into())
-      .await
+    self.make_request(Method::PUT, "community/tag", data).await
   }
 
   /// Delete an existing tag for a community you moderate.
@@ -238,7 +220,7 @@ impl LemmyClient {
   /// HTTP DELETE /community/tag
   pub async fn delete_community_tag(&self, data: DeleteCommunityTag) -> LemmyResult<Tag> {
     self
-      .make_request(Method::DELETE, "community/tag", data.into())
+      .make_request(Method::DELETE, "community/tag", data)
       .await
   }
 }

@@ -46,7 +46,7 @@ impl LemmyClient {
   /// HTTP POST /account/auth/register
   pub async fn register_account(&self, data: Register) -> LemmyResult<LoginResponse> {
     self
-      .make_request(Method::POST, "account/auth/register", data.into())
+      .make_request(Method::POST, "account/auth/register", data)
       .await
   }
 
@@ -55,7 +55,7 @@ impl LemmyClient {
   /// HTTP POST /account/auth/login
   pub async fn login(&self, data: Login) -> LemmyResult<LoginResponse> {
     self
-      .make_request(Method::POST, "account/auth/login", data.into())
+      .make_request(Method::POST, "account/auth/login", data)
       .await
   }
 
@@ -64,7 +64,7 @@ impl LemmyClient {
   /// HTTP POST /account/auth/logout
   pub async fn logout(&self) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "account/auth/logout", ().into())
+      .make_request(Method::POST, "account/auth/logout", ())
       .await
   }
 
@@ -74,7 +74,7 @@ impl LemmyClient {
   /// HTTP POST /account/auth/password_reset
   pub async fn reset_password(&self, data: PasswordReset) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "account/auth/password_reset", data.into())
+      .make_request(Method::POST, "account/auth/password_reset", data)
       .await
   }
 
@@ -83,7 +83,7 @@ impl LemmyClient {
   /// HTTP GET /account/auth/get_captcha
   pub async fn get_captcha(&self) -> LemmyResult<GetCaptchaResponse> {
     self
-      .make_request(Method::GET, "account/auth/get_captcha", ().into())
+      .make_request(Method::GET, "account/auth/get_captcha", ())
       .await
   }
 
@@ -95,7 +95,7 @@ impl LemmyClient {
     data: PasswordChangeAfterReset,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "account/auth/password_change", data.into())
+      .make_request(Method::POST, "account/auth/password_change", data)
       .await
   }
 
@@ -104,7 +104,7 @@ impl LemmyClient {
   /// HTTP PUT /account/auth/change_password
   pub async fn change_password(&self, data: ChangePassword) -> LemmyResult<LoginResponse> {
     self
-      .make_request(Method::POST, "account/auth/change_password", data.into())
+      .make_request(Method::POST, "account/auth/change_password", data)
       .await
   }
 
@@ -115,7 +115,7 @@ impl LemmyClient {
   /// HTTP POST /account/auth/totp/generate
   pub async fn generate_totp_secret(&self) -> LemmyResult<GenerateTotpSecretResponse> {
     self
-      .make_request(Method::POST, "account/auth/totp/generate", ().into())
+      .make_request(Method::POST, "account/auth/totp/generate", ())
       .await
   }
 
@@ -129,7 +129,7 @@ impl LemmyClient {
   /// HTTP POST /account/auth/totp/update
   pub async fn update_totp(&self, data: UpdateTotp) -> LemmyResult<UpdateTotpResponse> {
     self
-      .make_request(Method::POST, "account/auth/totp/update", data.into())
+      .make_request(Method::POST, "account/auth/totp/update", data)
       .await
   }
 
@@ -139,7 +139,7 @@ impl LemmyClient {
   /// HTTP POST /account/auth/verify_email
   pub async fn verify_email(&self, data: VerifyEmail) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "account/auth/verify_email", data.into())
+      .make_request(Method::POST, "account/auth/verify_email", data)
       .await
   }
 
@@ -151,11 +151,7 @@ impl LemmyClient {
     data: ResendVerificationEmail,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(
-        Method::POST,
-        "account/auth/resend_verification_email",
-        data.into(),
-      )
+      .make_request(Method::POST, "account/auth/resend_verification_email", data)
       .await
   }
 
@@ -163,7 +159,7 @@ impl LemmyClient {
   ///
   /// HTTP GET /account
   pub async fn get_current_user(&self) -> LemmyResult<MyUserInfo> {
-    self.make_request(Method::GET, "account", ().into()).await
+    self.make_request(Method::GET, "account", ()).await
   }
 
   /// Delete an image that you uploaded.
@@ -171,7 +167,7 @@ impl LemmyClient {
   /// HTTP DELETE /account/media
   pub async fn delete_image(&self, data: DeleteImageParams) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::DELETE, "account/media", data.into())
+      .make_request(Method::DELETE, "account/media", data)
       .await
   }
 
@@ -180,7 +176,7 @@ impl LemmyClient {
   /// HTTP GET /account/media/list
   pub async fn list_media(&self, data: ListMedia) -> LemmyResult<ListMediaResponse> {
     self
-      .make_request(Method::GET, "account/media/list", data.into())
+      .make_request(Method::GET, "account/media/list", data)
       .await
   }
 
@@ -189,7 +185,7 @@ impl LemmyClient {
   /// HTTP POST /account/delete
   pub async fn delete_account(&self, data: DeleteAccount) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "account/delete", data.into())
+      .make_request(Method::POST, "account/delete", data)
       .await
   }
 
@@ -198,7 +194,7 @@ impl LemmyClient {
   /// HTTP POST /account/mark_as_read/all
   pub async fn mark_all_notifications_as_read(&self) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "account/mark_as_read/all", ().into())
+      .make_request(Method::POST, "account/mark_as_read/all", ())
       .await
   }
 
@@ -207,7 +203,7 @@ impl LemmyClient {
   /// HTTP GET /account/report_count
   pub async fn report_count(&self, data: GetReportCount) -> LemmyResult<GetReportCountResponse> {
     self
-      .make_request(Method::GET, "account/report_count", data.into())
+      .make_request(Method::GET, "account/report_count", data)
       .await
   }
 
@@ -215,9 +211,7 @@ impl LemmyClient {
   ///
   /// HTTP GET /account/list_logins
   pub async fn list_logins(&self) -> LemmyResult<ListLoginsResponse> {
-    self
-      .make_request(Method::GET, "list_logins", ().into())
-      .await
+    self.make_request(Method::GET, "list_logins", ()).await
   }
 
   /// Returns an error message if your auth token is invalid.
@@ -225,7 +219,7 @@ impl LemmyClient {
   /// HTTP GET /account/validate_auth
   pub async fn validate_auth(&self) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::GET, "account/validate_auth", ().into())
+      .make_request(Method::GET, "account/validate_auth", ())
       .await
   }
 
@@ -234,7 +228,7 @@ impl LemmyClient {
   /// HTTP POST /account/donation_dialog_shown
   pub async fn donation_dialog_shown(&self) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "account/donation_dialog_shown", ().into())
+      .make_request(Method::POST, "account/donation_dialog_shown", ())
       .await
   }
 
@@ -243,7 +237,7 @@ impl LemmyClient {
   /// HTTP POST /account/block/person
   pub async fn block_person(&self, data: BlockPerson) -> LemmyResult<BlockPersonResponse> {
     self
-      .make_request(Method::POST, "account/block/person", data.into())
+      .make_request(Method::POST, "account/block/person", data)
       .await
   }
 
@@ -252,7 +246,7 @@ impl LemmyClient {
   /// HTTP POST /account/block/community
   pub async fn block_community(&self, data: BlockCommunity) -> LemmyResult<BlockCommunityResponse> {
     self
-      .make_request(Method::POST, "account/block/community", data.into())
+      .make_request(Method::POST, "account/block/community", data)
       .await
   }
 
@@ -264,11 +258,7 @@ impl LemmyClient {
     data: UserBlockInstanceCommunitiesParams,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(
-        Method::POST,
-        "account/block/instance/communities",
-        data.into(),
-      )
+      .make_request(Method::POST, "account/block/instance/communities", data)
       .await
   }
 
@@ -280,7 +270,7 @@ impl LemmyClient {
     data: UserBlockInstancePersonsParams,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "account/block/instance/persons", data.into())
+      .make_request(Method::POST, "account/block/instance/persons", data)
       .await
   }
 
@@ -288,9 +278,7 @@ impl LemmyClient {
   ///
   /// HTTP GET /account/saved
   pub async fn list_saved(&self, data: ListPersonSaved) -> LemmyResult<ListPersonSavedResponse> {
-    self
-      .make_request(Method::GET, "account/saved", data.into())
-      .await
+    self.make_request(Method::GET, "account/saved", data).await
   }
 
   /// List posts and comments that were read by the authenticated user in reverse chronological
@@ -298,27 +286,21 @@ impl LemmyClient {
   ///
   /// HTTP GET /account/read
   pub async fn list_read(&self, data: ListPersonRead) -> LemmyResult<ListPersonReadResponse> {
-    self
-      .make_request(Method::GET, "account/read", data.into())
-      .await
+    self.make_request(Method::GET, "account/read", data).await
   }
 
   /// List posts and comments that were hidden by the authenticated user, ordered by date hidden.
   ///
   /// HTTP GET /account/hidden
   pub async fn list_hidden(&self, data: ListPersonHidden) -> LemmyResult<ListPersonHiddenResponse> {
-    self
-      .make_request(Method::GET, "account/hidden", data.into())
-      .await
+    self.make_request(Method::GET, "account/hidden", data).await
   }
 
   /// List posts and comments that were liked by the authenticated user.
   ///
   /// HTTP GET /account/liked
   pub async fn list_liked(&self, data: ListPersonLiked) -> LemmyResult<ListPersonLikedResponse> {
-    self
-      .make_request(Method::GET, "account/liked", data.into())
-      .await
+    self.make_request(Method::GET, "account/liked", data).await
   }
 
   /// Saves your account settings.
@@ -326,7 +308,7 @@ impl LemmyClient {
   /// HTTP PUT /account/settings/save
   pub async fn save_user_settings(&self, data: SaveUserSettings) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::PUT, "account/settings/save", data.into())
+      .make_request(Method::PUT, "account/settings/save", data)
       .await
   }
 
@@ -336,7 +318,7 @@ impl LemmyClient {
   /// HTTP GET /account/settings/export
   pub async fn export_settings(&self) -> LemmyResult<UserSettingsBackup> {
     self
-      .make_request(Method::GET, "account/settings/export", ().into())
+      .make_request(Method::GET, "account/settings/export", ())
       .await
   }
 
@@ -345,7 +327,7 @@ impl LemmyClient {
   /// HTTP POST /account/settings/import
   pub async fn import_settings(&self, data: UserSettingsBackup) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "account/settings/import", data.into())
+      .make_request(Method::POST, "account/settings/import", data)
       .await
   }
 }

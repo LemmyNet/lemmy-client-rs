@@ -40,9 +40,7 @@ impl LemmyClient {
   ///
   /// HTTP POST admin/add
   pub async fn add_admin(&self, data: AddAdmin) -> LemmyResult<AddAdminResponse> {
-    self
-      .make_request(Method::POST, "admin/add", data.into())
-      .await
+    self.make_request(Method::POST, "admin/add", data).await
   }
 
   /// Gets the number of unread registration applications for the instance you administrate.
@@ -52,11 +50,7 @@ impl LemmyClient {
     &self,
   ) -> LemmyResult<GetUnreadRegistrationApplicationCountResponse> {
     self
-      .make_request(
-        Method::GET,
-        "admin/registration_application/count",
-        ().into(),
-      )
+      .make_request(Method::GET, "admin/registration_application/count", ())
       .await
   }
 
@@ -68,11 +62,7 @@ impl LemmyClient {
     data: ListRegistrationApplications,
   ) -> LemmyResult<ListRegistrationApplicationsResponse> {
     self
-      .make_request(
-        Method::GET,
-        "admin/registration_application/list",
-        data.into(),
-      )
+      .make_request(Method::GET, "admin/registration_application/list", data)
       .await
   }
 
@@ -84,11 +74,7 @@ impl LemmyClient {
     data: ApproveRegistrationApplication,
   ) -> LemmyResult<RegistrationApplicationResponse> {
     self
-      .make_request(
-        Method::PUT,
-        "admin/registration_application/approve",
-        data.into(),
-      )
+      .make_request(Method::PUT, "admin/registration_application/approve", data)
       .await
   }
 
@@ -100,7 +86,7 @@ impl LemmyClient {
     data: GetRegistrationApplication,
   ) -> LemmyResult<RegistrationApplicationResponse> {
     self
-      .make_request(Method::GET, "admin/registration_application", data.into())
+      .make_request(Method::GET, "admin/registration_application", data)
       .await
   }
 
@@ -109,7 +95,7 @@ impl LemmyClient {
   /// HTTP POST /admin/purge/person
   pub async fn purge_person(&self, data: PurgePerson) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "admin/purge/person", data.into())
+      .make_request(Method::POST, "admin/purge/person", data)
       .await
   }
 
@@ -118,7 +104,7 @@ impl LemmyClient {
   /// HTTP POST /admin/purge/community
   pub async fn purge_community(&self, data: PurgeCommunity) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "admin/purge/community", data.into())
+      .make_request(Method::POST, "admin/purge/community", data)
       .await
   }
 
@@ -127,7 +113,7 @@ impl LemmyClient {
   /// HTTP POST /admin/purge/post
   pub async fn purge_post(&self, data: PurgePost) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "admin/purge/post", data.into())
+      .make_request(Method::POST, "admin/purge/post", data)
       .await
   }
 
@@ -136,7 +122,7 @@ impl LemmyClient {
   /// HTTP POST /admin/purge/comment
   pub async fn purge_comment(&self, data: PurgeComment) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "admin/purge/Comment", data.into())
+      .make_request(Method::POST, "admin/purge/Comment", data)
       .await
   }
 
@@ -144,18 +130,14 @@ impl LemmyClient {
   ///
   /// HTTP POST /admin/tagline
   pub async fn create_tagline(&self, data: CreateTagline) -> LemmyResult<TaglineResponse> {
-    self
-      .make_request(Method::POST, "admin/tagline", data.into())
-      .await
+    self.make_request(Method::POST, "admin/tagline", data).await
   }
 
   /// Updates an existing tagline.
   ///
   /// HTTP PUT /admin/tagline
   pub async fn update_tagline(&self, data: UpdateTagline) -> LemmyResult<TaglineResponse> {
-    self
-      .make_request(Method::PUT, "admin/tagline", data.into())
-      .await
+    self.make_request(Method::PUT, "admin/tagline", data).await
   }
 
   /// Deletes an existing tagline.
@@ -163,7 +145,7 @@ impl LemmyClient {
   /// HTTP DELETE /admin/tagline/delete
   pub async fn delete_tagline(&self, data: DeleteTagline) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "admin/tagline/delete", data.into())
+      .make_request(Method::POST, "admin/tagline/delete", data)
       .await
   }
 
@@ -172,7 +154,7 @@ impl LemmyClient {
   /// HTTP GET /admin/tagline/list
   pub async fn list_taglines(&self, data: ListTaglines) -> LemmyResult<ListTaglinesResponse> {
     self
-      .make_request(Method::GET, "admin/tagline/list", data.into())
+      .make_request(Method::GET, "admin/tagline/list", data)
       .await
   }
 
@@ -180,27 +162,21 @@ impl LemmyClient {
   ///
   /// HTTP POST /admin/ban
   pub async fn ban_from_site(&self, data: BanPerson) -> LemmyResult<BanPersonResponse> {
-    self
-      .make_request(Method::POST, "admin/ban", data.into())
-      .await
+    self.make_request(Method::POST, "admin/ban", data).await
   }
 
   /// Lists users of your site.
   ///
   /// HTTP GET /admin/users
   pub async fn list_users(&self, data: AdminListUsers) -> LemmyResult<AdminListUsersResponse> {
-    self
-      .make_request(Method::GET, "admin/users", data.into())
-      .await
+    self.make_request(Method::GET, "admin/users", data).await
   }
 
   /// Leave your instance's admin team.
   ///
   /// HTTP POST /admin/leave
   pub async fn leave_admin(&self) -> LemmyResult<GetSiteResponse> {
-    self
-      .make_request(Method::POST, "admin/leave", ().into())
-      .await
+    self.make_request(Method::POST, "admin/leave", ()).await
   }
 
   /// Defederates an instance from the current instance.
@@ -211,7 +187,7 @@ impl LemmyClient {
     data: AdminBlockInstanceParams,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "admin/instance/block", data.into())
+      .make_request(Method::POST, "admin/instance/block", data)
       .await
   }
 
@@ -223,7 +199,7 @@ impl LemmyClient {
     data: AdminAllowInstanceParams,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "admin/instance/allow", data.into())
+      .make_request(Method::POST, "admin/instance/allow", data)
       .await
   }
 
@@ -232,7 +208,7 @@ impl LemmyClient {
   /// HTTP GET /admin/list_all_media
   pub async fn list_all_media(&self, data: ListMedia) -> LemmyResult<ListMediaResponse> {
     self
-      .make_request(Method::GET, "admin/list_all_media", data.into())
+      .make_request(Method::GET, "admin/list_all_media", data)
       .await
   }
 }

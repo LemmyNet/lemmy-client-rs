@@ -24,23 +24,21 @@ impl LemmyClient {
   ///
   /// HTTP GET /comment
   pub async fn get_comment(&self, data: GetComment) -> LemmyResult<CommentResponse> {
-    self.make_request(Method::GET, "comment", data.into()).await
+    self.make_request(Method::GET, "comment", data).await
   }
 
   /// Creates a new comment.
   ///
   /// HTTP POST /comment
   pub async fn create_comment(&self, data: CreateComment) -> LemmyResult<CommentResponse> {
-    self
-      .make_request(Method::POST, "comment", data.into())
-      .await
+    self.make_request(Method::POST, "comment", data).await
   }
 
   /// Edits one of your already-created comments.
   ///
   /// HTTP PUT /comment
   pub async fn edit_comment(&self, data: EditComment) -> LemmyResult<CommentResponse> {
-    self.make_request(Method::PUT, "comment", data.into()).await
+    self.make_request(Method::PUT, "comment", data).await
   }
 
   /// Deletes one of your already-existing comments.
@@ -48,7 +46,7 @@ impl LemmyClient {
   /// HTTP POST /comment/delete
   pub async fn delete_comment(&self, data: DeleteComment) -> LemmyResult<CommentResponse> {
     self
-      .make_request(Method::POST, "comment/delete", data.into())
+      .make_request(Method::POST, "comment/delete", data)
       .await
   }
 
@@ -57,7 +55,7 @@ impl LemmyClient {
   /// HTTP POST /comment/remove
   pub async fn remove_comment(&self, data: RemoveComment) -> LemmyResult<CommentResponse> {
     self
-      .make_request(Method::POST, "comment/remove", data.into())
+      .make_request(Method::POST, "comment/remove", data)
       .await
   }
 
@@ -69,7 +67,7 @@ impl LemmyClient {
     data: DistinguishComment,
   ) -> LemmyResult<CommentResponse> {
     self
-      .make_request(Method::POST, "comment/distinguish", data.into())
+      .make_request(Method::POST, "comment/distinguish", data)
       .await
   }
 
@@ -77,9 +75,7 @@ impl LemmyClient {
   ///
   /// HTTP POST /comment/like
   pub async fn like_comment(&self, data: CreateCommentLike) -> LemmyResult<CommentResponse> {
-    self
-      .make_request(Method::POST, "comment/like", data.into())
-      .await
+    self.make_request(Method::POST, "comment/like", data).await
   }
 
   /// Gets the votes for a comment.
@@ -90,7 +86,7 @@ impl LemmyClient {
     data: ListCommentLikes,
   ) -> LemmyResult<ListCommentLikesResponse> {
     self
-      .make_request(Method::GET, "comment/like/list", data.into())
+      .make_request(Method::GET, "comment/like/list", data)
       .await
   }
 
@@ -98,18 +94,14 @@ impl LemmyClient {
   ///
   /// HTTP PUT /comment/save
   pub async fn save_comment(&self, data: SaveComment) -> LemmyResult<CommentResponse> {
-    self
-      .make_request(Method::PUT, "comment/save", data.into())
-      .await
+    self.make_request(Method::PUT, "comment/save", data).await
   }
 
   /// Gets comments with various filters.
   ///
   /// HTTP GET /comment/list
   pub async fn list_comments(&self, data: GetComments) -> LemmyResult<GetCommentsResponse> {
-    self
-      .make_request(Method::GET, "comment/list", data.into())
-      .await
+    self.make_request(Method::GET, "comment/list", data).await
   }
 
   /// Retrieve a slim representation of comments.
@@ -120,7 +112,7 @@ impl LemmyClient {
     data: GetComments,
   ) -> LemmyResult<GetCommentsSlimResponse> {
     self
-      .make_request(Method::GET, "comment/list/slim", data.into())
+      .make_request(Method::GET, "comment/list/slim", data)
       .await
   }
 
@@ -130,7 +122,7 @@ impl LemmyClient {
   /// HTTP POST /comment/report
   pub async fn report_comment(&self, data: CreateCommentReport) -> LemmyResult<CommentResponse> {
     self
-      .make_request(Method::POST, "comment/report", data.into())
+      .make_request(Method::POST, "comment/report", data)
       .await
   }
 
@@ -142,7 +134,7 @@ impl LemmyClient {
     data: ResolveCommentReport,
   ) -> LemmyResult<CommentReportResponse> {
     self
-      .make_request(Method::PUT, "comment/report/resolve", data.into())
+      .make_request(Method::PUT, "comment/report/resolve", data)
       .await
   }
 }

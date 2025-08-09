@@ -17,7 +17,7 @@ impl LemmyClient {
     data: CreatePrivateMessage,
   ) -> LemmyResult<PrivateMessageResponse> {
     self
-      .make_request(Method::POST, "private_message", data.into())
+      .make_request(Method::POST, "private_message", data)
       .await
   }
 
@@ -29,7 +29,7 @@ impl LemmyClient {
     data: EditPrivateMessage,
   ) -> LemmyResult<PrivateMessageResponse> {
     self
-      .make_request(Method::PUT, "private_message", data.into())
+      .make_request(Method::PUT, "private_message", data)
       .await
   }
 
@@ -41,7 +41,7 @@ impl LemmyClient {
     data: DeletePrivateMessage,
   ) -> LemmyResult<PrivateMessageResponse> {
     self
-      .make_request(Method::POST, "private_message/delete", data.into())
+      .make_request(Method::POST, "private_message/delete", data)
       .await
   }
 
@@ -54,7 +54,7 @@ impl LemmyClient {
     data: CreatePrivateMessageReport,
   ) -> LemmyResult<PrivateMessageReportResponse> {
     self
-      .make_request(Method::POST, "private_message/report", data.into())
+      .make_request(Method::POST, "private_message/report", data)
       .await
   }
 
@@ -66,7 +66,7 @@ impl LemmyClient {
     data: ResolvePrivateMessageReport,
   ) -> LemmyResult<PrivateMessageReportResponse> {
     self
-      .make_request(Method::PUT, "private_message/report/resolve", data.into())
+      .make_request(Method::PUT, "private_message/report/resolve", data)
       .await
   }
 }

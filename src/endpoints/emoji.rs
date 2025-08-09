@@ -17,18 +17,14 @@ impl LemmyClient {
     &self,
     data: CreateCustomEmoji,
   ) -> LemmyResult<CustomEmojiResponse> {
-    self
-      .make_request(Method::POST, "custom_emoji", data.into())
-      .await
+    self.make_request(Method::POST, "custom_emoji", data).await
   }
 
   /// Edits an existing custom emoji.
   ///
   /// HTTP PUT /custom_emoji
   pub async fn edit_custom_emoji(&self, data: EditCustomEmoji) -> LemmyResult<CustomEmojiResponse> {
-    self
-      .make_request(Method::PUT, "custom_emoji", data.into())
-      .await
+    self.make_request(Method::PUT, "custom_emoji", data).await
   }
 
   /// Deletes an existing custom emoji.
@@ -39,7 +35,7 @@ impl LemmyClient {
     data: DeleteCustomEmoji,
   ) -> LemmyResult<CustomEmojiResponse> {
     self
-      .make_request(Method::POST, "custom_emoji/delete", data.into())
+      .make_request(Method::POST, "custom_emoji/delete", data)
       .await
   }
 
@@ -51,7 +47,7 @@ impl LemmyClient {
     data: ListCustomEmojis,
   ) -> LemmyResult<ListCustomEmojisResponse> {
     self
-      .make_request(Method::GET, "custom_emoji/list", data.into())
+      .make_request(Method::GET, "custom_emoji/list", data)
       .await
   }
 }

@@ -1,4 +1,4 @@
-use crate::{ClientOptions, client_options::ClientOptionsInternal, form::LemmyRequest};
+use crate::{ClientOptions, client_options::ClientOptionsInternal};
 use http::{HeaderMap, Method, header::USER_AGENT};
 use lemmy_api_common::{error::LemmyErrorType, media::UploadImageResponse};
 use reqwest::{Client, RequestBuilder};
@@ -25,20 +25,6 @@ impl WithHeaders for RequestBuilder {
     }
 
     request_builder
-  }
-}
-
-trait MaybeWithJwt {
-  fn maybe_with_jwt(self, jwt: Option<&str>) -> Self;
-}
-
-impl MaybeWithJwt for RequestBuilder {
-  fn maybe_with_jwt(self, jwt: Option<&str>) -> Self {
-    if let Some(jwt) = jwt {
-      self.bearer_auth(jwt)
-    } else {
-      self
-    }
   }
 }
 
@@ -134,12 +120,7 @@ impl LemmyClient {
   }
 
   /// Create a [`RequestBuilder`] to use for making requests.
-  fn create_request_builder(
-    &self,
-    method: &Method,
-    path: &str,
-    jwt: Option<&str>,
-  ) -> RequestBuilder {
+  fn create_request_builder(&self, method: &Method, path: &str) -> RequestBuilder {
     let route = build_route(path, &self.options);
 
     let request_builder = match *method {
@@ -149,24 +130,21 @@ impl LemmyClient {
       _ => unreachable!("This crate does not use other HTTP methods."),
     };
 
-    request_builder
-      .with_headers(&self.headers)
-      .maybe_with_jwt(jwt)
+    request_builder.with_headers(&self.headers)
   }
 
-  pub(crate) async fn make_request<'jwt, Response, Form>(
+  pub(crate) async fn make_request<Response, Form>(
     &self,
     method: Method,
     path: &str,
-    request: LemmyRequest<'jwt, Form>,
+    body: Form,
   ) -> LemmyResult<Response>
   where
     // TODO in the future, we can use trait aliases for these: https://doc.rust-lang.org/unstable-book/language-features/trait-alias.html
     Response: for<'de> Deserialize<'de>,
     Form: Serialize + Clone + fmt::Debug,
   {
-    let LemmyRequest { body, jwt } = request;
-    let request_builder = self.create_request_builder(&method, path, jwt);
+    let request_builder = self.create_request_builder(&method, path);
 
     let request_builder = match method {
       Method::GET => request_builder.query(&body),
@@ -179,15 +157,12 @@ impl LemmyClient {
     deserialize_response(&res)
   }
 
-  pub(crate) async fn make_file_request<'jwt>(
+  pub(crate) async fn make_file_request(
     &self,
     path: &str,
-    request: LemmyRequest<'jwt, &'static [u8]>,
+    body: &'static [u8],
   ) -> LemmyResult<UploadImageResponse> {
-    let LemmyRequest { body, jwt } = request;
-    let request_builder = self
-      .create_request_builder(&Method::POST, path, jwt)
-      .body(body);
+    let request_builder = self.create_request_builder(&Method::POST, path).body(body);
 
     let res = send_request(request_builder).await?;
 

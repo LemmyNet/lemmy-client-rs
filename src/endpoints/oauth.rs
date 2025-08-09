@@ -18,7 +18,7 @@ impl LemmyClient {
   /// HTTP POST /oauth_provider
   pub async fn add_oauth_provider(&self, data: CreateOAuthProvider) -> LemmyResult<OAuthProvider> {
     self
-      .make_request(Method::POST, "oauth_provider", data.into())
+      .make_request(Method::POST, "oauth_provider", data)
       .await
   }
 
@@ -26,9 +26,7 @@ impl LemmyClient {
   ///
   /// HTTP PUT /oauth_provider
   pub async fn edit_oauth_provider(&self, data: EditOAuthProvider) -> LemmyResult<OAuthProvider> {
-    self
-      .make_request(Method::PUT, "oauth_provider", data.into())
-      .await
+    self.make_request(Method::PUT, "oauth_provider", data).await
   }
 
   /// Remove an OAuth provider from your instance.
@@ -39,7 +37,7 @@ impl LemmyClient {
     data: DeleteOAuthProvider,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "oauth_provider/delete", data.into())
+      .make_request(Method::POST, "oauth_provider/delete", data)
       .await
   }
 
@@ -51,7 +49,7 @@ impl LemmyClient {
     data: AuthenticateWithOauth,
   ) -> LemmyResult<LoginResponse> {
     self
-      .make_request(Method::POST, "oauth/authenticate", data.into())
+      .make_request(Method::POST, "oauth/authenticate", data)
       .await
   }
 }

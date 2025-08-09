@@ -33,9 +33,7 @@
 
 mod client_options;
 mod endpoints;
-mod form;
 mod lemmy_client;
 
 pub use client_options::ClientOptions;
-pub use form::LemmyRequest;
 pub use lemmy_client::{LemmyClient, LemmyResult};
