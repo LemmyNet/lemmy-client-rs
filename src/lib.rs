@@ -17,7 +17,7 @@
 //!     domain: "lemmy.ml",
 //!     secure: true
 //!   });
-//!   let res = client.get_site(()).await;
+//!   let res = client.get_site().await;
 //!
 //!   assert!(res.is_ok());
 //! # }
@@ -32,13 +32,10 @@
 //! </div>
 
 mod client_options;
-mod endpoint_methods;
+mod endpoints;
 mod form;
 mod lemmy_client;
-mod macros;
-mod response;
 
 pub use client_options::ClientOptions;
 pub use form::LemmyRequest;
-pub use lemmy_api_common;
-pub use lemmy_client::LemmyClient;
+pub use lemmy_client::{LemmyClient, LemmyResult};

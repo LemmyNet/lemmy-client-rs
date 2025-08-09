@@ -1,13 +1,12 @@
-use crate::{
-  ClientOptions,
-  client_options::ClientOptionsInternal,
-  form::{LemmyForm, LemmyRequest},
-  response::{LemmyResponse, LemmyResult},
-};
+use crate::{ClientOptions, client_options::ClientOptionsInternal, form::LemmyRequest};
 use http::{HeaderMap, Method, header::USER_AGENT};
 use lemmy_api_common::{error::LemmyErrorType, media::UploadImageResponse};
 use reqwest::{Client, RequestBuilder};
-use std::borrow::Cow;
+use serde::{Deserialize, Serialize};
+use std::{borrow::Cow, fmt};
+
+/// A return type for the lemmy result
+pub type LemmyResult<R> = Result<R, LemmyErrorType>;
 
 trait WithHeaders {
   fn with_headers(self, headers: &HeaderMap) -> Self;
@@ -58,7 +57,10 @@ fn map_other_error<E: ToString>(e: E) -> LemmyErrorType {
   LemmyErrorType::Unknown(e.to_string())
 }
 
-fn deserialize_response<Response: LemmyResponse>(res: &str) -> Result<Response, LemmyErrorType> {
+fn deserialize_response<Response>(res: &str) -> Result<Response, LemmyErrorType>
+where
+  Response: for<'de> Deserialize<'de>,
+{
   serde_json::from_str::<Response>(res)
     .map_err(|_| serde_json::from_str::<LemmyErrorType>(res).unwrap_or_else(map_other_error))
 }
@@ -140,10 +142,10 @@ impl LemmyClient {
   ) -> RequestBuilder {
     let route = build_route(path, &self.options);
 
-    let request_builder = match method {
-      &Method::GET => self.client.get(route),
-      &Method::POST => self.client.post(route),
-      &Method::PUT => self.client.put(route),
+    let request_builder = match *method {
+      Method::GET => self.client.get(route),
+      Method::POST => self.client.post(route),
+      Method::PUT => self.client.put(route),
       _ => unreachable!("This crate does not use other HTTP methods."),
     };
 
@@ -159,8 +161,9 @@ impl LemmyClient {
     request: LemmyRequest<'jwt, Form>,
   ) -> LemmyResult<Response>
   where
-    Response: LemmyResponse,
-    Form: LemmyForm,
+    // TODO in the future, we can use trait aliases for these: https://doc.rust-lang.org/unstable-book/language-features/trait-alias.html
+    Response: for<'de> Deserialize<'de>,
+    Form: Serialize + Clone + fmt::Debug,
   {
     let LemmyRequest { body, jwt } = request;
     let request_builder = self.create_request_builder(&method, path, jwt);
