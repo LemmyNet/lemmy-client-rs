@@ -172,12 +172,19 @@ impl LemmyClient {
     deserialize_response(&res)
   }
 
-  pub(crate) async fn make_file_request(
+  pub(crate) async fn make_file_request<Form>(
     &self,
     path: &str,
+    query: Form,
     body: &'static [u8],
-  ) -> LemmyResult<UploadImageResponse> {
-    let request_builder = self.create_request_builder(&Method::POST, path).body(body);
+  ) -> LemmyResult<UploadImageResponse>
+  where
+    Form: Serialize + Clone + fmt::Debug,
+  {
+    let request_builder = self
+      .create_request_builder(&Method::POST, path)
+      .query(&query)
+      .body(body);
 
     let res = send_request(request_builder).await?;
 

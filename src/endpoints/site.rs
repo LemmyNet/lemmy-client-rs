@@ -3,7 +3,6 @@ use lemmy_api_common::{
   federation::{GetFederatedInstancesResponse, ResolveObject},
   media::UploadImageResponse,
   modlog::{GetModlog, GetModlogResponse},
-  report::{ListReports, ListReportsResponse},
   search::{Search, SearchResponse},
   site::{
     GetSiteResponse,
@@ -37,6 +36,28 @@ impl LemmyClient {
     self.make_request(Method::PUT, "site", data).await
   }
 
+  /// Upload an icon for your site. This is shown as the site favicon, in site header, and is used as metadata for external instance listings like [join-lemmy.org](https://join-lemmy.org/instances).
+  ///
+  /// **Only usable by instance admins**
+  ///
+  /// HTTP POST /icon
+  pub async fn upload_site_icon(&self, request: &'static [u8]) -> LemmyResult<UploadImageResponse> {
+    self.make_file_request("site/icon", (), request).await
+  }
+
+  /// Upload a banner for your site. This is shown in the site sidebar and is used as metadata for
+  /// external instance listings like [join-lemmy.org](https://join-lemmy.org/instances).
+  ///
+  /// **Only usable by instance admins**
+  ///
+  /// HTTP POST /banner
+  pub async fn upload_site_banner(
+    &self,
+    request: &'static [u8],
+  ) -> LemmyResult<UploadImageResponse> {
+    self.make_file_request("site/banner", (), request).await
+  }
+
   /// Gets the modlog.
   ///
   ///HTTP GET /modlog
@@ -64,34 +85,5 @@ impl LemmyClient {
     self
       .make_request(Method::GET, "federated_instances", ())
       .await
-  }
-
-  /// List all reports.
-  ///
-  /// HTTP GET /report/list
-  pub async fn list_reports(&self, data: ListReports) -> LemmyResult<ListReportsResponse> {
-    self.make_request(Method::GET, "report/list", data).await
-  }
-
-  /// Upload an icon for your site. This is shown as the site favicon, in site header, and is used as metadata for external instance listings like [join-lemmy.org](https://join-lemmy.org/instances).
-  ///
-  /// **Only usable by instance admins**
-  ///
-  /// HTTP POST /icon
-  pub async fn upload_site_icon(&self, request: &'static [u8]) -> LemmyResult<UploadImageResponse> {
-    self.make_file_request("site/icon", request).await
-  }
-
-  /// Upload a banner for your site. This is shown in the site sidebar and is used as metadata for
-  /// external instance listings like [join-lemmy.org](https://join-lemmy.org/instances).
-  ///
-  /// **Only usable by instance admins**
-  ///
-  /// HTTP POST /banner
-  pub async fn upload_site_banner(
-    &self,
-    request: &'static [u8],
-  ) -> LemmyResult<UploadImageResponse> {
-    self.make_file_request("site/banner", request).await
   }
 }

@@ -3,13 +3,22 @@ use http::Method;
 use lemmy_api_common::{
   SuccessResponse,
   community::{
+    CommunityId,
     CommunityResponse,
+    CreateMultiCommunity,
+    CreateOrDeleteMultiCommunityEntry,
+    FollowMultiCommunity,
     GetCommunity,
     GetCommunityResponse,
+    GetMultiCommunity,
+    GetMultiCommunityResponse,
     GetRandomCommunity,
     ListCommunities,
     ListCommunitiesResponse,
+    ListMultiCommunities,
+    ListMultiCommunitiesResponse,
     Tag,
+    UpdateMultiCommunity,
     actions::{
       CreateCommunity,
       FollowCommunity,
@@ -19,6 +28,7 @@ use lemmy_api_common::{
         ApproveCommunityPendingFollower,
         BanFromCommunity,
         BanFromCommunityResponse,
+        CommunityIdQuery,
         CreateCommunityTag,
         DeleteCommunity,
         DeleteCommunityTag,
@@ -33,7 +43,7 @@ use lemmy_api_common::{
       },
     },
   },
-  report::{CommunityReportResponse, CreateCommunityReport, ResolveCommunityReport},
+  media::UploadImageResponse,
 };
 
 // TODO: Add icon and banner stuff
@@ -91,30 +101,6 @@ impl LemmyClient {
       .await
   }
 
-  /// Report a community.
-  ///
-  /// HTTP POST /community/report
-  pub async fn report_community(
-    &self,
-    data: CreateCommunityReport,
-  ) -> LemmyResult<CommunityReportResponse> {
-    self
-      .make_request(Method::POST, "community/report", data)
-      .await
-  }
-
-  /// Resolves a community report.
-  ///
-  /// HTTP PUT /community/report/resolve
-  pub async fn resolve_community_report(
-    &self,
-    data: ResolveCommunityReport,
-  ) -> LemmyResult<CommunityReportResponse> {
-    self
-      .make_request(Method::PUT, "community/report/resolve", data)
-      .await
-  }
-
   /// Deletes a community.
   ///
   /// HTTP POST /community/delete
@@ -132,6 +118,7 @@ impl LemmyClient {
       .make_request(Method::POST, "community/remove", data)
       .await
   }
+
   /// Transfers a community you own to another user on that community's moderation team.
   ///
   /// HTTP POST community/transfer
@@ -166,6 +153,95 @@ impl LemmyClient {
     self.make_request(Method::POST, "community/mod", data).await
   }
 
+  /// Uploads an icon to represent a community.
+  ///
+  /// HTTP POST /community/icon
+  pub async fn upload_community_icon(
+    &self,
+    community_id: CommunityId,
+    body: &'static [u8],
+  ) -> LemmyResult<UploadImageResponse> {
+    self
+      .make_file_request(
+        "community/icon",
+        CommunityIdQuery { id: community_id },
+        body,
+      )
+      .await
+  }
+
+  /// Deletes the icon used by a community.
+  ///
+  /// HTTP DELETE /community/icon
+  pub async fn delete_community_icon(
+    &self,
+    community_id: CommunityId,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(
+        Method::DELETE,
+        "community/icon",
+        CommunityIdQuery { id: community_id },
+      )
+      .await
+  }
+
+  /// Uploads a banner to add flair to a community
+  ///
+  /// HTTP POST /community/banner
+  pub async fn upload_community_banner(
+    &self,
+    community_id: CommunityId,
+    body: &'static [u8],
+  ) -> LemmyResult<UploadImageResponse> {
+    self
+      .make_file_request(
+        "community/banner",
+        CommunityIdQuery { id: community_id },
+        body,
+      )
+      .await
+  }
+
+  /// Deletes the banner used by a community.
+  ///
+  /// HTTP DELETE /community/banner
+  pub async fn delete_community_banner(
+    &self,
+    community_id: CommunityId,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(
+        Method::DELETE,
+        "community/banner",
+        CommunityIdQuery { id: community_id },
+      )
+      .await
+  }
+
+  /// Create a tag for a community you moderate.
+  ///
+  /// HTTP POST /community/tag
+  pub async fn create_community_tag(&self, data: CreateCommunityTag) -> LemmyResult<Tag> {
+    self.make_request(Method::POST, "community/tag", data).await
+  }
+
+  /// Update an existing tag for a community you moderate.
+  ///
+  /// HTTP PUT /community/tag
+  pub async fn update_community_tag(&self, data: UpdateCommunityTag) -> LemmyResult<Tag> {
+    self.make_request(Method::PUT, "community/tag", data).await
+  }
+
+  /// Delete an existing tag for a community you moderate.
+  ///
+  /// HTTP DELETE /community/tag
+  pub async fn delete_community_tag(&self, data: DeleteCommunityTag) -> LemmyResult<Tag> {
+    self
+      .make_request(Method::DELETE, "community/tag", data)
+      .await
+  }
+
   /// Gets number of pending follows for a given community.
   ///
   /// HTTP GET /community/pending_follows/count
@@ -192,7 +268,7 @@ impl LemmyClient {
 
   /// Approve a pending follow for a given community.
   ///
-  /// HTTP POST community/pending_follows/approve
+  /// HTTP POST /community/pending_follows/approve
   pub async fn approve_community_pending_follow(
     &self,
     data: ApproveCommunityPendingFollower,
@@ -201,26 +277,88 @@ impl LemmyClient {
       .make_request(Method::POST, "community/pending_follows/approve", data)
       .await
   }
-  /// Create a tag for a community you moderate.
-  ///
-  /// HTTP POST /community/tag
-  pub async fn create_community_tag(&self, data: CreateCommunityTag) -> LemmyResult<Tag> {
-    self.make_request(Method::POST, "community/tag", data).await
-  }
 
-  /// Update an existing tag for a community you moderate.
+  /// Create a multi community.
   ///
-  /// HTTP PUT /community/tag
-  pub async fn update_community_tag(&self, data: UpdateCommunityTag) -> LemmyResult<Tag> {
-    self.make_request(Method::PUT, "community/tag", data).await
-  }
-
-  /// Delete an existing tag for a community you moderate.
-  ///
-  /// HTTP DELETE /community/tag
-  pub async fn delete_community_tag(&self, data: DeleteCommunityTag) -> LemmyResult<Tag> {
+  /// HTTP POST /multi_community
+  pub async fn create_multi_community(
+    &self,
+    data: CreateMultiCommunity,
+  ) -> LemmyResult<GetMultiCommunityResponse> {
     self
-      .make_request(Method::DELETE, "community/tag", data)
+      .make_request(Method::POST, "multi_community", data)
+      .await
+  }
+
+  /// Update a multi community.
+  ///
+  /// HTTP PUT /multi_community
+  pub async fn edit_multi_community(
+    &self,
+    data: UpdateMultiCommunity,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::PUT, "multi_community", data)
+      .await
+  }
+
+  /// Get a specific multi community.
+  ///
+  /// HTTP GET /multi_community
+  pub async fn get_multi_community(
+    &self,
+    data: GetMultiCommunity,
+  ) -> LemmyResult<GetMultiCommunityResponse> {
+    self
+      .make_request(Method::GET, "multi_community", data)
+      .await
+  }
+
+  /// Add a community to a multi community.
+  ///
+  /// HTTP POST /multi_community/entry
+  pub async fn add_multi_community_entry(
+    &self,
+    data: CreateOrDeleteMultiCommunityEntry,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "multi_community/entry", data)
+      .await
+  }
+
+  /// Remove a community from a multi community.
+  ///
+  /// HTTP DELETE /multi_community/entry
+  pub async fn remove_multi_community_entry(
+    &self,
+    data: CreateOrDeleteMultiCommunityEntry,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::DELETE, "multi_community/entry", data)
+      .await
+  }
+
+  /// List multi communities.
+  ///
+  /// HTTP GET /multi_community/list
+  pub async fn list_multi_communities(
+    &self,
+    data: ListMultiCommunities,
+  ) -> LemmyResult<ListMultiCommunitiesResponse> {
+    self
+      .make_request(Method::GET, "multi_community/list", data)
+      .await
+  }
+
+  /// Remove a community from a multi community.
+  ///
+  /// HTTP POST /multi_community/follow
+  pub async fn follow_multi_community(
+    &self,
+    data: FollowMultiCommunity,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "multi_community/follow", data)
       .await
   }
 }
