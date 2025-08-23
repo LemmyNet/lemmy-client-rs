@@ -16,6 +16,7 @@ use lemmy_api_common::{
     SaveUserSettings,
     auth::{
       ChangePassword,
+      ExportDataResponse,
       GenerateTotpSecretResponse,
       GetCaptchaResponse,
       ListLoginsResponse,
@@ -33,12 +34,16 @@ use lemmy_api_common::{
   },
   community::actions::{BlockCommunity, BlockCommunityResponse},
   federation::{UserBlockInstanceCommunitiesParams, UserBlockInstancePersonsParams},
-  media::{DeleteImageParams, ListMedia, ListMediaResponse},
+  media::{DeleteImageParams, ListMedia, ListMediaResponse, UploadImageResponse},
+  notification::{
+    GetUnreadCountResponse,
+    ListNotifications,
+    ListNotificationsResponse,
+    MarkNotificationAsRead,
+  },
   person::actions::{BlockPerson, BlockPersonResponse},
   report::{GetReportCount, GetReportCountResponse},
 };
-
-// TODO: Handle Account avatar and banner
 
 impl LemmyClient {
   /// Registers a new account on an instance.
@@ -189,6 +194,18 @@ impl LemmyClient {
       .await
   }
 
+  /// Gets all notifications for the logged in user.
+  ///
+  /// HTTP GET /account/notifications
+  pub async fn list_notifications(
+    &self,
+    data: ListNotifications,
+  ) -> LemmyResult<ListNotificationsResponse> {
+    self
+      .make_request(Method::GET, "/account/notifications", data)
+      .await
+  }
+
   /// Deletes your account.
   ///
   /// HTTP POST /account/delete
@@ -207,12 +224,33 @@ impl LemmyClient {
       .await
   }
 
+  /// Mark a notification (reply, mention, private message) as read.
+  ///
+  /// HTTP POST /account/mark_as_read
+  pub async fn mark_notification_as_read(
+    &self,
+    data: MarkNotificationAsRead,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/mark_as_read", data)
+      .await
+  }
+
   /// Gets number of reports you can resolve.
   ///
   /// HTTP GET /account/report_count
   pub async fn report_count(&self, data: GetReportCount) -> LemmyResult<GetReportCountResponse> {
     self
       .make_request(Method::GET, "account/report_count", data)
+      .await
+  }
+
+  /// Gets number of unread notifications.
+  ///
+  /// HTTP GET /account/unread_count
+  pub async fn unread_count(&self) -> LemmyResult<GetUnreadCountResponse> {
+    self
+      .make_request(Method::GET, "account/unread_count", ())
       .await
   }
 
@@ -238,6 +276,38 @@ impl LemmyClient {
   pub async fn donation_dialog_shown(&self) -> LemmyResult<SuccessResponse> {
     self
       .make_request(Method::POST, "account/donation_dialog_shown", ())
+      .await
+  }
+
+  /// Upload an avatar for the currently authenticated user.
+  ///
+  /// HTTP POST /account/avatar
+  pub async fn upload_user_avatar(&self, data: &'static [u8]) -> LemmyResult<UploadImageResponse> {
+    self.make_file_request("account/avatar", (), data).await
+  }
+
+  /// Delete the avatar for the currently authenticated user.
+  ///
+  /// HTTP DELETE /account/avatar
+  pub async fn delete_user_avatar(&self) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::DELETE, "account/avatar", ())
+      .await
+  }
+
+  /// Upload a banner for the currently authenticated user.
+  ///
+  /// HTTP POST /account/banner
+  pub async fn upload_user_banner(&self, data: &'static [u8]) -> LemmyResult<UploadImageResponse> {
+    self.make_file_request("account/banner", (), data).await
+  }
+
+  /// Deletes the banner for the currently authenticated in user.
+  ///
+  /// HTTP DELETE /account/banner
+  pub async fn delete_user_banner(&self) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::DELETE, "account/banner", ())
       .await
   }
 
@@ -338,5 +408,21 @@ impl LemmyClient {
     self
       .make_request(Method::POST, "account/settings/import", data)
       .await
+  }
+
+  /// Export data for the currently authenticated user.
+  ///
+  /// HTTP GET /account/data/export
+  pub async fn export_user_data(&self) -> LemmyResult<ExportDataResponse> {
+    self
+      .make_request(Method::GET, "account/data/export", ())
+      .await
+  }
+
+  /// Upload an image to the instance.
+  ///
+  /// HTTP POST /image
+  pub async fn upload_image(&self, data: &'static [u8]) -> LemmyResult<UploadImageResponse> {
+    self.make_file_request("image", (), data).await
   }
 }

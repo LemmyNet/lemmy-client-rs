@@ -1,7 +1,8 @@
 use crate::{LemmyClient, lemmy_client::LemmyResult};
 use lemmy_api_common::{
+  SuccessResponse,
   federation::{GetFederatedInstancesResponse, ResolveObject},
-  media::UploadImageResponse,
+  media::{DeleteImageParams, UploadImageResponse},
   modlog::{GetModlog, GetModlogResponse},
   search::{Search, SearchResponse},
   site::{
@@ -40,9 +41,20 @@ impl LemmyClient {
   ///
   /// **Only usable by instance admins**
   ///
-  /// HTTP POST /icon
+  /// HTTP POST /site/icon
   pub async fn upload_site_icon(&self, request: &'static [u8]) -> LemmyResult<UploadImageResponse> {
     self.make_file_request("site/icon", (), request).await
+  }
+
+  /// Delete your site's icon.
+  ///
+  /// **Only usable by instance admins**
+  ///
+  /// HTTP DELETE /site/icon
+  pub async fn delete_site_icon(&self, request: DeleteImageParams) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::DELETE, "site/icon", request)
+      .await
   }
 
   /// Upload a banner for your site. This is shown in the site sidebar and is used as metadata for
@@ -50,12 +62,26 @@ impl LemmyClient {
   ///
   /// **Only usable by instance admins**
   ///
-  /// HTTP POST /banner
+  /// HTTP POST /site/banner
   pub async fn upload_site_banner(
     &self,
     request: &'static [u8],
   ) -> LemmyResult<UploadImageResponse> {
     self.make_file_request("site/banner", (), request).await
+  }
+
+  /// Delete your site's icon.
+  ///
+  /// **Only usable by instance admins**
+  ///
+  /// HTTP DELETE /site/icon
+  pub async fn delete_site_banner(
+    &self,
+    request: DeleteImageParams,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::DELETE, "site/banner", request)
+      .await
   }
 
   /// Gets the modlog.

@@ -138,6 +138,7 @@ impl LemmyClient {
       Method::GET => self.client.get(route),
       Method::POST => self.client.post(route),
       Method::PUT => self.client.put(route),
+      Method::DELETE => self.client.delete(route),
       _ => unreachable!("This crate does not use other HTTP methods."),
     };
 
@@ -162,7 +163,7 @@ impl LemmyClient {
     let request_builder = self.create_request_builder(&method, path);
 
     let request_builder = match method {
-      Method::GET => request_builder.query(&body),
+      Method::GET | Method::DELETE => request_builder.query(&body),
       Method::POST | Method::PUT => request_builder.json(&body),
       _ => unreachable!("This crate does not use other HTTP methods."),
     };

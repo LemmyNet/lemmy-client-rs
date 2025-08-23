@@ -5,7 +5,7 @@ use lemmy_api_common::{
   comment::actions::moderation::PurgeComment,
   community::actions::moderation::PurgeCommunity,
   federation::administration::{AdminAllowInstanceParams, AdminBlockInstanceParams},
-  media::{ListMedia, ListMediaResponse},
+  media::{DeleteImageParams, ListMedia, ListMediaResponse},
   person::actions::moderation::{
     BanPerson,
     BanPersonResponse,
@@ -31,7 +31,7 @@ use lemmy_api_common::{
     ListTaglines,
     ListTaglinesResponse,
     TaglineResponse,
-    aministration::{CreateTagline, DeleteTagline, UpdateTagline},
+    administration::{CreateTagline, DeleteTagline, UpdateTagline},
   },
 };
 
@@ -205,10 +205,17 @@ impl LemmyClient {
 
   /// Gets all media posted on an instance. Only usable by the instance's admins.
   ///
-  /// HTTP GET /admin/list_all_media
+  /// HTTP GET /image/list
   pub async fn list_all_media(&self, data: ListMedia) -> LemmyResult<ListMediaResponse> {
-    self
-      .make_request(Method::GET, "admin/list_all_media", data)
-      .await
+    self.make_request(Method::GET, "image/list", data).await
+  }
+
+  /// Deletes an image from the instance.
+  ///
+  /// **Can only be used by instance admins**
+  ///
+  /// HTTP DELETE /image
+  pub async fn delete_image_admin(&self, data: DeleteImageParams) -> LemmyResult<SuccessResponse> {
+    self.make_request(Method::DELETE, "image", data).await
   }
 }

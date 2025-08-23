@@ -3,7 +3,6 @@ use http::Method;
 use lemmy_api_common::{
   SuccessResponse,
   community::{
-    CommunityId,
     CommunityResponse,
     CreateMultiCommunity,
     CreateOrDeleteMultiCommunityEntry,
@@ -18,6 +17,7 @@ use lemmy_api_common::{
     ListMultiCommunities,
     ListMultiCommunitiesResponse,
     Tag,
+    UpdateCommunityNotifications,
     UpdateMultiCommunity,
     actions::{
       CreateCommunity,
@@ -158,16 +158,10 @@ impl LemmyClient {
   /// HTTP POST /community/icon
   pub async fn upload_community_icon(
     &self,
-    community_id: CommunityId,
+    query: CommunityIdQuery,
     body: &'static [u8],
   ) -> LemmyResult<UploadImageResponse> {
-    self
-      .make_file_request(
-        "community/icon",
-        CommunityIdQuery { id: community_id },
-        body,
-      )
-      .await
+    self.make_file_request("community/icon", query, body).await
   }
 
   /// Deletes the icon used by a community.
@@ -175,14 +169,10 @@ impl LemmyClient {
   /// HTTP DELETE /community/icon
   pub async fn delete_community_icon(
     &self,
-    community_id: CommunityId,
+    request: CommunityIdQuery,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(
-        Method::DELETE,
-        "community/icon",
-        CommunityIdQuery { id: community_id },
-      )
+      .make_request(Method::DELETE, "community/icon", request)
       .await
   }
 
@@ -191,15 +181,11 @@ impl LemmyClient {
   /// HTTP POST /community/banner
   pub async fn upload_community_banner(
     &self,
-    community_id: CommunityId,
+    query: CommunityIdQuery,
     body: &'static [u8],
   ) -> LemmyResult<UploadImageResponse> {
     self
-      .make_file_request(
-        "community/banner",
-        CommunityIdQuery { id: community_id },
-        body,
-      )
+      .make_file_request("community/banner", query, body)
       .await
   }
 
@@ -208,14 +194,10 @@ impl LemmyClient {
   /// HTTP DELETE /community/banner
   pub async fn delete_community_banner(
     &self,
-    community_id: CommunityId,
+    request: CommunityIdQuery,
   ) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(
-        Method::DELETE,
-        "community/banner",
-        CommunityIdQuery { id: community_id },
-      )
+      .make_request(Method::DELETE, "community/banner", request)
       .await
   }
 
@@ -239,6 +221,18 @@ impl LemmyClient {
   pub async fn delete_community_tag(&self, data: DeleteCommunityTag) -> LemmyResult<Tag> {
     self
       .make_request(Method::DELETE, "community/tag", data)
+      .await
+  }
+
+  /// Set which notifications you want to receive for a community.
+  ///
+  /// HTTP POST /community/notifications
+  pub async fn update_community_notifications(
+    &self,
+    data: UpdateCommunityNotifications,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "community/notifications", data)
       .await
   }
 
