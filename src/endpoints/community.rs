@@ -45,6 +45,7 @@ use lemmy_api_common::{
   },
   media::UploadImageResponse,
 };
+use reqwest::Body;
 
 // TODO: Add icon and banner stuff
 
@@ -159,7 +160,7 @@ impl LemmyClient {
   pub async fn upload_community_icon(
     &self,
     query: CommunityIdQuery,
-    body: &'static [u8],
+    body: impl Into<Body>,
   ) -> LemmyResult<UploadImageResponse> {
     self.make_file_request("community/icon", query, body).await
   }
@@ -182,7 +183,7 @@ impl LemmyClient {
   pub async fn upload_community_banner(
     &self,
     query: CommunityIdQuery,
-    body: &'static [u8],
+    body: impl Into<Body>,
   ) -> LemmyResult<UploadImageResponse> {
     self
       .make_file_request("community/banner", query, body)

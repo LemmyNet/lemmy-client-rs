@@ -31,7 +31,7 @@ use lemmy_api_common::{
     ListTaglines,
     ListTaglinesResponse,
     TaglineResponse,
-    administration::{CreateTagline, DeleteTagline, UpdateTagline},
+    aministration::{CreateTagline, DeleteTagline, UpdateTagline},
   },
 };
 

@@ -11,7 +11,7 @@ use lemmy_api_common::{
     administration::{CreateSite, EditSite},
   },
 };
-use reqwest::Method;
+use reqwest::{Body, Method};
 
 // TODO: Add stuff for icon and banner
 
@@ -42,7 +42,10 @@ impl LemmyClient {
   /// **Only usable by instance admins**
   ///
   /// HTTP POST /site/icon
-  pub async fn upload_site_icon(&self, request: &'static [u8]) -> LemmyResult<UploadImageResponse> {
+  pub async fn upload_site_icon(
+    &self,
+    request: impl Into<Body>,
+  ) -> LemmyResult<UploadImageResponse> {
     self.make_file_request("site/icon", (), request).await
   }
 
@@ -65,7 +68,7 @@ impl LemmyClient {
   /// HTTP POST /site/banner
   pub async fn upload_site_banner(
     &self,
-    request: &'static [u8],
+    request: impl Into<Body>,
   ) -> LemmyResult<UploadImageResponse> {
     self.make_file_request("site/banner", (), request).await
   }

@@ -44,6 +44,7 @@ use lemmy_api_common::{
   person::actions::{BlockPerson, BlockPersonResponse},
   report::{GetReportCount, GetReportCountResponse},
 };
+use reqwest::Body;
 
 impl LemmyClient {
   /// Registers a new account on an instance.
@@ -282,7 +283,10 @@ impl LemmyClient {
   /// Upload an avatar for the currently authenticated user.
   ///
   /// HTTP POST /account/avatar
-  pub async fn upload_user_avatar(&self, data: &'static [u8]) -> LemmyResult<UploadImageResponse> {
+  pub async fn upload_user_avatar(
+    &self,
+    data: impl Into<Body>,
+  ) -> LemmyResult<UploadImageResponse> {
     self.make_file_request("account/avatar", (), data).await
   }
 
@@ -298,7 +302,10 @@ impl LemmyClient {
   /// Upload a banner for the currently authenticated user.
   ///
   /// HTTP POST /account/banner
-  pub async fn upload_user_banner(&self, data: &'static [u8]) -> LemmyResult<UploadImageResponse> {
+  pub async fn upload_user_banner(
+    &self,
+    data: impl Into<Body>,
+  ) -> LemmyResult<UploadImageResponse> {
     self.make_file_request("account/banner", (), data).await
   }
 
@@ -422,7 +429,7 @@ impl LemmyClient {
   /// Upload an image to the instance.
   ///
   /// HTTP POST /image
-  pub async fn upload_image(&self, data: &'static [u8]) -> LemmyResult<UploadImageResponse> {
+  pub async fn upload_image(&self, data: impl Into<Body>) -> LemmyResult<UploadImageResponse> {
     self.make_file_request("image", (), data).await
   }
 }

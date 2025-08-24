@@ -6,7 +6,7 @@ use http::{
   header::{AUTHORIZATION, InvalidHeaderValue, USER_AGENT},
 };
 use lemmy_api_common::{error::LemmyErrorType, media::UploadImageResponse};
-use reqwest::{Client, RequestBuilder};
+use reqwest::{Body, Client, RequestBuilder};
 use serde::{Deserialize, Serialize};
 use std::{borrow::Cow, fmt};
 
@@ -149,16 +149,15 @@ impl LemmyClient {
     request_builder.headers(self.headers.clone())
   }
 
-  pub(crate) async fn make_request<Response, Form>(
+  pub(crate) async fn make_request<Response>(
     &self,
     method: Method,
     path: &str,
-    body: Form,
+    body: impl Serialize + Clone + fmt::Debug,
   ) -> LemmyResult<Response>
   where
     // TODO in the future, we can use trait aliases for these: https://doc.rust-lang.org/unstable-book/language-features/trait-alias.html
     Response: for<'de> Deserialize<'de>,
-    Form: Serialize + Clone + fmt::Debug,
   {
     let request_builder = self.create_request_builder(&method, path);
 
@@ -173,15 +172,12 @@ impl LemmyClient {
     deserialize_response(&res)
   }
 
-  pub(crate) async fn make_file_request<Form>(
+  pub(crate) async fn make_file_request(
     &self,
     path: &str,
-    query: Form,
-    body: &'static [u8],
-  ) -> LemmyResult<UploadImageResponse>
-  where
-    Form: Serialize + Clone + fmt::Debug,
-  {
+    query: impl Serialize + Clone + fmt::Debug,
+    body: impl Into<Body>,
+  ) -> LemmyResult<UploadImageResponse> {
     let request_builder = self
       .create_request_builder(&Method::POST, path)
       .query(&query)
