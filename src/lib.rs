@@ -38,4 +38,5 @@ mod endpoints;
 mod lemmy_client;
 
 pub use client_options::ClientOptions;
+pub use lemmy_api_common;
 pub use lemmy_client::{LemmyClient, LemmyResult};
