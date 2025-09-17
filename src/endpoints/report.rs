@@ -5,6 +5,7 @@ use lemmy_api_common::report::{
   CreateCommunityReport,
   ListReports,
   ListReportsResponse,
+  ResolveCommunityReport,
 };
 
 impl LemmyClient {
@@ -32,7 +33,7 @@ impl LemmyClient {
   /// HTTP PUT /community/report/resolve
   pub async fn resolve_community_report(
     &self,
-    data: CreateCommunityReport,
+    data: ResolveCommunityReport,
   ) -> LemmyResult<CommunityReportResponse> {
     self
       .make_request(Method::PUT, "community/report/resolve", data)

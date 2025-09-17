@@ -36,6 +36,7 @@
 mod client_options;
 mod endpoints;
 mod lemmy_client;
+mod lemmy_request;
 
 pub use client_options::ClientOptions;
 pub use lemmy_api_common;
