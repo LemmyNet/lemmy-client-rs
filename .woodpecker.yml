@@ -1,5 +1,5 @@
 variables:
-  - &rust_image "rust:1.89-slim-bookworm"
+  - &rust_image "rust:1.90-slim-bookworm"
 
 steps:
   toml_fmt:
