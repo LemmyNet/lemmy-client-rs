@@ -32,7 +32,7 @@ use lemmy_api_common::{
       VerifyEmail,
     },
   },
-  community::actions::{BlockCommunity, BlockCommunityResponse},
+  community::{CommunityResponse, actions::BlockCommunity},
   federation::{UserBlockInstanceCommunitiesParams, UserBlockInstancePersonsParams},
   media::{DeleteImageParams, ListMedia, ListMediaResponse, UploadImageResponse},
   notification::{
@@ -41,7 +41,7 @@ use lemmy_api_common::{
     ListNotificationsResponse,
     MarkNotificationAsRead,
   },
-  person::actions::{BlockPerson, BlockPersonResponse},
+  person::{PersonResponse, actions::BlockPerson},
   report::{GetReportCount, GetReportCountResponse},
 };
 use reqwest::Body;
@@ -321,7 +321,7 @@ impl LemmyClient {
   /// Blocks a person.
   ///
   /// HTTP POST /account/block/person
-  pub async fn block_person(&self, data: BlockPerson) -> LemmyResult<BlockPersonResponse> {
+  pub async fn block_person(&self, data: BlockPerson) -> LemmyResult<PersonResponse> {
     self
       .make_request(Method::POST, "account/block/person", data)
       .await
@@ -330,7 +330,7 @@ impl LemmyClient {
   /// Blocks a community.
   ///
   /// HTTP POST /account/block/community
-  pub async fn block_community(&self, data: BlockCommunity) -> LemmyResult<BlockCommunityResponse> {
+  pub async fn block_community(&self, data: BlockCommunity) -> LemmyResult<CommunityResponse> {
     self
       .make_request(Method::POST, "account/block/community", data)
       .await
