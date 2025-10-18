@@ -33,7 +33,6 @@ use lemmy_api_common::{
         DeleteCommunity,
         DeleteCommunityTag,
         EditCommunity,
-        GetCommunityPendingFollowsCount,
         GetCommunityPendingFollowsCountResponse,
         ListCommunityPendingFollows,
         ListCommunityPendingFollowsResponse,
@@ -242,10 +241,9 @@ impl LemmyClient {
   /// HTTP GET /community/pending_follows/count
   pub async fn get_community_pending_follows_count(
     &self,
-    data: GetCommunityPendingFollowsCount,
   ) -> LemmyResult<GetCommunityPendingFollowsCountResponse> {
     self
-      .make_request(Method::GET, "community/pending_follows/count", data)
+      .make_request(Method::GET, "community/pending_follows/count", ())
       .await
   }
 

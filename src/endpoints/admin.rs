@@ -6,12 +6,14 @@ use lemmy_api_common::{
   community::actions::moderation::PurgeCommunity,
   federation::administration::{AdminAllowInstanceParams, AdminBlockInstanceParams},
   media::{DeleteImageParams, ListMedia, ListMediaResponse},
-  person::actions::moderation::{
-    BanPerson,
-    BanPersonResponse,
-    GetRegistrationApplication,
-    PurgePerson,
-    RegistrationApplicationResponse,
+  person::{
+    PersonResponse,
+    actions::moderation::{
+      BanPerson,
+      GetRegistrationApplication,
+      PurgePerson,
+      RegistrationApplicationResponse,
+    },
   },
   post::actions::moderation::PurgePost,
   site::{
@@ -161,7 +163,7 @@ impl LemmyClient {
   /// Bans a person from your instance.
   ///
   /// HTTP POST /admin/ban
-  pub async fn ban_from_site(&self, data: BanPerson) -> LemmyResult<BanPersonResponse> {
+  pub async fn ban_from_site(&self, data: BanPerson) -> LemmyResult<PersonResponse> {
     self.make_request(Method::POST, "admin/ban", data).await
   }
 
