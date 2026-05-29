@@ -1,48 +1,42 @@
 use crate::{LemmyClient, LemmyResult};
 use http::{Method, header::AUTHORIZATION};
 use lemmy_api_common::{
+  PagedResponse,
   SuccessResponse,
   account::{
     DeleteAccount,
     ListPersonHidden,
-    ListPersonHiddenResponse,
     ListPersonLiked,
-    ListPersonLikedResponse,
     ListPersonRead,
-    ListPersonReadResponse,
     ListPersonSaved,
-    ListPersonSavedResponse,
     MyUserInfo,
+    PostCommentCombinedView,
     SaveUserSettings,
     auth::{
       ChangePassword,
+      ChangePasswordAfterReset,
+      EditTotp,
+      EditTotpResponse,
       ExportDataResponse,
       GenerateTotpSecretResponse,
       GetCaptchaResponse,
       ListLoginsResponse,
       Login,
       LoginResponse,
-      PasswordChangeAfterReset,
-      PasswordReset,
       Register,
       ResendVerificationEmail,
-      UpdateTotp,
-      UpdateTotpResponse,
+      ResetPassword,
       UserSettingsBackup,
       VerifyEmail,
     },
   },
   community::{CommunityResponse, actions::BlockCommunity},
   federation::{UserBlockInstanceCommunitiesParams, UserBlockInstancePersonsParams},
-  media::{DeleteImageParams, ListMedia, ListMediaResponse, UploadImageResponse},
-  notification::{
-    GetUnreadCountResponse,
-    ListNotifications,
-    ListNotificationsResponse,
-    MarkNotificationAsRead,
-  },
+  media::{DeleteImageParams, ListMedia, LocalImageView, UploadImageResponse},
+  notification::{ListNotifications, MarkNotificationAsRead, NotificationView},
   person::{PersonResponse, actions::BlockPerson},
-  report::{GetReportCount, GetReportCountResponse},
+  post::PostView,
+  site::UnreadCountsResponse,
 };
 use reqwest::Body;
 
@@ -87,18 +81,9 @@ impl LemmyClient {
   /// Use this if you forgot your password.
   ///
   /// HTTP POST /account/auth/password_reset
-  pub async fn reset_password(&self, data: PasswordReset) -> LemmyResult<SuccessResponse> {
+  pub async fn reset_password(&self, data: ResetPassword) -> LemmyResult<SuccessResponse> {
     self
       .make_request(Method::POST, "account/auth/password_reset", data)
-      .await
-  }
-
-  /// Gets a captcha.
-  ///
-  /// HTTP GET /account/auth/get_captcha
-  pub async fn get_captcha(&self) -> LemmyResult<GetCaptchaResponse> {
-    self
-      .make_request(Method::GET, "account/auth/get_captcha", ())
       .await
   }
 
@@ -107,7 +92,7 @@ impl LemmyClient {
   /// HTTP POST /account/auth/password_change
   pub async fn change_password_after_reset(
     &self,
-    data: PasswordChangeAfterReset,
+    data: ChangePasswordAfterReset,
   ) -> LemmyResult<SuccessResponse> {
     self
       .make_request(Method::POST, "account/auth/password_change", data)
@@ -142,7 +127,7 @@ impl LemmyClient {
   /// You can only disable this if it is already enabled. Again, you must pass a valid TOTP.
   ///
   /// HTTP POST /account/auth/totp/update
-  pub async fn update_totp(&self, data: UpdateTotp) -> LemmyResult<UpdateTotpResponse> {
+  pub async fn edit_totp(&self, data: EditTotp) -> LemmyResult<EditTotpResponse> {
     self
       .make_request(Method::POST, "account/auth/totp/update", data)
       .await
@@ -170,11 +155,29 @@ impl LemmyClient {
       .await
   }
 
+  /// Gets a captcha.
+  ///
+  /// HTTP GET /account/auth/get_captcha
+  pub async fn get_captcha(&self) -> LemmyResult<GetCaptchaResponse> {
+    self
+      .make_request(Method::GET, "account/auth/get_captcha", ())
+      .await
+  }
+
   /// Return the user associated with the JWT token passed.
   ///
   /// HTTP GET /account
   pub async fn get_current_user(&self) -> LemmyResult<MyUserInfo> {
     self.make_request(Method::GET, "account", ()).await
+  }
+
+  /// Gets number of unreads
+  ///
+  /// HTTP GET /account/unread_count
+  pub async fn unread_counts(&self) -> LemmyResult<UnreadCountsResponse> {
+    self
+      .make_request(Method::GET, "account/unread_counts", ())
+      .await
   }
 
   /// Delete an image that you uploaded.
@@ -189,7 +192,7 @@ impl LemmyClient {
   /// Gets all media posted by the logged in user.
   ///
   /// HTTP GET /account/media/list
-  pub async fn list_media(&self, data: ListMedia) -> LemmyResult<ListMediaResponse> {
+  pub async fn list_media(&self, data: ListMedia) -> LemmyResult<PagedResponse<LocalImageView>> {
     self
       .make_request(Method::GET, "account/media/list", data)
       .await
@@ -201,9 +204,30 @@ impl LemmyClient {
   pub async fn list_notifications(
     &self,
     data: ListNotifications,
-  ) -> LemmyResult<ListNotificationsResponse> {
+  ) -> LemmyResult<PagedResponse<NotificationView>> {
     self
-      .make_request(Method::GET, "/account/notifications", data)
+      .make_request(Method::GET, "/account/notification/list", data)
+      .await
+  }
+
+  /// Marks all notifications (replies, mentions, private messages) as read.
+  ///
+  /// HTTP POST /account/mark_as_read/all
+  pub async fn mark_all_notifications_as_read(&self) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/notification/mark_as_read/all", ())
+      .await
+  }
+
+  /// Mark a notification (reply, mention, private message) as read.
+  ///
+  /// HTTP POST /account/mark_as_read
+  pub async fn mark_notification_as_read(
+    &self,
+    data: MarkNotificationAsRead,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/notification/mark_as_read", data)
       .await
   }
 
@@ -216,50 +240,13 @@ impl LemmyClient {
       .await
   }
 
-  /// Marks all notifications (replies, mentions, private messages) as read.
-  ///
-  /// HTTP POST /account/mark_as_read/all
-  pub async fn mark_all_notifications_as_read(&self) -> LemmyResult<SuccessResponse> {
-    self
-      .make_request(Method::POST, "account/mark_as_read/all", ())
-      .await
-  }
-
-  /// Mark a notification (reply, mention, private message) as read.
-  ///
-  /// HTTP POST /account/mark_as_read
-  pub async fn mark_notification_as_read(
-    &self,
-    data: MarkNotificationAsRead,
-  ) -> LemmyResult<SuccessResponse> {
-    self
-      .make_request(Method::POST, "account/mark_as_read", data)
-      .await
-  }
-
-  /// Gets number of reports you can resolve.
-  ///
-  /// HTTP GET /account/report_count
-  pub async fn report_count(&self, data: GetReportCount) -> LemmyResult<GetReportCountResponse> {
-    self
-      .make_request(Method::GET, "account/report_count", data)
-      .await
-  }
-
-  /// Gets number of unread notifications.
-  ///
-  /// HTTP GET /account/unread_count
-  pub async fn unread_count(&self) -> LemmyResult<GetUnreadCountResponse> {
-    self
-      .make_request(Method::GET, "account/unread_count", ())
-      .await
-  }
-
   /// Lists login tokens for your user's active sessions.
   ///
   /// HTTP GET /account/list_logins
   pub async fn list_logins(&self) -> LemmyResult<ListLoginsResponse> {
-    self.make_request(Method::GET, "list_logins", ()).await
+    self
+      .make_request(Method::GET, "account/login/list", ())
+      .await
   }
 
   /// Returns an error message if your auth token is invalid.
@@ -351,7 +338,7 @@ impl LemmyClient {
   /// Prevents posts and comments by users from the blocked instance from being fetched.
   ///
   /// HTTP POST /account/block/instance/persons
-  pub async fn user_block_instance_users(
+  pub async fn user_block_instance_persons(
     &self,
     data: UserBlockInstancePersonsParams,
   ) -> LemmyResult<SuccessResponse> {
@@ -363,7 +350,10 @@ impl LemmyClient {
   /// List posts and comments that were saved by the authenticated user.
   ///
   /// HTTP GET /account/saved
-  pub async fn list_saved(&self, data: ListPersonSaved) -> LemmyResult<ListPersonSavedResponse> {
+  pub async fn list_saved(
+    &self,
+    data: ListPersonSaved,
+  ) -> LemmyResult<PagedResponse<PostCommentCombinedView>> {
     self.make_request(Method::GET, "account/saved", data).await
   }
 
@@ -371,21 +361,24 @@ impl LemmyClient {
   /// order.
   ///
   /// HTTP GET /account/read
-  pub async fn list_read(&self, data: ListPersonRead) -> LemmyResult<ListPersonReadResponse> {
+  pub async fn list_read(&self, data: ListPersonRead) -> LemmyResult<PagedResponse<PostView>> {
     self.make_request(Method::GET, "account/read", data).await
   }
 
   /// List posts and comments that were hidden by the authenticated user, ordered by date hidden.
   ///
   /// HTTP GET /account/hidden
-  pub async fn list_hidden(&self, data: ListPersonHidden) -> LemmyResult<ListPersonHiddenResponse> {
+  pub async fn list_hidden(&self, data: ListPersonHidden) -> LemmyResult<PagedResponse<PostView>> {
     self.make_request(Method::GET, "account/hidden", data).await
   }
 
   /// List posts and comments that were liked by the authenticated user.
   ///
   /// HTTP GET /account/liked
-  pub async fn list_liked(&self, data: ListPersonLiked) -> LemmyResult<ListPersonLikedResponse> {
+  pub async fn list_liked(
+    &self,
+    data: ListPersonLiked,
+  ) -> LemmyResult<PagedResponse<PostCommentCombinedView>> {
     self.make_request(Method::GET, "account/liked", data).await
   }
 
@@ -424,12 +417,5 @@ impl LemmyClient {
     self
       .make_request(Method::GET, "account/data/export", ())
       .await
-  }
-
-  /// Upload an image to the instance.
-  ///
-  /// HTTP POST /image
-  pub async fn upload_image(&self, data: impl Into<Body>) -> LemmyResult<UploadImageResponse> {
-    self.make_file_request("image", (), data).await
   }
 }

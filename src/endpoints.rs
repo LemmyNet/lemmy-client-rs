@@ -1,9 +1,10 @@
-// TODO: Need to add multi-community stuff
 pub mod account;
 pub mod admin;
 pub mod comment;
 pub mod community;
 pub mod emoji;
+pub mod image;
+pub mod multi_community;
 pub mod oauth;
 pub mod person;
 pub mod post;
