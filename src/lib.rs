@@ -11,9 +11,10 @@
 //! ## Example
 //! ```
 //! use lemmy_client::{LemmyClient, ClientOptions};
+//! use lemmy_api_common::account::auth::Login;
 //!
 //! async fn get_site_test() {
-//!   let client = LemmyClient::new(ClientOptions {
+//!   let mut client = LemmyClient::new(ClientOptions {
 //!     domain: "lemmy.ml",
 //!     secure: true
 //!   });
@@ -23,12 +24,12 @@
 //!
 //!   // Login
 //!   let login = Login {
-//!     username_or_email: "user",
-//!     password: "password",
+//!     username_or_email: "user".to_string().into(),
+//!     password: "password".to_string().into(),
 //!     stay_logged_in: None,
 //!     totp_2fa_token: None,
 //!   };
-//!   let jwt = client.login(login).await?.jwt;
+//!   let jwt = client.login(login).await.unwrap().jwt;
 //!   if let Some(jwt) = jwt {
 //!     client.set_jwt(&jwt.into_inner());
 //!   };

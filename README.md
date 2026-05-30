@@ -18,9 +18,10 @@
 
 ```rust
 use lemmy_client::{LemmyClient, ClientOptions};
+use lemmy_api_common::account::auth::Login;
 
 async fn get_site_test() {
-  let client = LemmyClient::new(ClientOptions {
+  let mut client = LemmyClient::new(ClientOptions {
     domain: "lemmy.ml",
     secure: true
   });
@@ -30,8 +31,8 @@ async fn get_site_test() {
 
   // Login
   let login = Login {
-    username_or_email: "user",
-    password: "password",
+    username_or_email: "user".to_string().into(),
+    password: "password".to_string().into(),
     stay_logged_in: None,
     totp_2fa_token: None,
   };
