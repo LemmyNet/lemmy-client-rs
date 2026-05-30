@@ -1,0 +1,421 @@
+use crate::{LemmyClient, LemmyResult};
+use http::{Method, header::AUTHORIZATION};
+use lemmy_api_common::{
+  PagedResponse,
+  SuccessResponse,
+  account::{
+    DeleteAccount,
+    ListPersonHidden,
+    ListPersonLiked,
+    ListPersonRead,
+    ListPersonSaved,
+    MyUserInfo,
+    PostCommentCombinedView,
+    SaveUserSettings,
+    auth::{
+      ChangePassword,
+      ChangePasswordAfterReset,
+      EditTotp,
+      EditTotpResponse,
+      ExportDataResponse,
+      GenerateTotpSecretResponse,
+      GetCaptchaResponse,
+      ListLoginsResponse,
+      Login,
+      LoginResponse,
+      Register,
+      ResendVerificationEmail,
+      ResetPassword,
+      UserSettingsBackup,
+      VerifyEmail,
+    },
+  },
+  community::{CommunityResponse, actions::BlockCommunity},
+  federation::{UserBlockInstanceCommunitiesParams, UserBlockInstancePersonsParams},
+  media::{DeleteImageParams, ListMedia, LocalImageView, UploadImageResponse},
+  notification::{ListNotifications, MarkNotificationAsRead, NotificationView},
+  person::{PersonResponse, actions::BlockPerson},
+  post::PostView,
+  site::UnreadCountsResponse,
+};
+use reqwest::Body;
+
+impl LemmyClient {
+  /// Registers a new account on an instance.
+  ///
+  /// HTTP POST /account/auth/register
+  pub async fn register_account(&self, data: Register) -> LemmyResult<LoginResponse> {
+    self
+      .make_request(Method::POST, "account/auth/register", data)
+      .await
+  }
+
+  /// Logs into the instance, giving you a JWT to use to make authorized requests.
+  ///
+  /// HTTP POST /account/auth/login
+  pub async fn login(&self, data: Login) -> LemmyResult<LoginResponse> {
+    self
+      .make_request(Method::POST, "account/auth/login", data)
+      .await
+  }
+
+  /// Deletes the active session associated with the JWT.
+  /// If the response is successful, the JWT from the headers the client
+  /// sends with each request is also removed.
+  ///
+  /// HTTP POST /account/auth/logout
+  pub async fn logout(&mut self) -> LemmyResult<SuccessResponse> {
+    let response = self
+      .make_request(Method::POST, "account/auth/logout", ())
+      .await;
+
+    if response.is_ok() {
+      let headers = self.headers_mut();
+      headers.remove(AUTHORIZATION);
+    }
+
+    response
+  }
+
+  /// Sends an email to your account (if you have one) with a one time link to change your password.
+  /// Use this if you forgot your password.
+  ///
+  /// HTTP POST /account/auth/password_reset
+  pub async fn reset_password(&self, data: ResetPassword) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/auth/password_reset", data)
+      .await
+  }
+
+  /// Follows through with one time link password reset request.
+  ///
+  /// HTTP POST /account/auth/password_change
+  pub async fn change_password_after_reset(
+    &self,
+    data: ChangePasswordAfterReset,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/auth/password_change", data)
+      .await
+  }
+
+  /// Changes your password if you are already logged in.
+  ///
+  /// HTTP PUT /account/auth/change_password
+  pub async fn change_password(&self, data: ChangePassword) -> LemmyResult<LoginResponse> {
+    self
+      .make_request(Method::POST, "account/auth/change_password", data)
+      .await
+  }
+
+  /// Generates a secret to enable time-based one time passwords for two-factor authentication.
+  ///
+  /// After this, you will need to call /account/auth/totp/update with a valid token to enable it.
+  ///
+  /// HTTP POST /account/auth/totp/generate
+  pub async fn generate_totp_secret(&self) -> LemmyResult<GenerateTotpSecretResponse> {
+    self
+      .make_request(Method::POST, "account/auth/totp/generate", ())
+      .await
+  }
+
+  /// Enables/disables two-factor authentication.
+  ///
+  /// To enable, you must first call /account/auth/totp/generate to generate a token to pass to
+  /// this.
+  ///
+  /// You can only disable this if it is already enabled. Again, you must pass a valid TOTP.
+  ///
+  /// HTTP POST /account/auth/totp/update
+  pub async fn edit_totp(&self, data: EditTotp) -> LemmyResult<EditTotpResponse> {
+    self
+      .make_request(Method::POST, "account/auth/totp/update", data)
+      .await
+  }
+
+  /// Verifies your email. Used when the instance you are registering an account on requires email
+  /// verification.
+  ///
+  /// HTTP POST /account/auth/verify_email
+  pub async fn verify_email(&self, data: VerifyEmail) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/auth/verify_email", data)
+      .await
+  }
+
+  /// Resend a verification email.
+  ///
+  /// HTTP POST /account/auth/resend_verification_email
+  pub async fn resend_verification_email(
+    &self,
+    data: ResendVerificationEmail,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/auth/resend_verification_email", data)
+      .await
+  }
+
+  /// Gets a captcha.
+  ///
+  /// HTTP GET /account/auth/get_captcha
+  pub async fn get_captcha(&self) -> LemmyResult<GetCaptchaResponse> {
+    self
+      .make_request(Method::GET, "account/auth/get_captcha", ())
+      .await
+  }
+
+  /// Return the user associated with the JWT token passed.
+  ///
+  /// HTTP GET /account
+  pub async fn get_current_user(&self) -> LemmyResult<MyUserInfo> {
+    self.make_request(Method::GET, "account", ()).await
+  }
+
+  /// Gets number of unreads
+  ///
+  /// HTTP GET /account/unread_count
+  pub async fn unread_counts(&self) -> LemmyResult<UnreadCountsResponse> {
+    self
+      .make_request(Method::GET, "account/unread_counts", ())
+      .await
+  }
+
+  /// Delete an image that you uploaded.
+  ///
+  /// HTTP DELETE /account/media
+  pub async fn delete_image(&self, data: DeleteImageParams) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::DELETE, "account/media", data)
+      .await
+  }
+
+  /// Gets all media posted by the logged in user.
+  ///
+  /// HTTP GET /account/media/list
+  pub async fn list_media(&self, data: ListMedia) -> LemmyResult<PagedResponse<LocalImageView>> {
+    self
+      .make_request(Method::GET, "account/media/list", data)
+      .await
+  }
+
+  /// Gets all notifications for the logged in user.
+  ///
+  /// HTTP GET /account/notifications
+  pub async fn list_notifications(
+    &self,
+    data: ListNotifications,
+  ) -> LemmyResult<PagedResponse<NotificationView>> {
+    self
+      .make_request(Method::GET, "/account/notification/list", data)
+      .await
+  }
+
+  /// Marks all notifications (replies, mentions, private messages) as read.
+  ///
+  /// HTTP POST /account/mark_as_read/all
+  pub async fn mark_all_notifications_as_read(&self) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/notification/mark_as_read/all", ())
+      .await
+  }
+
+  /// Mark a notification (reply, mention, private message) as read.
+  ///
+  /// HTTP POST /account/mark_as_read
+  pub async fn mark_notification_as_read(
+    &self,
+    data: MarkNotificationAsRead,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/notification/mark_as_read", data)
+      .await
+  }
+
+  /// Deletes your account.
+  ///
+  /// HTTP POST /account/delete
+  pub async fn delete_account(&self, data: DeleteAccount) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/delete", data)
+      .await
+  }
+
+  /// Lists login tokens for your user's active sessions.
+  ///
+  /// HTTP GET /account/list_logins
+  pub async fn list_logins(&self) -> LemmyResult<ListLoginsResponse> {
+    self
+      .make_request(Method::GET, "account/login/list", ())
+      .await
+  }
+
+  /// Returns an error message if your auth token is invalid.
+  ///
+  /// HTTP GET /account/validate_auth
+  pub async fn validate_auth(&self) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::GET, "account/validate_auth", ())
+      .await
+  }
+
+  /// Make donation dialog appear for users of your instance even if a user dismissed it before.
+  ///
+  /// HTTP POST /account/donation_dialog_shown
+  pub async fn donation_dialog_shown(&self) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/donation_dialog_shown", ())
+      .await
+  }
+
+  /// Upload an avatar for the currently authenticated user.
+  ///
+  /// HTTP POST /account/avatar
+  pub async fn upload_user_avatar(
+    &self,
+    data: impl Into<Body>,
+  ) -> LemmyResult<UploadImageResponse> {
+    self.make_file_request("account/avatar", (), data).await
+  }
+
+  /// Delete the avatar for the currently authenticated user.
+  ///
+  /// HTTP DELETE /account/avatar
+  pub async fn delete_user_avatar(&self) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::DELETE, "account/avatar", ())
+      .await
+  }
+
+  /// Upload a banner for the currently authenticated user.
+  ///
+  /// HTTP POST /account/banner
+  pub async fn upload_user_banner(
+    &self,
+    data: impl Into<Body>,
+  ) -> LemmyResult<UploadImageResponse> {
+    self.make_file_request("account/banner", (), data).await
+  }
+
+  /// Deletes the banner for the currently authenticated in user.
+  ///
+  /// HTTP DELETE /account/banner
+  pub async fn delete_user_banner(&self) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::DELETE, "account/banner", ())
+      .await
+  }
+
+  /// Blocks a person.
+  ///
+  /// HTTP POST /account/block/person
+  pub async fn block_person(&self, data: BlockPerson) -> LemmyResult<PersonResponse> {
+    self
+      .make_request(Method::POST, "account/block/person", data)
+      .await
+  }
+
+  /// Blocks a community.
+  ///
+  /// HTTP POST /account/block/community
+  pub async fn block_community(&self, data: BlockCommunity) -> LemmyResult<CommunityResponse> {
+    self
+      .make_request(Method::POST, "account/block/community", data)
+      .await
+  }
+
+  /// Prevents posts from communities from the blocked instance from appearing in your feed.
+  ///
+  /// HTTP POST /account/block/instance/communities
+  pub async fn user_block_instance_communities(
+    &self,
+    data: UserBlockInstanceCommunitiesParams,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/block/instance/communities", data)
+      .await
+  }
+
+  /// Prevents posts and comments by users from the blocked instance from being fetched.
+  ///
+  /// HTTP POST /account/block/instance/persons
+  pub async fn user_block_instance_persons(
+    &self,
+    data: UserBlockInstancePersonsParams,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/block/instance/persons", data)
+      .await
+  }
+
+  /// List posts and comments that were saved by the authenticated user.
+  ///
+  /// HTTP GET /account/saved
+  pub async fn list_saved(
+    &self,
+    data: ListPersonSaved,
+  ) -> LemmyResult<PagedResponse<PostCommentCombinedView>> {
+    self.make_request(Method::GET, "account/saved", data).await
+  }
+
+  /// List posts and comments that were read by the authenticated user in reverse chronological
+  /// order.
+  ///
+  /// HTTP GET /account/read
+  pub async fn list_read(&self, data: ListPersonRead) -> LemmyResult<PagedResponse<PostView>> {
+    self.make_request(Method::GET, "account/read", data).await
+  }
+
+  /// List posts and comments that were hidden by the authenticated user, ordered by date hidden.
+  ///
+  /// HTTP GET /account/hidden
+  pub async fn list_hidden(&self, data: ListPersonHidden) -> LemmyResult<PagedResponse<PostView>> {
+    self.make_request(Method::GET, "account/hidden", data).await
+  }
+
+  /// List posts and comments that were liked by the authenticated user.
+  ///
+  /// HTTP GET /account/liked
+  pub async fn list_liked(
+    &self,
+    data: ListPersonLiked,
+  ) -> LemmyResult<PagedResponse<PostCommentCombinedView>> {
+    self.make_request(Method::GET, "account/liked", data).await
+  }
+
+  /// Saves your account settings.
+  ///
+  /// HTTP PUT /account/settings/save
+  pub async fn save_user_settings(&self, data: SaveUserSettings) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::PUT, "account/settings/save", data)
+      .await
+  }
+
+  /// Exports a backup of your user settings - including your saved content, followed communities,
+  /// and blocks - as JSON.
+  ///
+  /// HTTP GET /account/settings/export
+  pub async fn export_settings(&self) -> LemmyResult<UserSettingsBackup> {
+    self
+      .make_request(Method::GET, "account/settings/export", ())
+      .await
+  }
+
+  /// Imports a backup of your user settings.
+  ///
+  /// HTTP POST /account/settings/import
+  pub async fn import_settings(&self, data: UserSettingsBackup) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::POST, "account/settings/import", data)
+      .await
+  }
+
+  /// Export data for the currently authenticated user.
+  ///
+  /// HTTP GET /account/data/export
+  pub async fn export_user_data(&self) -> LemmyResult<ExportDataResponse> {
+    self
+      .make_request(Method::GET, "account/data/export", ())
+      .await
+  }
+}

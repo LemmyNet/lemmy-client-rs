@@ -1,0 +1,52 @@
+use crate::{LemmyClient, LemmyResult};
+use http::Method;
+use lemmy_api_common::{
+  PagedResponse,
+  SuccessResponse,
+  account::PostCommentCombinedView,
+  person::{
+    GetPersonDetails,
+    GetPersonDetailsResponse,
+    PersonView,
+    actions::{ListPersonContent, NotePerson},
+  },
+};
+
+impl LemmyClient {
+  /// Gets the publicly viewable details of a user's account.
+  ///
+  /// HTTP GET /person
+  pub async fn get_person_details(
+    &self,
+    data: GetPersonDetails,
+  ) -> LemmyResult<GetPersonDetailsResponse> {
+    self.make_request(Method::GET, "person", data).await
+  }
+
+  /// Lists persons.
+  ///
+  /// HTTP GET /person/list
+  pub async fn list_persons(
+    &self,
+    data: GetPersonDetails,
+  ) -> LemmyResult<PagedResponse<PersonView>> {
+    self.make_request(Method::GET, "person/list", data).await
+  }
+
+  /// List posts and comments made by a user.
+  ///
+  /// HTTP GET /person/content
+  pub async fn list_person_content(
+    &self,
+    data: ListPersonContent,
+  ) -> LemmyResult<PagedResponse<PostCommentCombinedView>> {
+    self.make_request(Method::GET, "person/content", data).await
+  }
+
+  /// Create a note about another user.
+  ///
+  /// HTTP POST /person/note
+  pub async fn create_person_note(&self, data: NotePerson) -> LemmyResult<SuccessResponse> {
+    self.make_request(Method::POST, "person/note", data).await
+  }
+}

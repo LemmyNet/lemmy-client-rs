@@ -12,7 +12,7 @@ steps:
   cargo_fmt:
     image: rustlang/rust:nightly-alpine
     commands:
-      - rustup component add rustfmt
+      - rustup component add rustfmt --toolchain nightly
       - cargo +nightly fmt -- --check
     when:
       - event: pull_request
