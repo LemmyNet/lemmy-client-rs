@@ -4,19 +4,22 @@ use lemmy_api_common::{
   SuccessResponse,
   account::auth::LoginResponse,
   oauth::{
+    AdminOAuthProvider,
     AuthenticateWithOauth,
     CreateOAuthProvider,
     DeleteOAuthProvider,
     EditOAuthProvider,
-    OAuthProvider,
   },
 };
 
 impl LemmyClient {
-  /// Add an OAuth provider your users can use to register for and log into your instance.
+  /// Create an OAuth provider your users can use to register for and log into your instance.
   ///
   /// HTTP POST /oauth_provider
-  pub async fn add_oauth_provider(&self, data: CreateOAuthProvider) -> LemmyResult<OAuthProvider> {
+  pub async fn create_oauth_provider(
+    &self,
+    data: CreateOAuthProvider,
+  ) -> LemmyResult<AdminOAuthProvider> {
     self
       .make_request(Method::POST, "oauth_provider", data)
       .await
@@ -25,7 +28,10 @@ impl LemmyClient {
   /// Edit one of your instance's OAuth providers.
   ///
   /// HTTP PUT /oauth_provider
-  pub async fn edit_oauth_provider(&self, data: EditOAuthProvider) -> LemmyResult<OAuthProvider> {
+  pub async fn edit_oauth_provider(
+    &self,
+    data: EditOAuthProvider,
+  ) -> LemmyResult<AdminOAuthProvider> {
     self.make_request(Method::PUT, "oauth_provider", data).await
   }
 
