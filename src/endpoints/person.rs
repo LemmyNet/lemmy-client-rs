@@ -1,11 +1,14 @@
 use crate::{LemmyClient, LemmyResult};
 use http::Method;
 use lemmy_api_common::{
+  PagedResponse,
   SuccessResponse,
+  account::PostCommentCombinedView,
   person::{
     GetPersonDetails,
     GetPersonDetailsResponse,
-    actions::{ListPersonContent, ListPersonContentResponse, NotePerson},
+    PersonView,
+    actions::{ListPersonContent, NotePerson},
   },
 };
 
@@ -20,13 +23,23 @@ impl LemmyClient {
     self.make_request(Method::GET, "person", data).await
   }
 
+  /// Lists persons.
+  ///
+  /// HTTP GET /person/list
+  pub async fn list_persons(
+    &self,
+    data: GetPersonDetails,
+  ) -> LemmyResult<PagedResponse<PersonView>> {
+    self.make_request(Method::GET, "person/list", data).await
+  }
+
   /// List posts and comments made by a user.
   ///
   /// HTTP GET /person/content
   pub async fn list_person_content(
     &self,
     data: ListPersonContent,
-  ) -> LemmyResult<ListPersonContentResponse> {
+  ) -> LemmyResult<PagedResponse<PostCommentCombinedView>> {
     self.make_request(Method::GET, "person/content", data).await
   }
 

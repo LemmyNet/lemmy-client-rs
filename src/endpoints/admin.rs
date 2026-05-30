@@ -1,39 +1,36 @@
 use crate::{LemmyClient, LemmyResult};
 use http::Method;
 use lemmy_api_common::{
+  self,
+  PagedResponse,
   SuccessResponse,
   comment::actions::moderation::PurgeComment,
   community::actions::moderation::PurgeCommunity,
   federation::administration::{AdminAllowInstanceParams, AdminBlockInstanceParams},
-  media::{DeleteImageParams, ListMedia, ListMediaResponse},
   person::{
+    LocalUserView,
     PersonResponse,
     actions::moderation::{
       BanPerson,
       GetRegistrationApplication,
       PurgePerson,
       RegistrationApplicationResponse,
+      RegistrationApplicationView,
     },
   },
   post::actions::moderation::PurgePost,
-  site::{
-    GetSiteResponse,
-    administration::{
-      AddAdmin,
-      AddAdminResponse,
-      AdminListUsers,
-      AdminListUsersResponse,
-      ApproveRegistrationApplication,
-      GetUnreadRegistrationApplicationCountResponse,
-      ListRegistrationApplications,
-      ListRegistrationApplicationsResponse,
-    },
+  site::administration::{
+    AddAdmin,
+    AddAdminResponse,
+    AdminListUsers,
+    ApproveRegistrationApplication,
+    ListRegistrationApplications,
   },
   tagline::{
     ListTaglines,
-    ListTaglinesResponse,
+    Tagline,
     TaglineResponse,
-    administration::{CreateTagline, DeleteTagline, UpdateTagline},
+    administration::{CreateTagline, DeleteTagline, EditTagline},
   },
 };
 
@@ -45,14 +42,15 @@ impl LemmyClient {
     self.make_request(Method::POST, "admin/add", data).await
   }
 
-  /// Gets the number of unread registration applications for the instance you administrate.
+  /// Get the application a user submitted when they first registered their account
   ///
-  /// HTTP GET /admin/registration_application/count
-  pub async fn unread_registration_application_count(
+  /// HTTP GET /admin/registration_application
+  pub async fn get_registration_application(
     &self,
-  ) -> LemmyResult<GetUnreadRegistrationApplicationCountResponse> {
+    data: GetRegistrationApplication,
+  ) -> LemmyResult<RegistrationApplicationResponse> {
     self
-      .make_request(Method::GET, "admin/registration_application/count", ())
+      .make_request(Method::GET, "admin/registration_application", data)
       .await
   }
 
@@ -62,7 +60,7 @@ impl LemmyClient {
   pub async fn list_registration_applications(
     &self,
     data: ListRegistrationApplications,
-  ) -> LemmyResult<ListRegistrationApplicationsResponse> {
+  ) -> LemmyResult<PagedResponse<RegistrationApplicationView>> {
     self
       .make_request(Method::GET, "admin/registration_application/list", data)
       .await
@@ -77,18 +75,6 @@ impl LemmyClient {
   ) -> LemmyResult<RegistrationApplicationResponse> {
     self
       .make_request(Method::PUT, "admin/registration_application/approve", data)
-      .await
-  }
-
-  /// Get the application a user submitted when they first registered their account
-  ///
-  /// HTTP GET /admin/registration_application
-  pub async fn get_registration_application(
-    &self,
-    data: GetRegistrationApplication,
-  ) -> LemmyResult<RegistrationApplicationResponse> {
-    self
-      .make_request(Method::GET, "admin/registration_application", data)
       .await
   }
 
@@ -124,7 +110,7 @@ impl LemmyClient {
   /// HTTP POST /admin/purge/comment
   pub async fn purge_comment(&self, data: PurgeComment) -> LemmyResult<SuccessResponse> {
     self
-      .make_request(Method::POST, "admin/purge/Comment", data)
+      .make_request(Method::POST, "admin/purge/comment", data)
       .await
   }
 
@@ -135,10 +121,10 @@ impl LemmyClient {
     self.make_request(Method::POST, "admin/tagline", data).await
   }
 
-  /// Updates an existing tagline.
+  /// Edits an existing tagline.
   ///
   /// HTTP PUT /admin/tagline
-  pub async fn update_tagline(&self, data: UpdateTagline) -> LemmyResult<TaglineResponse> {
+  pub async fn edit_tagline(&self, data: EditTagline) -> LemmyResult<TaglineResponse> {
     self.make_request(Method::PUT, "admin/tagline", data).await
   }
 
@@ -154,7 +140,7 @@ impl LemmyClient {
   /// Gets the site's taglines.
   ///
   /// HTTP GET /admin/tagline/list
-  pub async fn list_taglines(&self, data: ListTaglines) -> LemmyResult<ListTaglinesResponse> {
+  pub async fn list_taglines(&self, data: ListTaglines) -> LemmyResult<PagedResponse<Tagline>> {
     self
       .make_request(Method::GET, "admin/tagline/list", data)
       .await
@@ -170,15 +156,11 @@ impl LemmyClient {
   /// Lists users of your site.
   ///
   /// HTTP GET /admin/users
-  pub async fn list_users(&self, data: AdminListUsers) -> LemmyResult<AdminListUsersResponse> {
+  pub async fn list_users(
+    &self,
+    data: AdminListUsers,
+  ) -> LemmyResult<PagedResponse<LocalUserView>> {
     self.make_request(Method::GET, "admin/users", data).await
-  }
-
-  /// Leave your instance's admin team.
-  ///
-  /// HTTP POST /admin/leave
-  pub async fn leave_admin(&self) -> LemmyResult<GetSiteResponse> {
-    self.make_request(Method::POST, "admin/leave", ()).await
   }
 
   /// Defederates an instance from the current instance.
@@ -203,21 +185,5 @@ impl LemmyClient {
     self
       .make_request(Method::POST, "admin/instance/allow", data)
       .await
-  }
-
-  /// Gets all media posted on an instance. Only usable by the instance's admins.
-  ///
-  /// HTTP GET /image/list
-  pub async fn list_all_media(&self, data: ListMedia) -> LemmyResult<ListMediaResponse> {
-    self.make_request(Method::GET, "image/list", data).await
-  }
-
-  /// Deletes an image from the instance.
-  ///
-  /// **Can only be used by instance admins**
-  ///
-  /// HTTP DELETE /image
-  pub async fn delete_image_admin(&self, data: DeleteImageParams) -> LemmyResult<SuccessResponse> {
-    self.make_request(Method::DELETE, "image", data).await
   }
 }

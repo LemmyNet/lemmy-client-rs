@@ -1,19 +1,17 @@
 use crate::{LemmyClient, lemmy_client::LemmyResult};
 use lemmy_api_common::{
+  PagedResponse,
   SuccessResponse,
-  federation::{GetFederatedInstancesResponse, ResolveObject},
+  federation::{FederatedInstanceView, GetFederatedInstances, ResolveObject},
   media::{DeleteImageParams, UploadImageResponse},
-  modlog::{GetModlog, GetModlogResponse},
-  search::{Search, SearchResponse},
+  modlog::{GetModlog, ModlogView},
   site::{
     GetSiteResponse,
     SiteResponse,
-    administration::{CreateSite, EditSite},
+    administration::{CreateSite, EditSite, Search, SearchResponse},
   },
 };
 use reqwest::{Body, Method};
-
-// TODO: Add stuff for icon and banner
 
 impl LemmyClient {
   /// Gets the site.
@@ -89,8 +87,8 @@ impl LemmyClient {
 
   /// Gets the modlog.
   ///
-  ///HTTP GET /modlog
-  pub async fn get_modlog(&self, data: GetModlog) -> LemmyResult<GetModlogResponse> {
+  /// HTTP GET /modlog
+  pub async fn get_modlog(&self, data: GetModlog) -> LemmyResult<PagedResponse<ModlogView>> {
     self.make_request(Method::GET, "modlog", data).await
   }
 
@@ -110,9 +108,12 @@ impl LemmyClient {
   /// Gets the instances that are federated with your instance.
   ///
   /// HTTP GET /federated_instances
-  pub async fn get_federated_instances(&self) -> LemmyResult<GetFederatedInstancesResponse> {
+  pub async fn get_federated_instances(
+    &self,
+    data: GetFederatedInstances,
+  ) -> LemmyResult<PagedResponse<FederatedInstanceView>> {
     self
-      .make_request(Method::GET, "federated_instances", ())
+      .make_request(Method::GET, "federated_instances", data)
       .await
   }
 }
