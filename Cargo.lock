@@ -748,8 +748,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_api_common"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -780,8 +780,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_schema"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "derive-new",
@@ -795,8 +795,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_schema_file"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "serde",
  "strum",
@@ -804,8 +804,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_comment"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -817,8 +817,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_community"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -830,8 +830,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_community_follower"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -842,8 +842,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_community_follower_approval"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -854,8 +854,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_community_moderator"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -865,8 +865,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_custom_emoji"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -877,8 +877,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_local_image"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -890,8 +890,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_local_user"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -903,8 +903,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_modlog"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -915,8 +915,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_notification"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -932,8 +932,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_person"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -947,8 +947,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_person_content_combined"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -961,8 +961,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_person_liked_combined"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -975,8 +975,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_person_saved_combined"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -989,8 +989,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_post"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -1005,8 +1005,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_post_comment_combined"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -1017,8 +1017,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_private_message"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -1028,8 +1028,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_registration_applications"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -1040,8 +1040,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_report_combined"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -1054,8 +1054,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_site"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "extism-convert",
  "lemmy_db_schema",
@@ -1075,8 +1075,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_vote"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -1087,8 +1087,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_diesel_utils"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "diesel-derive-newtype",
  "serde",
@@ -1098,8 +1098,8 @@ dependencies = [
 
 [[package]]
 name = "lemmy_utils"
-version = "1.0.0-alpha.20"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#ca855bd07b44ce95b6bfc620f00d7f0e2a957a6e"
+version = "1.0.0-test-fix-publish-1"
+source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
 dependencies = [
  "chrono",
  "clearurls",
@@ -1470,6 +1470,7 @@ dependencies = [
  "pin-project-lite",
  "serde",
  "serde_json",
+ "serde_urlencoded",
  "sync_wrapper",
  "tokio",
  "tower",
@@ -1514,6 +1515,12 @@ name = "rustversion"
 version = "1.0.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b39cdef0fa800fc44525c84ccb54a029961a8215f9619753635a9c0d2538d46d"
+
+[[package]]
+name = "ryu"
+version = "1.0.23"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9774ba4a74de5f7b1c1451ed6cd5285a32eddb5cccb8cc655a4e50009e06477f"
 
 [[package]]
 name = "schemars"
@@ -1586,6 +1593,18 @@ dependencies = [
  "serde",
  "serde_core",
  "zmij",
+]
+
+[[package]]
+name = "serde_urlencoded"
+version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d3491c14715ca2294c4d6a88f15e84739788c1d030eed8c110436aafdaa2f3fd"
+dependencies = [
+ "form_urlencoded",
+ "itoa",
+ "ryu",
+ "serde",
 ]
 
 [[package]]
