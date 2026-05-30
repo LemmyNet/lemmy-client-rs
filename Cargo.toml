@@ -22,3 +22,11 @@ default = ["default-tls"]
 default-tls = ["reqwest/default-tls"]
 native-tls = ["reqwest/native-tls"]
 rustls-tls = ["reqwest/rustls-tls"]
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+gloo-net = { version = "0.7", features = ["http"] }
+serde_urlencoded = "0.7"
+web-sys = "0.3"
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+reqwest = { version = "0.13", features = ["json"], default-features = false }
