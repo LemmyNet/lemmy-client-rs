@@ -1,19 +1,23 @@
 use crate::{LemmyClient, LemmyResult};
 use http::Method;
 use lemmy_api_common::{
+  PagedResponse,
+  VoteView,
   comment::{
     CommentResponse,
+    CommentSlimView,
+    CommentView,
     GetComment,
     GetComments,
-    GetCommentsResponse,
-    GetCommentsSlimResponse,
     actions::{
       CreateComment,
       CreateCommentLike,
+      CreateCommentWarning,
       DeleteComment,
       EditComment,
+      LockComment,
       SaveComment,
-      moderation::{DistinguishComment, ListCommentLikes, ListCommentLikesResponse, RemoveComment},
+      moderation::{DistinguishComment, ListCommentLikes, RemoveComment},
     },
   },
   report::{CommentReportResponse, CreateCommentReport, ResolveCommentReport},
@@ -84,7 +88,7 @@ impl LemmyClient {
   pub async fn list_comment_likes(
     &self,
     data: ListCommentLikes,
-  ) -> LemmyResult<ListCommentLikesResponse> {
+  ) -> LemmyResult<PagedResponse<VoteView>> {
     self
       .make_request(Method::GET, "comment/like/list", data)
       .await
@@ -97,10 +101,17 @@ impl LemmyClient {
     self.make_request(Method::PUT, "comment/save", data).await
   }
 
+  /// Lock a comment thread.
+  ///
+  /// HTTP POST /comment/lock
+  pub async fn lock_comment(&self, data: LockComment) -> LemmyResult<CommentResponse> {
+    self.make_request(Method::POST, "comment/lock", data).await
+  }
+
   /// Gets comments with various filters.
   ///
   /// HTTP GET /comment/list
-  pub async fn list_comments(&self, data: GetComments) -> LemmyResult<GetCommentsResponse> {
+  pub async fn list_comments(&self, data: GetComments) -> LemmyResult<PagedResponse<CommentView>> {
     self.make_request(Method::GET, "comment/list", data).await
   }
 
@@ -110,10 +121,20 @@ impl LemmyClient {
   pub async fn list_comments_slim(
     &self,
     data: GetComments,
-  ) -> LemmyResult<GetCommentsSlimResponse> {
+  ) -> LemmyResult<PagedResponse<CommentSlimView>> {
     self
       .make_request(Method::GET, "comment/list/slim", data)
       .await
+  }
+
+  /// Warn a comment.
+  ///
+  /// HTTP POST /comment/warn
+  pub async fn create_comment_warning(
+    &self,
+    data: CreateCommentWarning,
+  ) -> LemmyResult<CommentResponse> {
+    self.make_request(Method::POST, "comment/warn", data).await
   }
 
   /// Reports a comment to the moderator team of the community the comment is in, your instance's
