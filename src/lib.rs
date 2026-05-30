@@ -10,9 +10,9 @@
 //! Also supports WASM, including use in the browser.
 //! ## Example
 //! ```
-//! # use lemmy_client::{LemmyClient, ClientOptions};
+//! use lemmy_client::{LemmyClient, ClientOptions};
 //!
-//! # async fn get_site_test() {
+//! async fn get_site_test() {
 //!   let client = LemmyClient::new(ClientOptions {
 //!     domain: "lemmy.ml",
 //!     secure: true
@@ -20,18 +20,20 @@
 //!   let res = client.get_site().await;
 //!
 //!   assert!(res.is_ok());
-//! # }
+//!
+//!   // Login
+//!   let login = Login {
+//!     username_or_email: "user",
+//!     password: "password",
+//!     stay_logged_in: None,
+//!     totp_2fa_token: None,
+//!   };
+//!   let jwt = client.login(login).await?.jwt;
+//!   if let Some(jwt) = jwt {
+//!     client.set_jwt(&jwt.into_inner());
+//!   };
+//! }
 //! ```
-//! <div class="warning">
-//!
-//! **IMPORTANT VERSIONING NOTE**: This crate now uses a different versioning scheme than before so
-//! as not to be too tied down to Lemmy releases. For Lemmy versions 0.19.4 and up, use versions
-//! 1.x.x. For Lemmy versions 0.19.3 and under, use versions 0.19.5 and up.
-//!
-//! This is confusing, but should become a non issue as Lemmy accumulates versions and fewer servers
-//! use Lemmy versions use 0.19.3 and lower.
-//!
-//! </div>
 
 mod client_options;
 mod endpoints;
