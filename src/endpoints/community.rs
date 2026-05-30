@@ -35,6 +35,7 @@ use lemmy_api_common::{
   },
   media::UploadImageResponse,
   person::PersonResponse,
+  report::{CommunityReportResponse, CreateCommunityReport},
 };
 use reqwest::Body;
 
@@ -58,6 +59,13 @@ impl LemmyClient {
   /// HTTP PUT /community
   pub async fn update_community(&self, data: EditCommunity) -> LemmyResult<CommunityResponse> {
     self.make_request(Method::PUT, "community", data).await
+  }
+
+  /// Deletes a community.
+  ///
+  /// HTTP DELETE /community
+  pub async fn delete_community(&self, data: DeleteCommunity) -> LemmyResult<CommunityResponse> {
+    self.make_request(Method::DELETE, "community", data).await
   }
 
   /// Fetches a random community.
@@ -91,12 +99,27 @@ impl LemmyClient {
       .await
   }
 
-  /// Deletes a community.
+  /// Report a community.
   ///
-  /// HTTP POST /community/delete
-  pub async fn delete_community(&self, data: DeleteCommunity) -> LemmyResult<CommunityResponse> {
+  /// HTTP POST /community/report
+  pub async fn report_community(
+    &self,
+    data: CreateCommunityReport,
+  ) -> LemmyResult<CommunityReportResponse> {
     self
-      .make_request(Method::POST, "community/delete", data)
+      .make_request(Method::POST, "community/report", data)
+      .await
+  }
+
+  /// Resolves a community report.
+  ///
+  /// HTTP PUT /community/report/resolve
+  pub async fn resolve_community_report(
+    &self,
+    data: CreateCommunityReport,
+  ) -> LemmyResult<CommunityReportResponse> {
+    self
+      .make_request(Method::PUT, "community/report/resolve", data)
       .await
   }
 
