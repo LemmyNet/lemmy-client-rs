@@ -1,25 +1,29 @@
 use crate::{LemmyClient, LemmyResult};
 use http::Method;
 use lemmy_api_common::{
+  PagedResponse,
   SuccessResponse,
+  VoteView,
   post::{
+    CreatePostWarning,
     GetPost,
     GetPostResponse,
     GetPosts,
-    GetPostsResponse,
     GetSiteMetadata,
     GetSiteMetadataResponse,
     PostResponse,
+    PostView,
     actions::{
       CreatePost,
       CreatePostLike,
       DeletePost,
       EditPost,
+      EditPostNotifications,
       HidePost,
       MarkManyPostsAsRead,
       MarkPostAsRead,
       SavePost,
-      moderation::{FeaturePost, ListPostLikes, ListPostLikesResponse, LockPost, RemovePost},
+      moderation::{FeaturePost, ListPostLikes, LockPost, ModEditPost, RemovePost},
     },
   },
   report::{CreatePostReport, PostReportResponse, ResolvePostReport},
@@ -118,7 +122,7 @@ impl LemmyClient {
   /// Gets posts with a variety of filters.
   ///
   /// HTTP GET /post/list
-  pub async fn list_posts(&self, data: GetPosts) -> LemmyResult<GetPostsResponse> {
+  pub async fn list_posts(&self, data: GetPosts) -> LemmyResult<PagedResponse<PostView>> {
     self.make_request(Method::GET, "post/list", data).await
   }
 
@@ -132,7 +136,7 @@ impl LemmyClient {
   /// Lists the likes for a post.
   ///
   /// HTTP GET /post/like/list
-  pub async fn list_post_likes(&self, data: ListPostLikes) -> LemmyResult<ListPostLikesResponse> {
+  pub async fn list_post_likes(&self, data: ListPostLikes) -> LemmyResult<PagedResponse<VoteView>> {
     self.make_request(Method::GET, "post/like/list", data).await
   }
 
@@ -150,6 +154,7 @@ impl LemmyClient {
   pub async fn report_post(&self, data: CreatePostReport) -> LemmyResult<PostReportResponse> {
     self.make_request(Method::POST, "post/report", data).await
   }
+
   /// Resolves a post report (moderator action).
   ///
   /// HTTP PUT /post/report/resolve
@@ -160,5 +165,31 @@ impl LemmyClient {
     self
       .make_request(Method::PUT, "post/report/resolve", data)
       .await
+  }
+
+  /// Edits post notifications.
+  ///
+  /// HTTP PUT /post/notifications
+  pub async fn edit_post_notifications(
+    &self,
+    data: EditPostNotifications,
+  ) -> LemmyResult<SuccessResponse> {
+    self
+      .make_request(Method::PUT, "post/notifications", data)
+      .await
+  }
+
+  /// Edit a post as a mod.
+  ///
+  /// HTTP PUT /post/mod_edit
+  pub async fn mod_edit_post(&self, data: ModEditPost) -> LemmyResult<PostResponse> {
+    self.make_request(Method::PUT, "post/mod_edit", data).await
+  }
+
+  /// Create a warning for a post.
+  ///
+  /// HTTP POST /post/warn
+  pub async fn create_post_warning(&self, data: CreatePostWarning) -> LemmyResult<PostResponse> {
+    self.make_request(Method::POST, "post/warn", data).await
   }
 }
