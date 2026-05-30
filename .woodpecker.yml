@@ -3,7 +3,7 @@ variables:
 
 steps:
   toml_fmt:
-    image: tamasfe/taplo:0.10.0
+    image: ghcr.io/shaddydc/taplo
     commands:
       - taplo format --check
     when:
