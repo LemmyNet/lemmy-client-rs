@@ -1,4 +1,4 @@
-[![Crates.io Version](https://img.shields.io/crates/v/lemmy-client?style=for-the-badge)](https://crates.io/crates/lemmy-client)
+[![Crates.io Version](https://img.shields.io/crates/v/lemmy-client)](https://crates.io/crates/lemmy-client)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/LemmyNet/lemmy-client-rs.svg)](https://github.com/LemmyNet/lemmy-client-rs/tags)
 [![Build Status](https://woodpecker.join-lemmy.org/api/badges/LemmyNet/lemmy-client-rs/status.svg)](https://woodpecker.join-lemmy.org/LemmyNet/lemmy-client-rs)
 [![GitHub issues](https://img.shields.io/github/issues-raw/LemmyNet/lemmy-client-rs.svg)](https://github.com/LemmyNet/lemmy-client-rs/issues)
