@@ -16,6 +16,15 @@
 
 ## Usage
 
+In your `Cargo.toml`:
+
+```toml
+[dependencies]
+lemmy_client = "X.X.X"
+```
+
+An example:
+
 ```rust
 use lemmy_client::{LemmyClient, ClientOptions};
 use lemmy_api_common::account::auth::Login;
