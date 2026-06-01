@@ -1,7 +1,15 @@
 use crate::utils::impl_marker_trait;
 use lemmy_api_common::{
-    comment::*, community::*, custom_emoji::*, lemmy_db_schema::source::login_token::LoginToken,
-    person::*, post::*, private_message::*, site::*, LemmyErrorType, SuccessResponse,
+  comment::*,
+  community::*,
+  custom_emoji::*,
+  lemmy_db_schema::source::login_token::LoginToken,
+  person::*,
+  post::*,
+  private_message::*,
+  site::*,
+  LemmyErrorType,
+  SuccessResponse,
 };
 use serde::Deserialize;
 
