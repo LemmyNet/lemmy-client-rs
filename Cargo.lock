@@ -748,8 +748,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_api_common"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb6162a441f4a6094eca658c01feac74c65f1c0fbfa2ec74b9edb672ebe8ef36"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -780,8 +781,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_schema"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6447cb04b6701b1fdffe0bc53619868265c1e0031442be6f4e2db3b62aea7058"
 dependencies = [
  "chrono",
  "derive-new",
@@ -795,8 +797,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_schema_file"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0fc3dac3719fd99c5db9b7e0a59e71e005ababd62e788b495a0510812c39630d"
 dependencies = [
  "serde",
  "strum",
@@ -804,8 +807,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_comment"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2ccf77b11d8d22d6da9c833003ac9fad78f0a52c135041c4e5386d3c42482216"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -817,8 +821,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_community"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9fcd881785cf21a85baaeaf592a4d46a8f24cca17e386378ecc8904718568861"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -830,8 +835,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_community_follower"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "efb0cbb2dd58a41c5e54a6e8770fc0a0bd17c2a0f0d20f738833a4b7e21cccb9"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -842,8 +848,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_community_follower_approval"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "49c537833acc527d0b54dffb6a60fb3ea5bfa8308fc7d3af2a2713a543044d42"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -854,8 +861,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_community_moderator"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b04a802adf7b1ea32c31f7e84a52dee53dc0cbfb5d08782e2ad20af6b31d19bf"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -865,8 +873,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_custom_emoji"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5a9c1a77be8a669ad173835ee1c0a7d85c3cc789ecf5d13a803e2be0d914dc37"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -877,8 +886,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_local_image"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a7992b516d0ff4b6313087233ce98788bb06533e4dca42610b286b50942be09d"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -890,8 +900,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_local_user"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "393db7b6e4d26f43a63adc5218a77d013980ad2220d8989baeea2386624c4c8b"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -903,8 +914,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_modlog"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6d9bf000a12f55820bc11b1a880d0ea1cbdf494b1559438cb0e14fcffabbaa3e"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -915,8 +927,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_notification"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c412e07ff0a5fabd24de1bdb290d9f672b97e72d3a998b46ea740656870f0ef3"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -932,8 +945,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_person"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d376b006ce300e7ffe80a4e92fa87aaecbe7889751b810da57f6d8a1a20f3da4"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -947,8 +961,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_person_content_combined"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f2b79ae22849cdb775be1b55a865f723f6daf74e6becb92dbf02a566a3a753ee"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -961,8 +976,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_person_liked_combined"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "171f7853b9c2ef7d36b61b7a769445899d3326709bd89e7ab0c2a98e04edb49c"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -975,8 +991,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_person_saved_combined"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0ffbe7b67f392d2e1aaef2c3280fe860a13bbc22aafd705309206e4839a33fa"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -989,8 +1006,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_post"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e9ff101989a30e5b2b9f2421e6236e08b86522c498ed93fa9ab2eadcb1eeda52"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -1005,8 +1023,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_post_comment_combined"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7e401f5504c276e15e879e66d1ea57e2d39caf8396e9d446c8c69416146c9855"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -1017,8 +1036,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_private_message"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c58d2596552b152d1be6ba349afbc5c8d875cc633a390639d9905a763da34ded"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -1028,8 +1048,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_registration_applications"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "801969a0be7a1002df7dd2d2622421e143651c104ae66ac554c580fc8971a97d"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -1040,8 +1061,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_report_combined"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "15d204a0c00c9490bcc65699d601c4889af540d05f33a7cfb3f09b194cdbba46"
 dependencies = [
  "chrono",
  "lemmy_db_schema",
@@ -1054,8 +1076,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_site"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9674d498b76aa1476a48978ddec0c19302c78a889f737db821b3ccb4341d5bb8"
 dependencies = [
  "extism-convert",
  "lemmy_db_schema",
@@ -1075,8 +1098,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_db_views_vote"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2cda7a00f2541bb1c04c1d5edac824052f938a3eccf06703b0cbc914b91f61f"
 dependencies = [
  "lemmy_db_schema",
  "lemmy_db_schema_file",
@@ -1087,8 +1111,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_diesel_utils"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "43a6442acf078abfc9768d1f17c4d566ad60bb67826a03d7d2b3e0445a5c30d3"
 dependencies = [
  "diesel-derive-newtype",
  "serde",
@@ -1098,8 +1123,9 @@ dependencies = [
 
 [[package]]
 name = "lemmy_utils"
-version = "1.0.0-test-fix-publish-1"
-source = "git+https://github.com/LemmyNet/lemmy?branch=add_api_exports_1#0cc712062d66f17ea52839487aa2c2d80ecf57ec"
+version = "1.0.0-test-fix-publish-3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "64cad978b34c758ea2ea3fe74d140dab1e10eea689ce9be69eefa558797415d7"
 dependencies = [
  "chrono",
  "clearurls",
