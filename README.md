@@ -1,11 +1,11 @@
-<div align="center">
-  <img src="https://img.shields.io/github/license/LemmyNet/lemmy-client-rs?style=for-the-badge" alt="License" />
-  <img src="https://img.shields.io/github/last-commit/LemmyNet/lemmy-client-rs?style=for-the-badge&logo=GitHub" alt="Last commit" />
-  <img src="https://img.shields.io/github/stars/LemmyNet/lemmy-client-rs?style=for-the-badge&logo=GitHub" alt="Github stars" />
-  <img src="https://img.shields.io/crates/v/lemmy-client?style=for-the-badge" alt="Latest version" />
-  <img src="https://img.shields.io/crates/dv/lemmy-client?style=for-the-badge" alt="Downloads for latest version" />
-  <img src="https://img.shields.io/github/languages/code-size/LemmyNet/lemmy-client-rs?style=for-the-badge&logo=Rust" alt="Library size in bytes" />
-</div>
+[![Crates.io Version](https://img.shields.io/crates/v/lemmy-client?style=for-the-badge)](https://crates.io/crates/lemmy-client)
+[![GitHub tag (latest SemVer)](https://img.shields.io/github/tag/LemmyNet/lemmy-client-rs.svg)](https://github.com/LemmyNet/lemmy-client-rs/tags)
+[![Build Status](https://woodpecker.join-lemmy.org/api/badges/LemmyNet/lemmy-client-rs/status.svg)](https://woodpecker.join-lemmy.org/LemmyNet/lemmy-client-rs)
+[![GitHub issues](https://img.shields.io/github/issues-raw/LemmyNet/lemmy-client-rs.svg)](https://github.com/LemmyNet/lemmy-client-rs/issues)
+[![License](https://img.shields.io/github/license/LemmyNet/lemmy-client-rs.svg)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/LemmyNet/lemmy-client-rs?style=social)](https://github.com/LemmyNet/lemmy-client-rs/stargazers)
+<a href="https://endsoftwarepatents.org/innovating-without-patents"><img style="height: 20px;" src="https://static.fsf.org/nosvn/esp/logos/patent-free.svg"></a>
+
 <div align="center">
   <a href="https://join-lemmy.org" rel="noopener">
       <img src="https://raw.githubusercontent.com/LemmyNet/lemmy-ui/main/src/assets/icons/favicon.svg" alt="Lemmy logo" width="250px" height="250px"/>
