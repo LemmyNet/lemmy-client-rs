@@ -17,10 +17,10 @@ sed -i "s/version = \"$old_tag\"/version = \"$new_tag\"/g" Cargo.toml
 cargo check
 
 # The commit
-# git add Cargo.toml Cargo.lock
-# git commit -m"Version $new_tag"
-# git tag $new_tag
+git add Cargo.toml Cargo.lock
+git commit -m"Version $new_tag"
+git tag $new_tag
 
 # Push
-# git push origin $new_tag
-# git push
+git push origin $new_tag
+git push
