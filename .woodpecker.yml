@@ -1,5 +1,7 @@
 variables:
   - &rust_image "rust:1.96-slim-bookworm"
+  - &rust_nightly_image "rustlang/rust:nightly-alpine"
+  - &install_binstall "wget -q -O- https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz | tar -xvz -C /usr/local/cargo/bin"
 
 steps:
   toml_fmt:
@@ -10,20 +12,19 @@ steps:
       - event: pull_request
 
   cargo_fmt:
-    image: rustlang/rust:nightly-alpine
+    image: *rust_nightly_image
     commands:
       - rustup component add rustfmt --toolchain nightly
       - cargo +nightly fmt -- --check
     when:
       - event: pull_request
 
-  cargo_machete:
-    image: *rust_image
+  cargo_shear:
+    image: *rust_nightly_image
     commands:
-      - apt update && apt -y install wget
-      - wget -O- https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz | tar -xvz -C /usr/local/cargo/bin
-      - cargo binstall -y cargo-machete
-      - cargo machete
+      - *install_binstall
+      - cargo binstall -y cargo-shear --disable-strategies compile
+      - cargo shear --deny-warnings
     when:
       - event: pull_request
 
