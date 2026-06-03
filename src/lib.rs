@@ -277,7 +277,7 @@ HTTP POST /community/mod"#
   );
   expose_wrapped_fn!(
     get_federated_instances,
-    FederatedInstances,
+    (),
     GetFederatedInstancesResponse,
     r#"Gets the instances that are federated with your instance.
 
