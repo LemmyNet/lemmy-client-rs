@@ -159,7 +159,7 @@ pub trait LemmyClientInternal: private_trait::LemmyClientInternal {
     get_federated_instances,
     Method::GET,
     "federated_instances",
-    FederatedInstances,
+    (),
     GetFederatedInstancesResponse
   );
   client_fn!(get_post, Method::GET, "post", GetPost, GetPostResponse);
