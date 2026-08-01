@@ -1,5 +1,5 @@
 variables:
-  - &rust_image "rust:1.96-slim-bookworm"
+  - &rust_image "rust:1.97-slim-bookworm"
   - &rust_nightly_image "rustlang/rust:nightly-alpine"
   - &install_binstall "wget -q -O- https://github.com/cargo-bins/cargo-binstall/releases/latest/download/cargo-binstall-x86_64-unknown-linux-musl.tgz | tar -xvz -C /usr/local/cargo/bin"
 
