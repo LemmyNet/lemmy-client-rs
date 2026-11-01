@@ -24,3 +24,6 @@ git tag $new_tag
 # Push
 git push origin $new_tag
 git push
+
+# Publish
+cargo publish
