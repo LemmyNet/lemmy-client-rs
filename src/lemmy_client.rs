@@ -47,6 +47,11 @@ async fn send_request(request_builder: RequestBuilder) -> Result<String, LemmyEr
 }
 
 /// API wrapper for Lemmy
+///
+/// Cloning is cheap: the clone shares the underlying HTTP connection pool, and gets its own
+/// copy of the headers. That makes a per-request clone with [`set_jwt`][LemmyClient::set_jwt]
+/// the safe way to act for different users from one server.
+#[derive(Clone)]
 pub struct LemmyClient {
   headers: HeaderMap,
   client: Client,
