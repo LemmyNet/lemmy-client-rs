@@ -35,7 +35,7 @@ use lemmy_api_common::{
   },
   media::UploadImageResponse,
   person::PersonResponse,
-  report::{CommunityReportResponse, CreateCommunityReport},
+  report::{CommunityReportResponse, CreateCommunityReport, ResolveCommunityReport},
 };
 use reqwest::Body;
 
@@ -116,7 +116,7 @@ impl LemmyClient {
   /// HTTP PUT /community/report/resolve
   pub async fn resolve_community_report(
     &self,
-    data: CreateCommunityReport,
+    data: ResolveCommunityReport,
   ) -> LemmyResult<CommunityReportResponse> {
     self
       .make_request(Method::PUT, "community/report/resolve", data)
